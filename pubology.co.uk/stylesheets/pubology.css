@@ -6,13 +6,13 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #c0c0c0;
+  background-color: #e0e0e0;
   color: #000000;
   font-family: calibri, sans-serif;
 }
 
 div#banner {
-  background-color: #b0b0b0;
+  background-color: #ed002f;
   margin: -1em;
   margin-top: -2.5em;
   padding-left: 1em;
@@ -36,7 +36,7 @@ div#navbar {
   margin-top: 0.9em;
   padding-right: 3em;
   white-space: nowrap;
-  background-color: #a0a0a0;
+  background-color: #9a001e;
   height: 100%;
 }
 
@@ -44,28 +44,58 @@ div#navbar ul {
   list-style: none;
 }
 
-div#navbar ul#internal_links li#home_link {
-  padding-bottom: 1em;
+div#navbar ul li a {
+  color: #e0e0e0;
+  text-decoration: none;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
 }
 
-div#navbar ul#internal_links li#postal_district_link, li#map_link, li#postal_district_nolink, li#map_nolink {
+div#navbar a:hover {
+  background-color: #ed002f;
+}
+
+div#navbar ul#internal_links li#home_link {
+  margin-bottom: 1em;
+}
+
+div#navbar ul#internal_links li#postal_district_link, li#map_link {
   padding-left: 1em;
+}
+
+div#navbar li#postal_district_nolink, li#map_nolink {
+  padding-left: 1.2em;
 }
 
 div#body_wrapper {
   height: 100%;
   margin: 0;
   padding: 1em;
+  position: relative;
 }
 
 div#main_content {
   float: right;
   width: 88%;
   height: 100%;
+  padding-top: 0.8em;
+}
+
+div#main_content a {
+  color: #9a001e;
+}
+
+div#main_content a:hover {
+  color: #ed002f;
 }
 
 div#front_page_text {
-  padding-top: 1em;
+  padding-top: 0.5em;
+}
+
+table.postal_district_pub_list th {
+  text-align: left;
+  padding-left: 0.5em;
 }
 
 div#map_canvas {
