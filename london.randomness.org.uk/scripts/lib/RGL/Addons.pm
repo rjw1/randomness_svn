@@ -302,6 +302,39 @@ sub get_num_photos {
   return $count;
 }
 
+=item B<search_truncated_node_names>
+
+  my @names = RGL::Addons->search_truncated_node_names( wiki => $wiki,
+                                                        node => $node );
+
+Looks for node names that could be truncated to the supplied C<node>
+parameter.  e.g. if you search for "Lush, Wimbled" and you have a node
+called "Lush, Wimbledon", the latter would be returned.
+
+=cut
+
+sub search_truncated_node_names {
+  my ( $self, %args ) = @_;
+  my $wiki = $args{wiki};
+  my $node = $args{node};
+
+  my $dbh = $wiki->store->dbh;
+  my $sql = "
+    SELECT name
+    FROM node
+    WHERE name LIKE ?";
+
+  my $sth = $dbh->prepare( $sql );
+  $sth->execute( $node . "%" );
+
+  my @results;
+  while ( my $name = $sth->fetchrow_array ) {
+    push @results, $name;
+  }
+
+  return @results;
+}
+
 =back
 
 =cut
