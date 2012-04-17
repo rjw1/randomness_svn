@@ -1,4 +1,3 @@
-var tubeReq;
 var node_param;
 
 $(
@@ -15,35 +14,24 @@ $(
               { speed: 150, maxDots: 3, word: 'Retrieving data' } );
         // node_param is already URI-encoded
         var url='scripts/nearest-tube.cgi?origin=' + node_param;
-        if (window.XMLHttpRequest) {
-          tubeReq = new XMLHttpRequest();
-          tubeReq.onreadystatechange = processTubeReqChange;
-          tubeReq.open("GET", url, true);
-          tubeReq.send(null);
-        } else if (window.ActiveXObject) {
-          tubeReq = new ActiveXObject("Microsoft.XMLHTTP");
-          if (tubeReq) {
-              tubeReq.onreadystatechange = processTubeReqChange;
-              tubeReq.open("GET", url, true);
-              tubeReq.send();
-          }
-        }
+        $.ajax( {
+          type: 'GET',
+          url: url,
+          success: function( data ) {
+            $( '#nearby_tubes' ).Loadingdotdotdot( "Stop" );
+            $( '#nearby_tube_results' ).css( { 'padding-left': '0.5em',
+                                               'padding-bottom': '0.5em' } );
+            $( '#nearby_tube_results' ).html( data );
+          },
+          error: function( jqXHR, textStatus, errorThrown ) {
+            $( '#nearby_tubes' ).Loadingdotdotdot( "Stop" );
+            $( '#nearby_tube_results' ).css( { 'padding-left': '0.5em',
+                                               'padding-bottom': '0.5em' } );
+            $( '#nearby_tube_results' ).html( 'Sorry! There was an error: '
+                                              + errorThrown );
+          },
+        } );
       }
     );
   }
 );
-
-function processTubeReqChange() {
-  if (tubeReq.readyState == 4) {
-    var results;
-    if (tubeReq.status == 200) {
-      results = tubeReq.responseText;
-    } else {
-      results = "Error retrieving data: " + tubeReq.statusText;
-    }
-    $( '#nearby_tubes' ).Loadingdotdotdot( "Stop" );
-    $( '#nearby_tube_results' ).css( { 'padding-left': '0.5em',
-                                       'padding-bottom': '0.5em' } );
-    $( '#nearby_tube_results' ).html( results );
-  }
-}
