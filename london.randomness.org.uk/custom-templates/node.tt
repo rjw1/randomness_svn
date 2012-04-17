@@ -51,6 +51,48 @@
 [% IF not (content || coord_field_1_value || coord_field_2_value || latitude || longitude) %]
 </div>
 We don't have a page called "[% node_name %]". Would you like to <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]">create it</a>?
+
+  [% IF node_name.length > 4 %]
+    <div id="page_name_suggestions"></div>
+
+    <script type="text/javascript">
+      var nameReq;
+      function get_page_name_suggestions() {
+        document.getElementById( "page_name_suggestions" ).innerHTML = "<p>Alternatively, checking for other pages you might have meant...</p>";
+        // node_param is already URI-encoded
+        var url='scripts/page-name-suggestions.cgi?page=[% node_param %]';
+        if (window.XMLHttpRequest) {
+          nameReq = new XMLHttpRequest();
+          nameReq.onreadystatechange = processNameReqChange;
+          nameReq.open("GET", url, true);
+          nameReq.send(null);
+        } else if (window.ActiveXObject) {
+          nameReq = new ActiveXObject("Microsoft.XMLHTTP");
+          if (nameReq) {
+            nameReq.onreadystatechange = processNameReqChange;
+            nameReq.open("GET", url, true);
+            nameReq.send();
+          }
+        }
+        return false;
+       }
+
+      function processNameReqChange() {
+        if (nameReq.readyState == 4) {
+          var results;
+          if (nameReq.status == 200) {
+            results = nameReq.responseText;
+          } else {
+            results = "Error retrieving data: " + nameReq.statusText;
+          }
+          document.getElementById( "page_name_suggestions" ).innerHTML = "<p>Alternatively, perhaps you meant one of the following?</p>" + results;
+        }
+      }
+
+      window.onload = function() { get_page_name_suggestions(); }
+    </script>
+  [% END %]
+
 [% ELSE %]
 <div id="title_edit_link">
   <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]" rel="nofollow">Edit this page</a>
