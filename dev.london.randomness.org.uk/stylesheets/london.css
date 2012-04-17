@@ -283,6 +283,21 @@ div#metadata ul li span.metadata_label {
   margin-left: -1em;
 }
 
+span#nearby_tube_text {
+  display: block;
+  float: left;
+}
+
+span#nearby_tube_results {
+  display: block;
+  float: left;
+}
+
+span#nearby_tube_results span {
+  padding-left: 0.5em;
+  width: 20em;
+}
+
 #content_text
 {
   margin-bottom: 2.5em;

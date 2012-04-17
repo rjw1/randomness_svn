@@ -2,11 +2,12 @@
 
 <div id="location_stuff">
   [% IF coord_field_1_value AND coord_field_2_value %]
+    <script type="text/javascript">
+      node_param = '[% node_param %]';
+    </script>
     <div id="nearby_tubes">
-      <form onSubmit="return showTubeStations()">
-        <p>Show nearby Tube stations:
-        <input type="submit" name="Show" value="Show" class="form_button" />
-      </form>
+      <span id="nearby_tube_text"></span>
+      <span id="nearby_tube_results"></span>
     </div>
 
     <div id="find_within_distance">
