@@ -88,6 +88,11 @@ div.summary_bar_link {
 #banner div.summary_bar_link a:hover { text-decoration: underline; }
 #banner div.summary_bar_link a:active { text-decoration: underline; }
 
+div.summary_bar_username {
+  float: left;
+  font-size: 0.8em;
+}
+
 /* Navbar */
 #navbar {
   float: right;
@@ -276,6 +281,21 @@ div#metadata ul li {
 div#metadata ul li span.metadata_label {
   font-style: italic;
   margin-left: -1em;
+}
+
+span#nearby_tube_text {
+  display: block;
+  float: left;
+}
+
+span#nearby_tube_results {
+  display: block;
+  float: left;
+}
+
+span#nearby_tube_results span {
+  padding-left: 0.5em;
+  width: 20em;
 }
 
 #content_text

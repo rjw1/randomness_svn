@@ -1,3 +1,9 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"
+        type="text/javascript"></script>
+<script src="/static/jquery.loadingdotdotdot.js" type="text/javascript">
+</script>
+<script src="/static/rgl.js" type="text/javascript"></script>
+
    [% UNLESS not_editable %]
         <link rel="alternate" type="application/wiki" title="Edit this page!" href="[% source_site or full_cgi_url %]?id=[% node_param %];action=edit">
 [% END %] 
@@ -15,38 +21,3 @@
     }
   </script>
  
-  <script type="text/javascript" language="javascript">
-    var tubeReq;
-    function showTubeStations() {
-      document.getElementById( "nearby_tubes" ).innerHTML = "<p>Retrieving data...</p>";
-      // node_param is already URI-encoded
-      var url='scripts/nearest-tube.cgi?origin=[% node_param %]';
-      if (window.XMLHttpRequest) {
-        tubeReq = new XMLHttpRequest();
-        tubeReq.onreadystatechange = processTubeReqChange;
-        tubeReq.open("GET", url, true);
-        tubeReq.send(null);
-      } else if (window.ActiveXObject) {
-        tubeReq = new ActiveXObject("Microsoft.XMLHTTP");
-        if (tubeReq) {
-            tubeReq.onreadystatechange = processTubeReqChange;
-            tubeReq.open("GET", url, true);
-            tubeReq.send();
-        }
-      }
-      return false;
-    }
-
-    function processTubeReqChange() {
-      if (tubeReq.readyState == 4) {
-        var results;
-        if (tubeReq.status == 200) {
-          results = tubeReq.responseText;
-        } else {
-          results = "Error retrieving data: " + tubeReq.statusText;
-        }
-        document.getElementById( "nearby_tubes" ).innerHTML = "<p>Nearby Tube stations: " + results + "</p>";
-      }
-    }
-  </script>
-
