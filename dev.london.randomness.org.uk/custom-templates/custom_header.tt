@@ -1,3 +1,8 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"
+        type="text/javascript"></script>
+<script src="/static/jquery.loadingdotdotdot.js" type="text/javascript">
+</script>
+
    [% UNLESS not_editable %]
         <link rel="alternate" type="application/wiki" title="Edit this page!" href="[% source_site or full_cgi_url %]?id=[% node_param %];action=edit">
 [% END %] 
@@ -18,10 +23,12 @@
   <script type="text/javascript" language="javascript">
     var tubeReq;
     function showTubeStations() {
-      document.getElementById( "nearby_tubes" ).innerHTML = "<p>Retrieving data...</p>";
+      $( '#nearby_tubes' ).Loadingdotdotdot( { speed: 400, maxDots: 3,
+                                               word: 'Retrieving data' } );
       // node_param is already URI-encoded
       var url='scripts/nearest-tube.cgi?origin=[% node_param %]';
       if (window.XMLHttpRequest) {
+
         tubeReq = new XMLHttpRequest();
         tubeReq.onreadystatechange = processTubeReqChange;
         tubeReq.open("GET", url, true);
@@ -40,6 +47,7 @@
     function processTubeReqChange() {
       if (tubeReq.readyState == 4) {
         var results;
+        $( '#nearby_tubes' ).Loadingdotdotdot( "Stop" );
         if (tubeReq.status == 200) {
           results = tubeReq.responseText;
         } else {
