@@ -88,6 +88,11 @@ div.summary_bar_link {
 #banner div.summary_bar_link a:hover { text-decoration: underline; }
 #banner div.summary_bar_link a:active { text-decoration: underline; }
 
+div.summary_bar_username {
+  float: left;
+  font-size: 0.8em;
+}
+
 /* Navbar */
 #navbar {
   float: right;
@@ -178,6 +183,7 @@ div.summary_bar_link {
 
 .recentchanges_node_name {
   font-size: 0.8em;
+  min-width: 12em;
 }
 .recentchanges_meta {
   font-size: 0.8em;

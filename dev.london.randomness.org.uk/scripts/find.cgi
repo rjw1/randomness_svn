@@ -41,15 +41,38 @@ if ( $q->param( "do_search" ) ) {
   my $small_pointers = $q->param( "small_pointers" ) || 0;
 
   my $show_map = $q->param( "show_map" );
+  my $map_style = $q->param( "map_style" );
 
   $dist ||= 0;
   $dist =~ s/[^0-9]//g;
 
-  if ( !$dist || !$cat1 ) {
-    # Yes, the categories are displayed the wrong way around.  Don't want to
-    # break URLs, so don't change it.
-    $tt_vars{error_message} =
-                  "Must supply at least the second category, and a distance.";
+  # NB the categories are displayed the wrong way around.  Don't want to
+  # break URLs, so don't change it.
+
+  if ( !$dist || !$cat1 || !$cat2) {
+    my $err = "To use this search, you should supply two categories and a "
+      . "distance; this will show you all things in the first category that "
+      . "are within that distance of anything in the second category.";
+    if ( $cat1 && $cat2 ) {
+      $err .= " If you just want to view things in one of your chosen "
+        . "categories, take a look at "
+        . "<a href=\"" . $config->script_url . $config->script_name . "?"
+        . $formatter->node_name_to_node_param( "Category $cat2" )
+        . "\">Category: " . $q->escapeHTML( $cat2 ) . "</a> or "
+        . "<a href=\"" . $config->script_url . $config->script_name . "?"
+        . $formatter->node_name_to_node_param( "Category $cat1" )
+        . "\">Category: " . $q->escapeHTML( $cat1 ) . "</a>.";
+    } else {
+      my $one_cat = $cat1 || $cat2;
+      if ( $one_cat ) {
+        $err .= " If you just want to view things in your single chosen "
+          . "category, take a look at <a href=\""
+          . $config->script_url . $config->script_name . "?"
+          . $formatter->node_name_to_node_param( "Category $one_cat" )
+          . "\">Category: " . $q->escapeHTML( $one_cat ) . "</a>.";
+      }
+    }
+    $tt_vars{error_message} = $err;
   } else {
     $tt_vars{do_search} = 1;
     $tt_vars{cat1} = $cat1;
@@ -135,6 +158,7 @@ if ( $q->param( "do_search" ) ) {
                    enable_gmaps        => 1,
                    display_google_maps => 1,
                    show_map            => 1,
+                   map_style           => $map_style,
                  );
       my ( %origin_results, %end_results );
       my ( $min_lat, $max_lat, $min_long, $max_long, $bd_set );
@@ -306,4 +330,11 @@ sub setup_form_fields {
                                                  -value => 1, label => "" );
   $tt_vars{small_pointers_box} = $q->checkbox( -name => "small_pointers",
                                                -value => 1, label => "" );
+  $tt_vars{map_style_group} = $q->radio_group(
+      -name => "map_style",
+      -values => [ "mq", "osm", "google" ],
+      -default => "google",
+      -labels => { "mq" => "MapQuest", "osm" => "OpenStreetMap",
+                   "google" => "Google Maps" },
+  );
 }

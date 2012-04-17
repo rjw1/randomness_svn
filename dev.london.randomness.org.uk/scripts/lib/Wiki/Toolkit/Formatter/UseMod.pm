@@ -287,8 +287,8 @@ sub format {
         } else {
           $type = "loc";
         }
-        return qq(<a href="http://london.randomness.org.uk/scripts/locate.cgi?$type=$_[1];map=1">$link_title</a>);
-#        my $script_name = "http://london.randomness.org.uk/wiki.cgi";
+        return qq(<a href="http://dev.london.randomness.org.uk/scripts/locate.cgi?$type=$_[1];map=1">$link_title</a>);
+#        my $script_name = "http://dev.london.randomness.org.uk/wiki.cgi";
 #        return qq(<a href="$script_name?action=index;format=map;index_type=) . uri_escape(lc($_[0])) . qq(;index_value=) . uri_escape($_[1]) . qq(">$link_title</a>);
     };
     foreach my $key (keys %macros) {

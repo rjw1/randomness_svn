@@ -38,7 +38,9 @@ if ( $do_search && !$cat && !$loc ) {
 } elsif ( $do_search || $cat || $loc ) {
   $tt_vars{show_search_example} = 0;
   my $small_pointers = $q->param( "small_pointers" ) || 0;
+  my $blue_pointers = $q->param( "blue_pointers" ) || 0;
   my $show_map = $q->param( "map" );
+  my $map_style = $q->param( "map_style" );
 
   if ( !$cat && !$loc ) {
   } else {
@@ -85,10 +87,18 @@ if ( $do_search && !$cat && !$loc ) {
       ORDER BY node.name";
 
     my $markertype;
-    if ( $small_pointers ) {
-      $markertype = "small_light_red";
+    if ( $blue_pointers ) {
+      if ( $small_pointers ) {
+        $markertype = "small_light_blue";
+      } else {
+        $markertype = "large_light_blue";
+      }
     } else {
-      $markertype = "large_light_red";
+      if ( $small_pointers ) {
+        $markertype = "small_light_red";
+      } else {
+        $markertype = "large_light_red";
+      }
     }
 
     my @results;
@@ -145,6 +155,7 @@ if ( $do_search && !$cat && !$loc ) {
                    enable_gmaps        => 1,
                    display_google_maps => 1,
                    show_map            => 1,
+                   map_style           => $map_style,
                    lat                 => ( $min_lat + $max_lat ) / 2,
                    long                => ( $min_long + $max_long ) / 2,
                  );
@@ -196,4 +207,14 @@ sub setup_form_fields {
                                          -value => 1, label => "" );
   $tt_vars{small_pointers_box} = $q->checkbox( -name => "small_pointers",
                                                -value => 1, label => "" );
+  $tt_vars{blue_pointers_box} = $q->checkbox( -name => "blue_pointers",
+                                              -value => 1, label => "" );
+
+  $tt_vars{map_style_group} = $q->radio_group(
+      -name => "map_style",
+      -values => [ "mq", "osm", "google" ],
+      -default => "google",
+      -labels => { "mq" => "MapQuest", "osm" => "OpenStreetMap",
+                   "google" => "Google Maps" },
+  );
 }

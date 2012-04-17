@@ -4,10 +4,13 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
 use strict;
-use lib qw( /export/home/rgl/perl5/lib/perl5 );
-use lib qw( /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/ );
+use lib qw(
+        /export/home/rgl/web/vhosts/dev.london.randomness.org.uk/scripts/lib/
+            /export/home/rgl/perl5/lib/perl5
+            /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/
+          );
 use warnings;
-use sigtrap die => 'normal-signals';                                            
+use sigtrap die => 'normal-signals';
 
 use vars qw( $VERSION );
 $VERSION = '0.65';
@@ -15,8 +18,6 @@ $VERSION = '0.65';
 use CGI qw/:standard/;
 use CGI::Carp qw(croak);
 use Wiki::Toolkit;
-use Geography::NationalGrid;
-use Geography::NationalGrid::GB;
 use OpenGuides;
 use OpenGuides::CGI;
 use OpenGuides::Config;
