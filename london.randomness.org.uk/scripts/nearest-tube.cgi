@@ -88,14 +88,14 @@ sub find_stations {
                     if ( $line =~ /hammersmith and city line/i ) {
                         $line = "Hammersmith And City Line";
                     }
-                    # Pull out just the Tube lines.
+                    # Pull out just the Tube and London Overground lines.
                     my @thiscats = $categoriser->categories( node =>
                                                             "Category $line" );
-                    @thiscats = grep { /^Tube$/ } @thiscats;
+                    @thiscats = grep { /^(Tube|London Overground)$/ } @thiscats;
                     if ( scalar @thiscats ) {
                         $line =~ s/ Line$//;
                         if ( $line eq "East London" ) {
-                            $line .= " - line closed until 2010";
+                            $line .= " Line";
                         }
                         $tubelines{$line} = 1;
                     }
