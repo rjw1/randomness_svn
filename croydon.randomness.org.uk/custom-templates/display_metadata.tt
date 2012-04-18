@@ -4,26 +4,6 @@
        OR hours_text OR map_link OR categories.size OR locales.size OR
        node_image %]
 <div id="metadata" class="vcard">
-[% IF node_image %]
-  <div id="node_image_box">
-    [% IF node_image_url %]<a href="[% node_image_url %]">[% END %]
-    <img id="node_image" src="[% node_image %]"
-         alt="Picture of [% node_name %]" />
-    [% IF node_image_url %]</a>[% END %]
-    [% IF node_image_copyright %]
-      <div id="node_image_copyright">
-        [% IF node_image_licence %]
-          <a href="[% node_image_licence %]">&copy;
-            [% node_image_copyright %]</a>
-        [% ELSE %]
-          &copy; [% node_image_copyright %]
-        [% END %]
-      </div>
-    [% END %]
-  </div>
-[% ELSE %]
-  <span id="node_no_image" />
-[% END %]
 
   <!-- For the vcard -->
   <span class="fn" style="display:none">[% node_name %]</span>
@@ -56,11 +36,7 @@
       </li>
     [% ELSIF map_link %]
       <li class="map">
-        <span class="metadata_label">Finding this place:</span> (<a href="[% map_link %]">map</a>)
-        [% IF wgs84_lat AND wgs84_long %]
-          (<a href="http://maps.google.co.uk/maps?q=[% wgs84_lat %],[% wgs84_long %]&zoom=5">gmap</a>)
-          (<a href="http://www.multimap.com/maps/#t=l&map=[% wgs84_lat %],[% wgs84_long %]|15|4&loc=GB:[% wgs84_lat %]:[% wgs84_long %]:15">multimap</a>)
-        [% END %]
+        <span class="metadata_label"><a href="[% map_link %]">Map of this place</a></span>
       </li>
     [% END %]
     [% IF postcode && !address %]
