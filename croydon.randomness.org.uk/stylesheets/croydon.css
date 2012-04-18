@@ -59,7 +59,11 @@ div#redirect_message {
 
 #maincontent {
   float: left;
-  width: 70%;
+  width: 72%;
+  padding-left: 1em;
+}
+
+#maincontent_no_navbar {
   padding-left: 1em;
 }
 
@@ -199,11 +203,11 @@ div#node_image_box
 {
   float: right;
   padding-left: 0.5em;
-  padding-right: 1em;
-  padding-bottom: 1em;
+  padding-right: 0.4em;
+  padding-bottom: 0.3em;
   color: black;
   font-size: 0.8em;
-  margin: -1em -0.8em 0em 1em;
+  margin-top: 1em;
 }
 
 div#node_image_box img {
@@ -353,13 +357,18 @@ div#journeyplanner_link {
   display: none;
 }
 
-div#map_index_permalink {
-  padding: 1em 1em 1em 0em;
+/* Map stuff */
+div#map_index_node_list {
+  height: 450px;
+  overflow: auto;
+  float: right;
+  width: 20%;
 }
 
-div#map_index_node_list {
-  float: right;
-  width: 30%;
+div#map_index_canvas {
+  width: 75%;
+  height: 450px;
+  margin-top: 1em;
 }
 
 div#map_index_node_list li {
