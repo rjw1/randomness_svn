@@ -3,8 +3,9 @@
 use strict;
 use warnings;
 
-use lib qw( /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/ );
 use lib qw( /export/home/rgl/perl5/lib/perl5 );
+use lib qw( /export/home/rgc/web/vhosts/croydon.randomness.org.uk/scripts/lib/ );
+use lib qw( /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/ );
 use CGI qw( :standard );
 use CGI::Carp qw( fatalsToBrowser );
 use OpenGuides;

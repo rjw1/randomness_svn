@@ -3,7 +3,7 @@ package Wiki::Toolkit::Formatter::UseMod;
 use strict;
 
 use vars qw( $VERSION @_links_found );
-$VERSION = '0.20';
+$VERSION = '0.23';
 
 use URI::Escape;
 use Text::WikiFormat as => 'wikiformat';
@@ -275,20 +275,6 @@ sub format {
 
     # Now process any macros.
     my %macros = %{$self->{_macros}};
-    $macros{qr/\@MAP_LINK\s+\[\[(Category|Locale)\s+([^\]|]+)\|?([^\]]+)?\]\]/}
-      = sub {
-        if ( UNIVERSAL::isa( $_[0], "Wiki::Toolkit" ) ) {
-          shift;
-        }
-        my $link_title = $_[2] || "View map of pages in $_[0] $_[1]";
-        my $type;
-        if ( $_[0] eq "Category" ) {
-          $type = "cat";
-        } else {
-          $type = "loc";
-        }
-        return qq(<a href="http://croydon.randomness.org.uk/scripts/locate.cgi?$type=$_[1];map=1">$link_title</a>);
-    };
 
     $macros{qr/\@INDEX_ADDR_LIST\s+\[\[(Category|Locale)\s+([^\]]+)]]/}
       = sub {
@@ -317,7 +303,7 @@ sub format {
     foreach my $key (keys %macros) {
         my $value = $macros{$key};
         if ( ref $value && ref $value eq 'CODE' ) {
-        if ( $self->{_pass_wiki_to_macros} and $wiki ) {
+	    if ( $self->{_pass_wiki_to_macros} and $wiki ) {
                 $safe=~ s/$key/$value->($wiki, $1, $2, $3, $4, $5, $6, $7, $8, $9)/eg;
             } else {
                 $safe=~ s/$key/$value->($1, $2, $3, $4, $5, $6, $7, $8, $9)/eg;
@@ -608,6 +594,8 @@ sub _munge_spaces {
     return $node
 }
 
+=back
+
 =head1 SUBCLASSING
 
 The following methods can be overridden to provide custom behaviour.
@@ -706,7 +694,7 @@ Kake Pugh (kake@earth.li) and the Wiki::Toolkit team.
 =head1 COPYRIGHT
 
      Copyright (C) 2003-2004 Kake Pugh.  All Rights Reserved.
-     Copyright (C) 2006 the Wiki::Toolkit team. All Rights Reserved.
+     Copyright (C) 2006-2009 the Wiki::Toolkit team. All Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
