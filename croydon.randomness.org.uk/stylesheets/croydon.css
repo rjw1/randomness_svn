@@ -370,6 +370,10 @@ div#map {
   float: left;
 }
 
+li.map_search_result {
+  margin-left: -2em;
+}
+
 /* Create new page stuff */
 div#create_new_page {
   padding-top: 2em;
