@@ -76,6 +76,7 @@ div#summary {
   color: #000000;
   height: 25px; /* Yes yes I know but there's an image to line up with. */
   letter-spacing: 0;
+  font-size: 0.8em;
 }
 
 div#summary_text {
