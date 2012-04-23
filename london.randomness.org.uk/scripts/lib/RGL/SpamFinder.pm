@@ -55,6 +55,13 @@ sub looks_like_spam {
             return 1;
         }
 
+        if ( $name eq "Old Salt Quay, SE16 5QU"
+              && $comment =~ m|lefora\.com| ) {
+            $class->notify_admins( %args, id => "00041",
+                                  reason => "lefora comment on $name" );
+            return 1;
+        }
+
        if ( ( $name eq "Dagenham Vue" || $name eq "Green Park Station" )
               && $comment =~ m|^\w{11},.*https?://| ) {
             $class->notify_admins( %args, id => "00042",
