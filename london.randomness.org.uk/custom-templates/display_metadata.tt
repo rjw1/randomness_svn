@@ -106,7 +106,7 @@
             [% IF years %]
               [% gbg_year = years.0 %]
               [% IF gbg_year == "2012" %]
-                [% gbg_year = gbg_year _ " (current)" %]
+                [% gbg_year = gbg_year _ "&nbsp;(current)" %]
               [% END %]
               [% IF category.url != "" %]
                 [% gbg_cats = gbg_cats _ '<a href="' _ category.url _ '" class="category">' _ gbg_year _ "</a>" %]
