@@ -104,9 +104,50 @@ div#front_page_text {
   padding-top: 0.5em;
 }
 
+div.pub_table_key th.status span {
+  font-size: 0.8em;
+  font-weight: bold;
+  border: thin solid black;
+  width: 1.5em;
+  text-align: center;
+  display: block;
+}
+
+div.pub_table_key {
+  float: right;
+  padding-bottom: 1em;
+}
+
 table.postal_district_pub_list th {
   text-align: left;
   padding-left: 0.5em;
+}
+
+table.postal_district_pub_list td.status {
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+table.postal_district_pub_list td.status span {
+  border: thin solid black;
+  width: 1.5em;
+  display: block;
+  text-align: center;
+}
+
+table.postal_district_pub_list td.demolished span,
+  div.pub_table_key th.demolished span {
+  background-color: #fc6355;
+}
+
+table.postal_district_pub_list td.closed span,
+  div.pub_table_key th.closed span {
+  background-color: #fcf357;
+}
+
+table.postal_district_pub_list td.open span,
+  div.pub_table_key th.open span {
+  background-color: #00e13c;
 }
 
 div#map_canvas {
