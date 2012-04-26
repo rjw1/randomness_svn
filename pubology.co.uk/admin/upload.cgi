@@ -18,6 +18,17 @@ my $HOME = "/export/home/pubology";
 my $base_dir = "$HOME/web/vhosts/pubology.co.uk/";
 my $base_url = "http://www.pubology.co.uk/";
 
+my %regexes = (
+      "central london"    => qr/^[EW]C\d/i,
+      "east london"       => qr/^E\d/i,
+      "north london"      => qr/^N\d/i,
+      "north-west london" => qr/^NW\d/i,
+      "outer london"      => qr/^[BCHTU][ABRW]\d/i,
+      "south-west london" => qr/^SW\d/i,
+      "south-east london" => qr/^SE\d/i,
+      "west london"       => qr/^W\d/i,
+);
+
 my $q = CGI->new;
 my $cgi_url = $q->url();
 if ( $cgi_url !~ /www/ ) {
@@ -30,6 +41,7 @@ my $tt_config = {
   OUTPUT_PATH => $base_dir,
 };
 my $tt = Template->new( $tt_config ) or croak Template->error;
+my %tt_base_vars = ( base_url => $base_url );
 
 # If we aren't trying to upload, just print the form.
 if ( !$q->param( "Upload" ) ) {
@@ -42,97 +54,10 @@ if ( $q->param( "Upload" ) && !$tmpfile ) {
   print_form_and_exit( errmsg => "<p>Must supply a CSV file.</p>" );
 }
 
-# OK, we have data to process.  Check we can extract the postal district.
+# OK, we have data to process.
 my $tmpfile_name = $q->tmpFileName( $tmpfile );
 
-my $postal_district = lc( $tmpfile );
-$postal_district =~ s/^pubs //;
-$postal_district =~ s/\.csv$//;
-
-if ( $postal_district !~ m/^[bcdehiknrstuw][abcdegmnprtw]?\d\d?[cw]?$/i ) {
-  print_form_and_exit( errmsg => "<p>Filename in wrong format &#8212; should "
-    . "be of the form 'Pubs [postal district].csv', where postal district is "
-    . "one or two letters followed by one or two numbers and an optional "
-    . "final letter.  Filename was $tmpfile, postal district was "
-    . "$postal_district.</p>" );
-}
-
-# Check postal district is valid and figure out which area it's in.
-my %regexes = (
-    "central london"    => qr/^[EW]C\d/i,
-    "east london"       => qr/^E\d/i,
-    "north london"      => qr/^N\d/i,
-    "north-west london" => qr/^NW\d/i,
-    "outer london"      => qr/^[BCHTU][ABRW]\d/i,
-    "south-west london" => qr/^SW\d/i,
-    "south-east london" => qr/^SE\d/i,
-    "west london"       => qr/^W\d/i,
-);
-
-my $district_conf = PubSite->parse_postal_district_config(
-                        file => "$HOME/conf/postal_districts.conf",
-  ) || print_form_and_exit( errmsg => "<p>$PubSite::errstr</p>" );
-
-my $this_area;
-foreach my $area ( keys %regexes ) {
-  if ( $postal_district =~ $regexes{$area} ) {
-    $this_area = $area;
-    last;
-  }
-}
-
-if ( !$this_area ) {
-  print_form_and_exit( errmsg => "<p>Couldn't match postal district \""
-            . $q->escapeHTML( $postal_district ) . "\" to an area of "
-            . "London.  If you're sure the postal district is correct, "
-            . "please report this as a bug.</p>" );
-} elsif ( !$district_conf->{lc($this_area)} ) {
-  print_form_and_exit( errmsg => "<p>Couldn't find config information for "
-            . "postal district "
-            . $q->escapeHTML( $postal_district ) . " &#8212; please report "
-            . "this as a bug.</p>" );
-}
-
-my $config = Config::Tiny->read( "$HOME/conf/pubology.conf" )
-               or croak "Can't read config file: $Config::Tiny::errstr "
-                      . "(please report this as a bug)";
-
-my $flickr_key    = $config->{_}->{flickr_key}    || "";
-my $flickr_secret = $config->{_}->{flickr_secret} || "";
-
-my %data = PubSite->parse_csv(
-  file          => $tmpfile_name,
-  check_flickr  => 1,
-  flickr_key    => $flickr_key,
-  flickr_secret => $flickr_secret,
-);
-my @pubs = @{ $data{pubs} };
-
-my ( $min_lat, $max_lat, $min_long, $max_long )
-  = @data{ qw( min_lat max_lat min_long max_long ) };
-
-my $map_file = "maps/" . lc( $postal_district ) . ".html";
-my $map_url = $base_url . $map_file;
-my $district_file = "indexes/" . lc( $postal_district ) . ".html";
-my $district_url = $base_url . $district_file;
-my $kml_file = "kml/" . lc( $postal_district ) . ".kml";
-my $kml_url = $base_url . $kml_file;
-
-foreach my $pub ( @pubs ) {
-  write_pub_page( $pub );
-}
-
-write_map_page();
-write_district_page();
-write_kml_file();
-rewrite_index( $this_area );
-
-# If we get this far then hopefully we've succeeded.
-my $succ_msg = "Data successfully uploaded for " . uc( $postal_district )
-               . ". "
-               . "<a href=\"$base_url$district_file\">Here is your index</a>, "
-               . "<a href=\"$base_url$map_file\">here is your map</a>, and "
-               . "<a href=\"$base_url$kml_file\">here is your KML</a>.";
+my $succ_msg = do_upload( csv_file => $tmpfile_name, csv_name => $tmpfile );
 
 my %tt_vars = (
                 cgi_url => $cgi_url,
@@ -144,16 +69,107 @@ $tt->process( "upload_complete.tt", \%tt_vars ) || die $tt->error;
 
 # subroutines
 
+sub do_upload {
+  my %args = @_;
+  my $csv_name = $args{csv_name};
+  my $csv_file = $args{csv_file};
+
+  # Check we can extract the postal district.
+  my $postal_district = lc( $csv_name );
+  $postal_district =~ s/^pubs //;
+  $postal_district =~ s/\.csv$//;
+
+  if ( $postal_district !~ m/^[bcdehiknrstuw][abcdegmnprtw]?\d\d?[cw]?$/i ) {
+    print_form_and_exit( errmsg => "<p>Filename '$csv_name' in wrong format "
+      . "&#8212; should be of the form 'Pubs [postal district].csv', where "
+      . "postal district is one or two letters followed by one or two "
+      . "numbers and an optional final letter.</p>" );
+  }
+
+  # Check postal district is valid and figure out which area it's in.
+  my $district_conf = PubSite->parse_postal_district_config(
+                          file => "$HOME/conf/postal_districts.conf",
+    ) || print_form_and_exit( errmsg => "<p>$PubSite::errstr</p>" );
+
+  my $this_area;
+  foreach my $area ( keys %regexes ) {
+    if ( $postal_district =~ $regexes{$area} ) {
+      $this_area = $area;
+      last;
+    }
+  }
+
+  if ( !$this_area ) {
+    print_form_and_exit( errmsg => "<p>Couldn't match postal district \""
+              . $q->escapeHTML( $postal_district ) . "\" to an area of "
+              . "London.  If you're sure the postal district is correct, "
+              . "please report this as a bug.</p>" );
+  } elsif ( !$district_conf->{lc($this_area)} ) {
+    print_form_and_exit( errmsg => "<p>Couldn't find config information for "
+              . "postal district "
+              . $q->escapeHTML( $postal_district ) . " &#8212; please report "
+              . "this as a bug.</p>" );
+  }
+
+  my $config = Config::Tiny->read( "$HOME/conf/pubology.conf" )
+                 or croak "Can't read config file: $Config::Tiny::errstr "
+                        . "(please report this as a bug)";
+
+  my $flickr_key    = $config->{_}->{flickr_key}    || "";
+  my $flickr_secret = $config->{_}->{flickr_secret} || "";
+
+  my %data = PubSite->parse_csv(
+    file          => $csv_file,
+    check_flickr  => 1,
+    flickr_key    => $flickr_key,
+    flickr_secret => $flickr_secret,
+  );
+  my @pubs = @{ $data{pubs} };
+
+  my ( $min_lat, $max_lat, $min_long, $max_long )
+    = @data{ qw( min_lat max_lat min_long max_long ) };
+
+  my $map_file = "maps/" . lc( $postal_district ) . ".html";
+  my $map_url = $base_url . $map_file;
+  my $district_file = "indexes/" . lc( $postal_district ) . ".html";
+  my $district_url = $base_url . $district_file;
+  my $kml_file = "kml/" . lc( $postal_district ) . ".kml";
+  my $kml_url = $base_url . $kml_file;
+
+  foreach my $pub ( @pubs ) {
+    write_pub_page( pub => $pub, map_url => $map_url,
+                    district_url => $district_url,
+                    postal_district => $postal_district );
+  }
+
+  write_map_page( this_area => $this_area, pubs => \@pubs,
+    district_url => $district_url, min_lat => $min_lat, max_lat => $max_lat,
+    min_long => $min_long, max_long => $max_long,
+    postal_district => $postal_district, map_file => $map_file );
+
+  write_district_page( district_file => $district_file, pubs => \@pubs,
+      postal_district => $postal_district, map_url => $map_url );
+
+  write_kml_file( pubs => \@pubs, postal_district => $postal_district,
+      kml_file => $kml_file );
+
+  rewrite_index( this_area => $this_area, district_conf => $district_conf );
+
+  # If we get this far then hopefully we've succeeded.
+  my $succ_msg = "Data successfully uploaded for " . uc( $postal_district )
+               . ". "
+               . "<a href=\"$base_url$district_file\">Here is your index</a>, "
+               . "<a href=\"$base_url$map_file\">here is your map</a>, and "
+               . "<a href=\"$base_url$kml_file\">here is your KML</a>.";
+  return $succ_msg;
+}
+
 sub write_pub_page {
-  my $pub = shift;
-
-  my $tt_vars = { pub => $pub, map_url => $map_url, base_url => $base_url,
-                  district_url => $district_url,
-                  postal_district => $postal_district };
-
+  my %args = @_;
+  my $tt_vars = { %args, %tt_base_vars };
   my $template = "pub_page.tt";
 
-  open( my $output_fh, ">", "$base_dir/pubs/" . $pub->id . ".html" )
+  open( my $output_fh, ">", "$base_dir/pubs/" . $args{pub}{id} . ".html" )
       or die $!;
   $tt->process( $template, $tt_vars, $output_fh )
     || print_form_and_exit( errmsg => $tt->error );
@@ -167,56 +183,50 @@ sub get_time {
 }
 
 sub write_map_page {
-  my $area_name = $this_area;
+  my %args = @_;
+
+  my $area_name = $args{this_area};
   $area_name =~ s/\b(\w)/\u$1/g;
-  my $area_file = $this_area;
+  my $area_file = $args{this_area};
   $area_file =~ s/\s+/-/g;
 
+  $args{postal_district} = uc( $args{postal_district} );
   my $tt_vars = {
-    pubs => \@pubs,
-    base_url => $base_url,
+    %tt_base_vars,
+    %args,
     area_name => $area_name,
     area_file => $area_file,
-    district_url => $district_url,
-    min_lat => $min_lat,
-    max_lat => $max_lat,
-    min_long => $min_long,
-    max_long => $max_long,
-    centre_lat => ( ( $max_lat + $min_lat ) / 2 ),
-    centre_long => ( ( $max_long + $min_long ) / 2 ),
+    centre_lat => ( ( $args{max_lat} + $args{min_lat} ) / 2 ),
+    centre_long => ( ( $args{max_long} + $args{min_long} ) / 2 ),
     updated => get_time(),
-    postal_district => uc( $postal_district ),
   };
 
   my $template = "map.tt";
-  open( my $output_fh, ">", $base_dir . $map_file ) or die $!;
+  open( my $output_fh, ">", $base_dir . $args{map_file} ) or die $!;
   $tt->process( $template, $tt_vars, $output_fh )
     || print_form_and_exit( errmsg => $tt->error );
 }
 
 sub write_district_page {
-  my $area_name = $this_area;
-  $area_name =~ s/\b(\w)/\u$1/g;
-  my $area_file = $this_area;
-  $area_file =~ s/\s+/-/g;
+  my %args = @_;
+
+  $args{postal_district} = uc( $args{postal_district} );
 
   my $tt_vars = {
-    pubs => \@pubs,
-    base_url => $base_url,
-    map_url => $map_url,
+    %tt_base_vars,
+    %args,
     updated => get_time(),
-    postal_district => uc( $postal_district ),
   };
 
   my $template = "district_index.tt";
-  open( my $output_fh, ">", $base_dir . $district_file ) or die $!;
+  open( my $output_fh, ">", $base_dir . $args{district_file} ) or die $!;
   $tt->process( $template, $tt_vars, $output_fh )
     || print_form_and_exit( errmsg => $tt->error );
 }
 
 sub write_kml_file {
-  my $area_file = $this_area;
-  $area_file =~ s/\s+/-/g;
+  my %args = @_;
+  my @pubs = @{$args{pubs}};
 
   my @points;
   foreach my $pub ( @pubs ) {
@@ -241,25 +251,28 @@ sub write_kml_file {
   }
 
   my $tt_vars = {
+    %tt_base_vars,
     points => \@points,
-    postal_district => uc( $postal_district ),
+    postal_district => uc( $args{postal_district} ),
   };
 
   my $template = "kml.tt";
-  open( my $output_fh, ">", $base_dir . $kml_file ) or die $!;
+  open( my $output_fh, ">", $base_dir . $args{kml_file} ) or die $!;
   $tt->process( $template, $tt_vars, $output_fh )
     || print_form_and_exit( errmsg => $tt->error );
 }
 
 sub rewrite_index {
-  my $area = shift;
+  my %args = @_;
+  my $area = $args{this_area};
+  my $district_conf = $args{district_conf};
 
   # already checked this exists in the config
   my %district_names = %{ $district_conf->{ lc( $area ) } };
 
   opendir( my $dh, $base_dir . "indexes" ) || croak "Can't open $base_dir";
   my @files = grep { /\.html$/ } readdir( $dh );
-  @files = grep { $regexes{ $this_area } } @files;
+  @files = grep { $regexes{ $area } } @files;
   my %urls = map { my $label = $_;
                    $label =~ s/\.html//;
                    { uc( $label ) => $base_url . "indexes/$_" }
@@ -297,7 +310,7 @@ sub rewrite_index {
   $area_file =~ s/\s+/-/g;
 
   my $tt_vars = {
-                  base_url => $base_url,
+                  %tt_base_vars,
                   area_name => $area_name,
                   district_sets => \@district_sets,
                 };
