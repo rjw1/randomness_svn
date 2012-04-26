@@ -10,6 +10,7 @@ use lib qw(
 use CGI;
 use CGI::Carp qw( fatalsToBrowser );
 use Config::Tiny;
+use File::Copy;
 use POSIX qw( strftime );
 use PubSite;
 use Template;
@@ -44,6 +45,11 @@ my $tt = Template->new( $tt_config ) or croak Template->error;
 my %tt_base_vars = ( base_url => $base_url );
 
 # If we aren't trying to upload, just print the form.
+if ( $q->param( "action" ) && $q->param( "action" ) eq "regenerate" ) {
+  regenerate_site();
+  exit 0;
+}
+                  
 if ( !$q->param( "Upload" ) ) {
   print_form_and_exit();
 }
@@ -57,7 +63,8 @@ if ( $q->param( "Upload" ) && !$tmpfile ) {
 # OK, we have data to process.
 my $tmpfile_name = $q->tmpFileName( $tmpfile );
 
-my $succ_msg = do_upload( csv_file => $tmpfile_name, csv_name => $tmpfile );
+my $succ_msg = do_upload( stash_csv => 1, csv_file => $tmpfile_name,
+                          csv_name => $tmpfile );
 
 my %tt_vars = (
                 cgi_url => $cgi_url,
@@ -114,6 +121,12 @@ sub do_upload {
   my $config = Config::Tiny->read( "$HOME/conf/pubology.conf" )
                  or croak "Can't read config file: $Config::Tiny::errstr "
                         . "(please report this as a bug)";
+
+  # OK, we want to go ahead.  If this is a newly-uploaded CSV file, stash
+  # it away in case we need to regenerate the site later.
+  if ( $args{stash_csv} ) {
+    copy( $tmpfile_name, "$base_dir/data/$tmpfile" );
+  }
 
   my $flickr_key    = $config->{_}->{flickr_key}    || "";
   my $flickr_secret = $config->{_}->{flickr_secret} || "";
@@ -381,4 +394,24 @@ sub print_form_and_exit {
   print $q->header;
   $tt->process( "upload_form.tt", \%tt_vars ) || die $tt->error;
   exit 0;
+}
+
+sub regenerate_site {
+  # Check which files we have.
+  my $datadir = $base_dir . "data";
+  opendir( my $dh, $datadir ) || croak "Can't open $datadir";
+  my @files = grep { /^Pubs .*\.csv/ } readdir $dh;
+  closedir $dh;
+
+  foreach my $file ( @files ) {
+    do_upload( csv_file => "$datadir/$file", csv_name => $file );
+  }
+
+  my %tt_vars = (
+                  cgi_url => $cgi_url,
+                  base_url => $base_url,
+                  succ_msg => "Site regenerated!",
+                );
+  print $q->header;
+  $tt->process( "upload_complete.tt", \%tt_vars ) || die $tt->error;
 }
