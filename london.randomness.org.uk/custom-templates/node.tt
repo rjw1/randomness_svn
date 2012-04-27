@@ -146,6 +146,8 @@ We don't have a page called "[% node_name %]". Would you like to <a href="[% ful
 <div id="rdf_link">
   <a href="[% cgi_url %]?id=[% node_param %];format=rdf">RDF/XML for this
   node</a>
+  <a href="[% cgi_url %]?id=[% node_param %];format=json">JSON for this
+  node</a>
   [% IF rss_locale_url %]
     / <a href="[% rss_locale_url %]">RSS feed for this locale</a>
   [% END %]
