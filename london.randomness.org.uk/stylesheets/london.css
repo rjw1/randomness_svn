@@ -254,6 +254,10 @@ div#title_edit_link, div#title_comment_link {
   padding-left: 0.5em;
 }
 
+span.current_version_title_link {
+  display: block;
+}
+
 div#metadata
 {
   font-size: 0.85em;
