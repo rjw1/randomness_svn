@@ -8,11 +8,12 @@ use strict;
 use lib qw( /export/home/rgl/perl5/lib/perl5 );
 use lib qw( /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/ );
 
-use sigtrap die => 'normal-signals';                                            
+use sigtrap die => 'normal-signals';
 
 use CGI;
 use OpenGuides::Config;
 use OpenGuides::CGI;
+use OpenGuides::JSON;
 use OpenGuides::Utils;
 use OpenGuides::Template;
 
@@ -21,9 +22,15 @@ my $config = OpenGuides::Config->new( file => $config_file );
 my $wiki = OpenGuides::Utils->make_wiki_object( config => $config );
 my $cgi = CGI->new();
 my $action = $cgi->param('action') || '';
+my $format = $cgi->param('format') || '';
 
 if ( $action eq "set_preferences" ) {
     set_preferences();
+} elsif ( $action eq "show" && $format eq "json" ) {
+    my $json_writer = OpenGuides::JSON->new( wiki   => $wiki,
+                                             config => $config );
+    print "Content-type: text/javascript\n\n";
+    print $json_writer->make_prefs_json();
 } else {
     show_form();
 }
@@ -44,6 +51,8 @@ sub set_preferences {
         );
         push @cookies, $rc_cookie;
     }
+    # We have to send the username to OpenGuides::Template because they might
+    # have changed it, in which case it won't be in the cookie yet.
     print OpenGuides::Template->output(
         wiki     => $wiki,
         config   => $config,
@@ -52,6 +61,7 @@ sub set_preferences {
         vars     => {
                       not_editable => 1,
                       not_deletable => 1,
+                      username => $prefs{username},
                     }
     );
 }
