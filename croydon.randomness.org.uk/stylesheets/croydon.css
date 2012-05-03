@@ -13,12 +13,17 @@ a:visited { color: #446688; }
 a:active  { text-decoration: underline; }
 a:hover   { text-decoration: underline; }
 
-input.form_button {
+input.form_button, div.cancel_edit a {
   font-weight: bold;
   font-size: 0.9em;
   color: #e7eeff;
   background: #585c7e;
   border: 1px solid #000000;
+}
+
+div.cancel_edit a {
+  padding: 0.1em 0.4em 0.1em 0.4em;
+  text-decoration: none;
 }
 
 /* Main body */
@@ -61,6 +66,47 @@ div#redirect_message {
   float: left;
   width: 72%;
   padding-left: 1em;
+}
+
+#maincontent.preview {
+  background: #cbd1e0;
+  margin-bottom: 1em;
+  float: none;
+  margin: auto;
+  padding: 0.5em 1em 0.5em 1em;
+}
+
+div.preview_actions div.cancel_edit {
+  text-align: center;
+  margin-top: -1em;
+}
+
+div.preview_actions div.jump_to_edit_form {
+  font-size: 0.8em;
+  float: left;
+}
+
+div.preview_actions {
+  margin-bottom: 1em;
+}
+
+div.cancel_edit a {
+  font-weight: bold;
+}
+
+#maincontent.preview div#summary {
+  background: #cbd1e0;
+  margin-left: 0;
+  clear: both;
+}
+
+#maincontent.preview div#summary:before {
+  content: "Summary: ";
+}
+
+#maincontent.preview h2 {
+  text-align: center;
+  margin-bottom: 1em;
 }
 
 #maincontent_no_navbar {
@@ -189,6 +235,7 @@ div.summary_bar_link {
 
 .recentchanges_node_name {
   font-size: 0.8em;
+  padding-right: 1em;
 }
 .recentchanges_meta {
   font-size: 0.8em;
@@ -368,7 +415,7 @@ div#map_index_node_list {
 
 div#map_index_canvas {
   width: 75%;
-  height: 450px;
+  height: 600px;
   margin-top: 1em;
 }
 
@@ -433,7 +480,7 @@ div.preview_edit {
   float: left;
   width: 33%;
 }
-div.cancel_edit {
+div.edit_form_actions div.cancel_edit {
   float: left;
   width: 33%;
 }
