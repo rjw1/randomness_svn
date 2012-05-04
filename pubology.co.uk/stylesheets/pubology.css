@@ -21,11 +21,15 @@ div#banner {
 
 h1.page_header {
   text-transform: uppercase;
+  padding: 0;
+  margin: 0;
 }
 
 h1.page_header a {
   color: #000000;
   text-decoration: none;
+  display: block;
+  margin: 0;
 }
 
 div#navbar_wrapper {

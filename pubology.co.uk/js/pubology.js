@@ -4,6 +4,11 @@ $(
                           + 'a little while.');
     $('#upload_msg').hide();
 
+    // Banner.
+    $('#banner h1 a').html( '&nbsp;' );
+    $('#banner').anystretch( '/images/banner.jpg' );
+    $('#banner h1 a').height(75);
+
     // Navbar that scrolls with the page.
     $('#navbar').portamento();
 
