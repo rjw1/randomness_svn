@@ -407,10 +407,17 @@ div#journeyplanner_link {
 
 /* Map stuff */
 div#map_index_node_list {
-  height: 450px;
+  height: 600px;
   overflow: auto;
   float: right;
-  width: 20%;
+  width: 21%;
+}
+
+div#map_index_node_list ul {
+  list-style: none;
+  text-indent: -1em;
+  padding-left: 2em;
+  font-size: 0.8em;
 }
 
 div#map_index_canvas {
