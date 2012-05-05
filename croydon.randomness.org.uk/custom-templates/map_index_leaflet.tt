@@ -1,6 +1,10 @@
 [% USE JSON.Escape %]
 
-[% page_title = "Map of $criteria_title - $site_name" %]
+[% IF criteria %]
+  [% page_title = "Map of $criteria_title - $site_name" %]
+[% ELSE %]
+  [% page_title = "Map of all nodes - $site_name" %]
+[% END %]
 [% INCLUDE header.tt %]
 [% INCLUDE banner.tt %]
 
@@ -52,11 +56,22 @@
         <p class="no_nodes_on_map">No pages with geodata - nothing to display
         on map!</p>
       [% ELSE %]
+        <span id="map_index_no_js">
+          <p>Sorry! JavaScript is required to view the map - you may prefer to
+          <a href="[% feed_base %]">view the results as a list</a> instead.</p>
+        </span>
+
         <script type="text/javascript">
+
+          $('#map_index_no_js').hide();
 
           map_div_id = 'map_index_canvas';
           centre_lat = [% centre_lat %];
           centre_long = [% centre_long %];
+          min_lat = [% min_lat %];
+          max_lat = [% max_lat %];
+          min_long = [% min_long %];
+          max_long = [% max_long %];
 
           function add_markers() {
             var node;
