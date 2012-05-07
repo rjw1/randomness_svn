@@ -1,0 +1,30 @@
+<html>
+<head><title>Checklist</title></head>
+<body>
+
+[% FOREACH street IN streets %]
+
+  <h1>[% street.name | html %] &#8212; odd numbers</h1>
+  <ul>
+    [% FOREACH node IN street.odds %]
+      <li>[% node.name | html %]</li>
+    [% END %]
+  </ul>
+  
+  <h1>[% street.name | html %] &#8212;even numbers</h1>
+  <ul>
+    [% FOREACH node IN street.evens %]
+      <li>[% node.name | html %]</li>
+    [% END %]
+  </ul>
+  
+  <h1>[% street.name | html %] &#8212; others</h1>
+  <ul>
+    [% FOREACH node IN street.others %]
+      <li>[% node.name | html %]</li>
+    [% END %]
+  </ul>
+  
+[% END %]
+
+</body>
