@@ -2,6 +2,10 @@
 <head><title>Checklist</title></head>
 <body>
 
+[% IF !streets.size %]
+  <p>No streets specified!</p>
+[% END %]
+
 [% FOREACH street IN streets %]
 
   <h1>[% street.name | html %] &#8212; odd numbers</h1>
