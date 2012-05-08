@@ -23,6 +23,8 @@ my $formatter = $wiki->formatter;
 my $base_url = $config->script_url . $config->script_name;
 my $agent = WWW::Mechanize->new;
 $agent->credentials( "croydon", "rocks" );
+my $q = CGI->new;
+my %wanted = map { lc( $_ ) => 1 } $q->param( "street" );
 
 # Get all the locales.
 my $url = "$base_url?action=index;cat=locales;format=json";
@@ -36,7 +38,7 @@ delete $locales{Croydon};
 # Process them one at a time.
 my @streets;
 foreach my $locale ( sort keys %locales ) {
-  next unless lc( $locale ) eq "north end";
+  next unless $wanted{ lc( $locale ) };
   $url = "$base_url?action=index;loc=" . uri_encode( $locale ). ";format=json";
   my @nodes;
   $agent->get( $url );
@@ -78,6 +80,5 @@ my %tt_vars = ( streets => \@streets );
 my $custom_template_path = $config->custom_template_path || "";
 my $template_path = $config->template_path;
 my $tt = Template->new( { INCLUDE_PATH => ".:$custom_template_path:$template_path"  } );
-my $q = CGI->new;
 print $q->header;
 $tt->process( "lists.tt", \%tt_vars );
