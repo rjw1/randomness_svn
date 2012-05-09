@@ -1,5 +1,8 @@
 <html>
-<head><title>Checklist</title></head>
+<head>
+  <title>Checklist</title>
+  <link rel="stylesheet" href="http://croydon.randomness.org.uk/stylesheets/checklist.css" type="text/css" />
+</head>
 <body>
 
 [% IF !streets.size %]
@@ -8,26 +11,53 @@
 
 [% FOREACH street IN streets %]
 
-  <h1>[% street.name | html %] &#8212; odd numbers</h1>
-  <ul>
+<div class="checklist_odd_numbers">
+  <table class="checklist">
+    <tr>
+      <th class="checklist_number">Odd numbers</th>
+      <th class="checklist_status">Status</th>
+    </tr>
+
     [% FOREACH node IN street.odds %]
-      <li>[% node.name | html %]</li>
+      <tr>
+        <td class="checklist_address">[% node.name | html %]</td>
+        <td class="checklist_status">&nbsp;</td>
+      </tr>
     [% END %]
-  </ul>
+  </table>
+</div>
   
-  <h1>[% street.name | html %] &#8212;even numbers</h1>
-  <ul>
+<div class="checklist_even_numbers">
+  <table class="checklist">
+    <tr>
+      <th class="checklist_number">Even numbers</th>
+      <th class="checklist_status">Status</th>
+    </tr>
+
     [% FOREACH node IN street.evens %]
-      <li>[% node.name | html %]</li>
+      <tr>
+        <td class="checklist_address">[% node.name | html %]</td>
+        <td class="checklist_status">&nbsp;</td>
+      </tr>
     [% END %]
-  </ul>
-  
-  <h1>[% street.name | html %] &#8212; others</h1>
-  <ul>
+  </table>
+</div>
+
+<div class="checklist_other_numbers">
+  <table class="checklist">
+    <tr>
+      <th class="checklist_number">Other addresses</th>
+      <th class="checklist_status">Status</th>
+    </tr>
+
     [% FOREACH node IN street.others %]
-      <li>[% node.name | html %]</li>
+      <tr>
+        <td class="checklist_address">[% node.name | html %]</td>
+        <td class="checklist_status">&nbsp;</td>
+      </tr>
     [% END %]
-  </ul>
+  </table>
+</div>
   
 [% END %]
 
