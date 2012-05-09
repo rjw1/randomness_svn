@@ -25,6 +25,10 @@ my $agent = WWW::Mechanize->new;
 $agent->credentials( "croydon", "rocks" );
 my $q = CGI->new;
 my %wanted = map { lc( $_ ) => 1 } $q->param( "street" );
+my $dir = $q->param( "dir" );
+if ( !$dir || $dir ne "desc" ) {
+  $dir = "asc";
+}
 
 # Get all the locales.
 my $url = "$base_url?action=index;cat=locales;format=json";
@@ -68,8 +72,8 @@ foreach my $locale ( sort keys %locales ) {
   my @odds   = grep { $_->{type} eq "odd" }   @nodes;
   my @evens  = grep { $_->{type} eq "even" }  @nodes;
   my @others = grep { $_->{type} eq "other" } @nodes;
-  @odds = sort { my $an = $a->{number}; my $bn = $b->{number}; $an =~ s/-.*$//; $bn =~ s/-.*$//; $an =~ s/[a-d]$//; $bn =~ s/[a-d]$//; $an <=> $bn } @odds;
-  @evens = sort { my $an = $a->{number}; my $bn = $b->{number}; $an =~ s/-.*$//; $bn =~ s/-.*$//; $an =~ s/[a-d]$//; $bn =~ s/[a-d]$//; $an <=> $bn } @evens;
+  @odds = sort { addr_sort( $a->{number}, $b->{number}, $dir ) } @odds;
+  @evens = sort { addr_sort( $a->{number}, $b->{number}, $dir ) } @evens;
   @others = sort {$a->{address} cmp $b->{address} } @others;
 
   push @streets, { name => $locale, odds => \@odds, evens => \@evens,
@@ -82,3 +86,16 @@ my $template_path = $config->template_path;
 my $tt = Template->new( { INCLUDE_PATH => ".:$custom_template_path:$template_path"  } );
 print $q->header;
 $tt->process( "lists.tt", \%tt_vars );
+
+sub addr_sort {
+  my ( $c, $d, $dir ) = @_;
+  foreach ( ( $c, $d ) ) {
+    s/-.*$//;
+    s/[a-d]$//;
+  }
+  if ( $dir eq "asc" ) {
+    return $c <=> $d;
+  } else {
+    return $d <=> $c;
+  }
+}
