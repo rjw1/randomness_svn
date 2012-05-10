@@ -24,9 +24,16 @@ $(
 
       map = new L.Map( map_div_id, {
         center: map_centre,
-        zoom: 13,
         layers: [ mapquest_layer ],
       } );
+
+      if ( min_lat ) {
+        var bounds = new L.LatLngBounds( new L.LatLng( min_lat, min_long ),
+                                         new L.LatLng( max_lat, max_long ) );
+        map.fitBounds( bounds );
+      } else {
+        map.setView( map_centre, 13 );
+      }
 
       var layersControl = new L.Control.Layers( {
         "MapQuest": mapquest_layer,
