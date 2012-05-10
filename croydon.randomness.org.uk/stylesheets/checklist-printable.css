@@ -4,15 +4,19 @@ html {
 }
 
 div.checklist_odd_numbers {
-  width: 100%
+  float: left;
+  width: 48%
 }
 
 div.checklist_even_numbers {
-  width: 100%
+  float: right;
+  width: 48%
 }
 
 div.checklist_other_numbers {
-  width: 100%;
+  clear: both;
+  padding-top: 1em;
+  width: 96%;
 }
 
 table.checklist {
@@ -23,10 +27,5 @@ table.checklist {
 
 table.checklist td {
   border: thin solid black;
-  padding: 0.5em;
-}
-
-input.checkbox {
-  height: 4em;
-  width: 4em;
+  padding-left: 5px;
 }
