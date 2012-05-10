@@ -3,6 +3,11 @@
   <title>Checklist</title>
   <link rel="stylesheet" type="text/css"
         href="http://croydon.randomness.org.uk/stylesheets/checklist.css" />
+  <script
+     src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"
+     type="text/javascript"></script>
+  <script src="http://croydon.randomness.org.uk/static/checklist.js"
+          type="text/javascript"></script>
 </head>
 <body>
 
