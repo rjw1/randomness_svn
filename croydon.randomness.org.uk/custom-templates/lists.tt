@@ -13,8 +13,19 @@
 
 [% street = streets.0 %]
 
-[% IF to_update %]
-  <p>To update: [% to_update %]</p>
+[% IF did_update %]
+  [% IF updated.size %]
+    <p>Last verified dates updated for:
+       [% updated.join( "; " ) %]</p>
+  [% END %]
+  [% IF non_existent.size %]
+    <p>Not updated because the page couldn't be found (this might be a bug):
+       [% non_existent.join( "; " ) %]</p>
+  [% END %]
+  [% IF not_updated.size %]
+    <p>Not updated (already been checked this month):
+       [% not_updated.join( "; " ) %]</p>
+  [% END %]
 [% ELSIF !street %]
   <p>Street name not specified!</p>
 [% ELSE %]
