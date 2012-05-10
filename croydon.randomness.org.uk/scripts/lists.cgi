@@ -12,6 +12,7 @@ use JSON;
 use OpenGuides;
 use OpenGuides::CGI;
 use OpenGuides::Config;
+use POSIX qw( strftime );
 use Template;
 use URI::Encode qw( uri_encode );
 use WWW::Mechanize;
@@ -22,7 +23,10 @@ my $guide = OpenGuides->new( config => $config );
 my $wiki = $guide->wiki;
 my $formatter = $wiki->formatter;
 my $base_url = $config->script_url . $config->script_name;
-my $agent = WWW::Mechanize->new;
+my $new_page_url = $config->script_url . "newpage.cgi";
+# Turn autocheck off since we check page existence by seeing if we get a
+# failure on trying to view it.
+my $agent = WWW::Mechanize->new( autocheck => 0 );
 $agent->credentials( "croydon", "rocks" );
 my $q = CGI->new;
 my %locales = get_locales();
@@ -121,9 +125,70 @@ sub update_and_exit {
   my %tt_vars = %{ $args{tt_vars} || {} };
 
   my @to_update = $q->param( "update_last_verified" );
-  $tt_vars{to_update} = join( "; ", sort @to_update );
+
+  my ( @non_existent, @not_updated, @updated );
+  foreach my $node ( sort @to_update ) {
+    if ( !page_exists( $node ) ) {
+      push @non_existent, $node;
+    } else {
+      if ( update_last_verified( $node ) ) {
+        push @updated, $node;
+      } else {
+        push @not_updated, $node;
+      }
+    }
+  }
+
+  $tt_vars{did_update} = 1;
+  $tt_vars{non_existent} = \@non_existent;
+  $tt_vars{updated} = \@updated;
+  $tt_vars{not_updated} = \@not_updated;
 
   output_and_exit( tt_vars => \%tt_vars );
+}
+
+sub update_last_verified {
+  my $pagename = shift;
+  $agent->get( $new_page_url );
+  $agent->submit_form( form_number => 2,
+                       fields => { pagename => $pagename } );
+  my $to_edit;
+  my $monthyear = strftime( "%B %Y", localtime );
+  my $div = qq(<div class="last_verified">Existence last checked in)
+             . " $monthyear.</div>";
+  my $re = qr/$div/;
+
+  my $content = $agent->value( "content" );
+  if ( $content !~ m|<div class="last_verified"| ) {
+    $content .= "\n\n$div";
+    $to_edit = 1;
+  } elsif ( $content !~ m/$re/ ) {
+    $content =~ s|<div class="last_verified">[^<]*</div>|$div|s;
+    $to_edit = 1;
+  }  
+
+  return unless $to_edit;
+
+  my %prefs = OpenGuides::CGI->get_prefs_from_cookie( config => $config );
+  my $username = $prefs{username};
+
+  # Hack around bug in WWW::Mechanize.
+  my $locales = $agent->value( "locales" );
+  $locales =~ s/\n/\r\n/gs;
+  my $categories = $agent->value( "categories" );
+  $categories =~ s/\n/\r\n/gs;
+  $agent->submit_form( form_number => 1,
+                       fields => {
+                                   locales => $locales,
+                                   categories => $categories,
+                                   content => $content,
+                                   username => $username,
+                                   comment => "Updated last verified.",
+                                   edit_type => "Minor tidying",
+                                 }, 
+                       button => "Save", 
+                     );
+  return 1;
 }
 
 sub addr_sort {
@@ -162,4 +227,18 @@ sub get_locales {
                       $name => $_->{param} } @$locale_data;
   delete $locales{Croydon};
   return %locales;
+}
+
+sub page_exists {
+  my $pagename = shift;
+  $agent->get( $new_page_url );
+  $agent->submit_form( form_number => 2,
+                       fields => { pagename => $pagename } );
+  $agent->follow_link( text => "cancel edit" );
+  $agent->follow_link( text => "Cancel edit" );
+  my $html = $agent->content();
+  if ( $html =~ /We don't have a (page|node) called/ ) {
+    return 0;
+  }
+  return 1;
 }
