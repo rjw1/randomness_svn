@@ -1,64 +1,94 @@
 <html>
 <head>
   <title>Checklist</title>
-  <link rel="stylesheet" href="http://croydon.randomness.org.uk/stylesheets/checklist.css" type="text/css" />
+  <link rel="stylesheet" type="text/css"
+        href="http://croydon.randomness.org.uk/stylesheets/checklist.css" />
 </head>
 <body>
 
-[% IF !streets.size %]
-  <p>No streets specified!</p>
-[% END %]
+<form action="[% cgi_url %]" method="get">
+[% streets_box %]
+<input type="submit" value="Get addresses" />
+</form>
 
-[% FOREACH street IN streets %]
+[% street = streets.0 %]
 
-<div class="checklist_odd_numbers">
-  <table class="checklist">
-    <tr>
-      <th class="checklist_number">Odd numbers</th>
-      <th class="checklist_status">Status</th>
-    </tr>
+[% IF to_update %]
+  <p>To update: [% to_update %]</p>
+[% ELSIF !street %]
+  <p>Street name not specified!</p>
+[% ELSE %]
+  <form action="[% cgi_url %]" method="post">
 
-    [% FOREACH node IN street.odds %]
-      <tr>
-        <td class="checklist_address">[% node.name | html %]</td>
-        <td class="checklist_status">&nbsp;</td>
-      </tr>
-    [% END %]
-  </table>
-</div>
-  
-<div class="checklist_even_numbers">
-  <table class="checklist">
-    <tr>
-      <th class="checklist_number">Even numbers</th>
-      <th class="checklist_status">Status</th>
-    </tr>
+    <div class="checklist_odd_numbers">
+      <table class="checklist">
+        <tr>
+          <th class="checklist_number">Odd numbers</th>
+          <th class="checklist_status">Present?</th>
+        </tr>
 
-    [% FOREACH node IN street.evens %]
-      <tr>
-        <td class="checklist_address">[% node.name | html %]</td>
-        <td class="checklist_status">&nbsp;</td>
-      </tr>
-    [% END %]
-  </table>
-</div>
+        [% FOREACH node IN street.odds %]
+          <tr>
+            <td class="checklist_address">[% node.name | html %]</td>
+            <td class="checklist_status">
+              <input type="checkbox" name="update_last_verified"
+                     class="checkbox" value="[% node.name | html %]" />
+            </td>
+          </tr>
+        [% END %]
+      </table>
+    </div>
+      
+    <div class="checklist_even_numbers">
+      <table class="checklist">
+        <tr>
+          <th class="checklist_number">Even numbers</th>
+          <th class="checklist_status">Present?</th>
+        </tr>
 
-<div class="checklist_other_numbers">
-  <table class="checklist">
-    <tr>
-      <th class="checklist_number">Other addresses</th>
-      <th class="checklist_status">Status</th>
-    </tr>
+        [% FOREACH node IN street.evens %]
+          <tr>
+            <td class="checklist_address">[% node.name | html %]</td>
+            <td class="checklist_status">
+              <input type="checkbox" name="update_last_verified"
+                     class="checkbox" value="[% node.name | html %]" />
+            </td>
+          </tr>
+        [% END %]
+      </table>
+    </div>
 
-    [% FOREACH node IN street.others %]
-      <tr>
-        <td class="checklist_address">[% node.name | html %]</td>
-        <td class="checklist_status">&nbsp;</td>
-      </tr>
-    [% END %]
-  </table>
-</div>
-  
+    <div class="checklist_other_numbers">
+      <table class="checklist">
+        <tr>
+          <th class="checklist_number">Other addresses</th>
+          <th class="checklist_status">Present?</th>
+        </tr>
+
+        [% FOREACH node IN street.others %]
+          <tr>
+            <td class="checklist_address">[% node.name | html %]</td>
+            <td class="checklist_status">
+              <input type="checkbox" name="update_last_verified"
+                     class="checkbox" value="[% node.name | html %]" />
+            </td>
+          </tr>
+        [% END %]
+      </table>
+    </div>
+
+    <div class="confirm_updates">
+      <input type="hidden" name="action" value="update" />
+      <input type="hidden" name="street" value="[% street.name | html %]" />
+      <label for="username" class="username">Username:</label>
+      <input type="text" class="username" name="username"
+             value="[% username %]" />
+      <input type="submit" class="update" value="Update last verified dates" />
+    </div>
+
+  </form>
+
 [% END %]
 
 </body>
+  
