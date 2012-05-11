@@ -17,7 +17,7 @@ $(
       var mq_url = 'http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
       var subdomains = [ 'otile1', 'otile2', 'otile3', 'otile4' ];
       var attrib = 'Data, imagery and map information provided by <a href="http://open.mapquest.co.uk" target="_blank">MapQuest</a>, <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> and contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/" target="_blank">CC-BY-SA</a>';
-      var mapquest_layer = new L.TileLayer( mq_url, { maxZoom: 19, attribution: attrib, subdomains: subdomains } );
+      var mapquest_layer = new L.TileLayer( mq_url, { maxZoom: 18, attribution: attrib, subdomains: subdomains } );
 
       var osm_layer = new L.TileLayer(
           'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' );
@@ -27,10 +27,12 @@ $(
         layers: [ mapquest_layer ],
       } );
 
-      if ( min_lat ) {
+      if ( min_lat && ( min_lat != max_lat ) ) {
         var bounds = new L.LatLngBounds( new L.LatLng( min_lat, min_long ),
                                          new L.LatLng( max_lat, max_long ) );
         map.fitBounds( bounds );
+      } else if ( min_lat == max_lat ) {
+        map.setView( new L.LatLng( min_lat, min_long ), 18 );
       } else {
         map.setView( map_centre, 13 );
       }
