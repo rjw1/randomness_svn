@@ -8,28 +8,19 @@ use lib qw(
             /export/home/rgc/web/vhosts/croydon.randomness.org.uk/scripts/lib/
 );
 use CGI;
-use JSON;
 use OpenGuides;
 use OpenGuides::CGI;
 use OpenGuides::Config;
 use POSIX qw( strftime );
 use Template;
-use URI::Encode qw( uri_encode );
-use WWW::Mechanize;
 
 my $config_file = $ENV{OPENGUIDES_CONFIG_FILE} || "../wiki.conf";
 my $config = OpenGuides::Config->new( file => $config_file );
 my $guide = OpenGuides->new( config => $config );
 my $wiki = $guide->wiki;
 my $formatter = $wiki->formatter;
-my $base_url = $config->script_url . $config->script_name;
-my $new_page_url = $config->script_url . "newpage.cgi";
-# Turn autocheck off since we check page existence by seeing if we get a
-# failure on trying to view it.
-my $agent = WWW::Mechanize->new( autocheck => 0 );
-$agent->credentials( "croydon", "rocks" );
 my $q = CGI->new;
-my %locales = get_locales();
+my @locales = get_locales();
 my %tt_vars;
 
 # Find out what to do.
@@ -59,18 +50,17 @@ if ( !scalar %wanted ) {
 
 # Process the locales one at a time.
 my @streets;
-foreach my $locale ( sort keys %locales ) {
+foreach my $locale ( sort @locales ) {
   next unless $wanted{ lc( $locale ) };
-  my $url = "$base_url?action=index;loc=" . uri_encode( $locale )
-            . ";format=json";
+  my @names = $wiki->list_nodes_by_metadata(
+                  metadata_type => "locale",
+                  metadata_value => $locale,
+                  ignore_case => 1 );
   my @nodes;
-  $agent->get( $url );
-  my $json = $agent->content;
-  my $data = decode_json( $json );
-  foreach my $datum ( @$data ) {
+  foreach my $name ( @names ) {
+    my %data = $wiki->retrieve_node( $name );
     my $type;
-    my $name = $datum->{name};
-    my $address = $datum->{node_data}{metadata}{address}[0];
+    my $address = $data{metadata}{address}[0];
     if ( !$address ) {
         die "$name has no address!";
     }
@@ -149,45 +139,33 @@ sub update_and_exit {
 
 sub update_last_verified {
   my $pagename = shift;
-  $agent->get( $new_page_url );
-  $agent->submit_form( form_number => 2,
-                       fields => { pagename => $pagename } );
+  my %node = $wiki->retrieve_node( $pagename );
   my $to_edit;
   my $monthyear = strftime( "%B %Y", localtime );
   my $div = qq(<div class="last_verified">Existence last checked in)
              . " $monthyear.</div>";
   my $re = qr/$div/;
 
-  my $content = $agent->value( "content" );
+  my $content = $node{content};
   if ( $content !~ m|<div class="last_verified"| ) {
     $content .= "\n\n$div";
     $to_edit = 1;
   } elsif ( $content !~ m/$re/ ) {
     $content =~ s|<div class="last_verified">[^<]*</div>|$div|s;
     $to_edit = 1;
-  }  
+  }
 
   return unless $to_edit;
 
   my %prefs = OpenGuides::CGI->get_prefs_from_cookie( config => $config );
-  my $username = $prefs{username};
+  $node{metadata}{username} = $prefs{username};
+  $node{metadata}{host} = $ENV{REMOTE_ADDR};
+  $node{metadata}{edit_type} = "Minor tidying";
+  $node{metadata}{major_change} = 0;
+  $node{metadata}{comment} = "Updated last verified.";
 
-  # Hack around bug in WWW::Mechanize.
-  my $locales = $agent->value( "locales" );
-  $locales =~ s/\n/\r\n/gs;
-  my $categories = $agent->value( "categories" );
-  $categories =~ s/\n/\r\n/gs;
-  $agent->submit_form( form_number => 1,
-                       fields => {
-                                   locales => $locales,
-                                   categories => $categories,
-                                   content => $content,
-                                   username => $username,
-                                   comment => "Updated last verified.",
-                                   edit_type => "Minor tidying",
-                                 }, 
-                       button => "Save", 
-                     );
+  $wiki->write_node( $pagename, $content, $node{checksum}, $node{metadata} )
+    or die "Can't write node!";
   return 1;
 }
 
@@ -205,8 +183,8 @@ sub addr_sort {
 }
 
 sub make_streets_box {
-  my %locales = get_locales();
-  my %labels = map { lc( $_ ) => $_ } keys %locales;
+  my @locales = get_locales();
+  my %labels = map { lc( $_ ) => $_ } @locales;
   my @values = sort keys %labels;
   return $q->popup_menu(
     -name => "street",
@@ -216,29 +194,19 @@ sub make_streets_box {
 }
 
 sub get_locales {
-  if ( scalar %locales ) {
-    return %locales;
+  if ( scalar @locales ) {
+    return @locales;
   }
-  my $url = "$base_url?action=index;cat=locales;format=json";
-  $agent->get( $url );
-  my $json = $agent->content;
-  my $locale_data = decode_json( $json );
-  my %locales = map { my $name = $_->{name}; $name =~ s/^Locale //;
-                      $name => $_->{param} } @$locale_data;
-  delete $locales{Croydon};
-  return %locales;
+  my @nodes = $wiki->list_nodes_by_metadata(
+                metadata_type => "category",
+                metadata_value => "locales",
+                ignore_case => 1 );
+  my %locs = map { s/Locale //; $_ => 1 } @nodes;
+  delete $locs{Croydon};
+  return keys %locs;
 }
 
 sub page_exists {
   my $pagename = shift;
-  $agent->get( $new_page_url );
-  $agent->submit_form( form_number => 2,
-                       fields => { pagename => $pagename } );
-  $agent->follow_link( text => "cancel edit" );
-  $agent->follow_link( text => "Cancel edit" );
-  my $html = $agent->content();
-  if ( $html =~ /We don't have a (page|node) called/ ) {
-    return 0;
-  }
-  return 1;
+  return $wiki->node_exists( $pagename );
 }
