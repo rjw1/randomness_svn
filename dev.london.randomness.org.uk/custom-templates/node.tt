@@ -45,7 +45,9 @@
   [% END %]
     version [% version %] of
     <span class="node_name">[% node_name %]</span></em>
-    <br><a href="[% cgi_url %]?[% node_param %]">(view current version)</a>
+    <span class="current_version_title_link">
+      <a href="[% cgi_url %]?[% node_param %]">(view current version)</a>
+    </span>
   </h2>
 [% END %]
 [% IF not (content || coord_field_1_value || coord_field_2_value || latitude || longitude) %]
@@ -143,6 +145,8 @@ We don't have a page called "[% node_name %]". Would you like to <a href="[% ful
 [% END %]
 <div id="rdf_link">
   <a href="[% cgi_url %]?id=[% node_param %];format=rdf">RDF/XML for this
+  node</a>
+  <a href="[% cgi_url %]?id=[% node_param %];format=json">JSON for this
   node</a>
   [% IF rss_locale_url %]
     / <a href="[% rss_locale_url %]">RSS feed for this locale</a>
