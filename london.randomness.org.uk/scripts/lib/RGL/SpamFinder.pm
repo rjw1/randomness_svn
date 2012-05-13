@@ -56,6 +56,13 @@ sub looks_like_spam {
         }
 
         if ( $name eq "Old Salt Quay, SE16 5QU"
+              && $comment =~ m|multiply\.com| ) {
+            $class->notify_admins( %args, id => "00040",
+                                  reason => "multiply comment on $name" );
+            return 1;
+        }
+
+        if ( $name eq "Old Salt Quay, SE16 5QU"
               && $comment =~ m|lefora\.com| ) {
             $class->notify_admins( %args, id => "00041",
                                   reason => "lefora comment on $name" );
@@ -78,6 +85,20 @@ sub looks_like_spam {
         if ( $comment =~ m{http://www.(prominentinsurers.com|ensureyourhealth.net|protectionrates.net|bestinsurerstoday.com|healthinsurplans.com|discountinsurlife.com|autoprotectionquotes.net|coveryourhealth.net|insureeverything.net|topinsurancerates.net|getyourquote.net|cheapautoinsur.net|protectionagencies.net|teamschuco.com|topinsurancerates.net|locateautoinsur.com|quotesinyourstate.com|affordableautoinsur.net|bestinsurplans.net|businessinsurtips.com|bestinsurcoverage.com|carinsuragency.com|autoprotectiontips.com|comparelifeinsurers.net|homeownerscover.com|getthebestratesfast.com|findyourcarinsurance.net|insurancequotesforfree.net|freequotesfast.net|www.carinsurplans.com|www.lifeinsurpolicies.com|carinsurplans.com|yourhealthservice.net|lifeinsurforseniors.com|carinsurforyou.com|bestcarinsurers.net|lifeinsurpolicies.com|autoinsurplans.net)}is ) {
             $class->notify_admins( %args, id => "00044",
                                   reason => "insurance spam comment" );
+            return 1;
+        }
+
+        if ( $name eq "Elm Park, RM12 4RX"
+              && $comment =~ m|^\w{11},.*https?://| ) {
+            $class->notify_admins( %args, id => "00045",
+                                  reason => "11 char + URL comment on $name" );
+            return 1;
+        }
+
+        if ( $name eq "Old Salt Quay, SE16 5QU"
+              && $comment =~ m|http://[a-z]+.de.tl| ) {
+            $class->notify_admins( %args, id => "00046",
+                                   reason => "de.tl comment on $name" );
             return 1;
         }
 
