@@ -313,6 +313,19 @@ sub format {
                . qq(alt="$node" title="$node" /></a></span>);
     };
 
+    $macros{qr/\@THUMB\s+\[\[([^|\]]+)\]\].*/}
+      = sub {
+        my ($wiki, $node) = @_;
+        unless ( UNIVERSAL::isa( $wiki, "Wiki::Toolkit" ) ) {
+          return "(unprocessed THUMB macro)";
+        }
+        my $image = "http://croydon.randomness.org.uk/static/no-photo.png";
+        return qq(<span class="neighbour_thumb"><a href="wiki.cgi?)
+               . $wiki->formatter->node_name_to_node_param( $node )
+               . qq("><img src="$image" width="75" height="75" )
+               . qq(alt="$node" title="$node" /></a></span>);
+    };
+
     foreach my $key (keys %macros) {
         my $value = $macros{$key};
         if ( ref $value && ref $value eq 'CODE' ) {
