@@ -280,7 +280,7 @@ sub format {
       = sub {
         my ($wiki, $type, $value) = @_;
         unless ( UNIVERSAL::isa( $wiki, "Wiki::Toolkit" ) ) {
-          return "(unprocessed INDEX_LIST macro)";
+          return "(unprocessed INDEX_ADDR_LIST macro)";
         }
 
         my @nodes = $wiki->list_nodes_by_metadata(
@@ -298,6 +298,19 @@ sub format {
                                                      link => $node ) . "\n";
         }
         return $return;
+    };
+
+    $macros{qr/\@THUMB\s+\[\[([^|]+)\|([^]]+).*/}
+      = sub {
+        my ($wiki, $node, $image) = @_;
+        unless ( UNIVERSAL::isa( $wiki, "Wiki::Toolkit" ) ) {
+          return "(unprocessed THUMB macro)";
+        }
+        $image =~ s/<a href="//;
+        return qq(<span class="neighbour_thumb"><a href="wiki.cgi?)
+               . $wiki->formatter->node_name_to_node_param( $node )
+               . qq("><img src="$image" width="75" height="75" )
+               . qq(alt="$node" title="$node" /></a></span>);
     };
 
     foreach my $key (keys %macros) {
