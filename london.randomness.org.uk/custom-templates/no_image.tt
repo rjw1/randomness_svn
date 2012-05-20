@@ -104,7 +104,7 @@ function clearAllCriteria() {
     [% results.size %]</p>
     <ul>
       [% FOREACH node = results %]
-        <li><a href="[% node.url %]">[% node.name %]</a></li>
+        <li><a href="[% full_cgi_url %]?[% node.param %]">[% node.name %]</a></li>
       [% END %]
     </ul>
   [% END %]
