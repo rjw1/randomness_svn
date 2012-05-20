@@ -12,8 +12,5 @@
   <div class="summary_bar_link">
     <a href="[% full_cgi_url %]?Contact_RGL">Contact RGL</a>
   </div> 
-  <div class="summary_bar_link">
-    <a href="[% full_cgi_url %]?Current_Site_Status">Current Site Status</a>
-  </div> 
 </div>
 
