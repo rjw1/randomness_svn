@@ -9,6 +9,14 @@ var gicon = L.Icon.extend( {
     popupAnchor: new L.Point( 0, -40 )
 } );
 
+var gicon_blue = L.Icon.extend( {
+    iconUrl: 'http://maps.google.com/mapfiles/ms/micons/blue-dot.png',
+    shadowUrl: null,
+    iconSize: new L.Point( 32, 32 ),
+    iconAnchor: new L.Point( 15, 32 ),
+    popupAnchor: new L.Point( 0, -40 )
+} );
+
 $(
   function() {
     if ( map_div_id && centre_lat && centre_long ) {
@@ -58,7 +66,11 @@ function add_marker( i, node ) {
 
   position = new L.LatLng( node.lat, node.long );
 
-  marker = new L.Marker( position, { icon: new gicon() } );
+  if ( node.colour && node.colour == 'blue' ) {
+    marker = new L.Marker( position, { icon: new gicon_blue() } );
+  } else {
+    marker = new L.Marker( position, { icon: new gicon() } );
+  }
   map.addLayer( marker );
 
   content = '<a href="/wiki.cgi?' + node.param + '">' + node.name + '</a>';
