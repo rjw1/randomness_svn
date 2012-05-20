@@ -3,8 +3,10 @@
 use strict;
 use warnings;
 
-use lib qw( /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/ );
-use lib qw( /export/home/rgl/perl5/lib/perl5 );
+use lib qw(
+    /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/
+   /export/home/rgl/perl5/lib/perl5
+);
 use CGI qw( :standard );
 use CGI::Carp qw( fatalsToBrowser );
 use OpenGuides;
@@ -38,10 +40,7 @@ if ( $q->param( "do_search" ) ) {
   my $cat1 = $q->param( "cat1" );
   my $cat2 = $q->param( "cat2" );
   my $dist = $q->param( "distance" );
-  my $small_pointers = $q->param( "small_pointers" ) || 0;
-
   my $show_map = $q->param( "show_map" );
-  my $map_style = $q->param( "map_style" );
 
   $dist ||= 0;
   $dist =~ s/[^0-9]//g;
@@ -121,7 +120,7 @@ if ( $q->param( "do_search" ) ) {
     my $sth = $dbh->prepare( $sql{cat1} );
     $sth->execute( lc( $cat1 ) ) or die $dbh->errstr;
     while ( my ( $id, $name, $x, $y, $lat, $long ) = $sth->fetchrow_array ) {
-      my $url = $base_url . "?" . $formatter->node_name_to_node_param( $name );
+      my $param = $formatter->node_name_to_node_param( $name );
       if ( $show_map ) {
         # I still hate that I have to do this.
         ( $long, $lat ) = OpenGuides::Utils->get_wgs84_coords(
@@ -129,8 +128,9 @@ if ( $q->param( "do_search" ) ) {
                                         longitude => $long,
                                         config    => $config );
       }
-      push @cat1stuff, { id => $id, name => $name, url => $url,
-                         x => $x, y => $y, lat => $lat, long => $long };
+      push @cat1stuff, { id => $id, name => $name, param => $param,
+                         x => $x, y => $y, wgs84_lat => $lat,
+                         wgs84_long => $long, has_geodata => 1 };
     }
     $sth = $dbh->prepare( $sql{cat2} );
     if ( $cat2 ) {
@@ -139,7 +139,7 @@ if ( $q->param( "do_search" ) ) {
       $sth->execute or die $dbh->errstr;
     }
     while ( my ( $id, $name, $x, $y, $lat, $long ) = $sth->fetchrow_array ) {
-      my $url = $base_url . "?" . $formatter->node_name_to_node_param( $name );
+      my $param = $formatter->node_name_to_node_param( $name );
       if ( $show_map ) {
         # I still hate that I have to do this.
         ( $long, $lat ) = OpenGuides::Utils->get_wgs84_coords(
@@ -147,8 +147,9 @@ if ( $q->param( "do_search" ) ) {
                                         longitude => $long,
                                         config    => $config );
       }
-      push @cat2stuff, { id => $id, name => $name, url => $url,
-                         x => $x, y => $y, lat => $lat, long => $long };
+      push @cat2stuff, { id => $id, name => $name, param => $param,
+                         x => $x, y => $y, wgs84_lat => $lat,
+                         wgs84_long => $long, has_geodata => 1 };
     }
 
     if ( $show_map ) {
@@ -158,10 +159,8 @@ if ( $q->param( "do_search" ) ) {
                    enable_gmaps        => 1,
                    display_google_maps => 1,
                    show_map            => 1,
-                   map_style           => $map_style,
                  );
       my ( %origin_results, %end_results );
-      my ( $min_lat, $max_lat, $min_long, $max_long, $bd_set );
       foreach my $origin ( @cat1stuff ) {
         foreach my $end ( @cat2stuff ) {
           my $thisdist = int( sqrt(   ( $origin->{x} - $end->{x} )**2
@@ -180,21 +179,16 @@ if ( $q->param( "do_search" ) ) {
 
       my @results;
       my ( $min_lat, $max_lat, $min_long, $max_long, $bd_set );
-      my $markertype;
-      if ( $small_pointers ) {
-        $markertype = "small_light_red";
-      } else {
-        $markertype = "large_light_red";
-      }
+      my $markertype = "red";
       foreach my $res ( sort { $a->{name} cmp $b->{name} }
                              values %origin_results ) {
         push @results, {
                          %$res,
-                         type       => "origin",
-                         markertype => $markertype,
+                         type   => "origin",
+                         colour => $markertype,
                        };
-        my $lat = $res->{lat};
-        my $long = $res->{long};
+        my $lat = $res->{wgs84_lat};
+        my $long = $res->{wgs84_long};
         if ( !$bd_set ) {
           $min_lat = $max_lat = $lat;
           $min_long = $max_long = $long;
@@ -215,11 +209,7 @@ if ( $q->param( "do_search" ) ) {
         }
       }
 
-      if ( $small_pointers ) {
-        $markertype = "small_dark_blue";
-      } else {
-        $markertype = "large_light_blue";
-      }
+      $markertype = "blue";
       foreach my $res ( sort { $a->{name} cmp $b->{name} }
                              values %end_results ) {
         # Don't want to overwrite origin-coloured markers with end-coloured
@@ -227,12 +217,12 @@ if ( $q->param( "do_search" ) ) {
         unless ( $origin_results{ $res->{name} } ) {
           push @results, {
                            %$res,
-                           type       => "end",
-                           markertype => $markertype,
+                           type   => "end",
+                           colour => $markertype,
                          };
         }
-        my $lat = $res->{lat};
-        my $long = $res->{long};
+        my $lat = $res->{wgs84_lat};
+        my $long = $res->{wgs84_long};
         if ( !$bd_set ) {
           $min_lat = $max_lat = $lat;
           $min_long = $max_long = $long;
@@ -253,13 +243,13 @@ if ( $q->param( "do_search" ) ) {
         }
       }
       %tt_vars = ( %tt_vars,
-                   results  => \@results,
-                   min_lat  => $min_lat,
-                   max_lat  => $max_lat,
-                   min_long => $min_long,
-                   max_long => $max_long,
-                   lat      => ( $min_lat + $max_lat ) / 2,
-                   long     => ( $min_long + $max_long ) / 2,
+                   results     => \@results,
+                   min_lat     => $min_lat,
+                   max_lat     => $max_lat,
+                   min_long    => $min_long,
+                   max_long    => $max_long,
+                   centre_lat  => ( $min_lat + $max_lat ) / 2,
+                   centre_long => ( $min_long + $max_long ) / 2,
                  );
     } else {
       my @results;
@@ -328,13 +318,4 @@ sub setup_form_fields {
                                                  -value => 1, label => "" );
   $tt_vars{include_all_origins_box} = $q->checkbox( -name => "include_all_origins",
                                                  -value => 1, label => "" );
-  $tt_vars{small_pointers_box} = $q->checkbox( -name => "small_pointers",
-                                               -value => 1, label => "" );
-  $tt_vars{map_style_group} = $q->radio_group(
-      -name => "map_style",
-      -values => [ "mq", "osm", "google" ],
-      -default => "google",
-      -labels => { "mq" => "MapQuest", "osm" => "OpenStreetMap",
-                   "google" => "Google Maps" },
-  );
 }
