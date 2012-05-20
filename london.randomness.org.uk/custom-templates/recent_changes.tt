@@ -49,7 +49,7 @@
           [% END %]
           [% IF (node.username != 'Anonymous') %]
             <a href="[% cgi_url %]?username=[% node.username %];action=userstats">[% node.username %]</a>
-            [% IF is_admin AND node.host %]
+            [% IF is_admin AND node.host AND 0 %]
               ([% host_link %])
             [% END %]
           [% ELSE %]
