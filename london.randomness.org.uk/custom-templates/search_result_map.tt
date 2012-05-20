@@ -69,6 +69,9 @@
               [% IF node.address %]
                 address: [% node.address.json %],
               [% END %]
+              [% IF node.colour %]
+                colour: [% node.colour.json %],
+              [% END %]
               lat: [% node.wgs84_lat.json %],
               long: [% node.wgs84_long.json %],
             };
