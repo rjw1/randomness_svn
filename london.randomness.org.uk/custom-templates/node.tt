@@ -1,7 +1,13 @@
 [% USE CGI %]
 [% INCLUDE header.tt %]
 [% INCLUDE banner.tt %]
-<div id="content">
+
+[% IF categories.size OR locales.size %]
+  <div id="content" class="[% FOREACH cat = categories %]cat_[% cat.name.lower.replace( ' ', '_' ) %][%- " " UNLESS (loop.last AND !locales.size) %][% END %][% FOREACH loc=locales %]loc_[% loc.name.lower.replace( ' ', '_' ) %][%- " " UNLESS loop.last %][% END %]">
+[% ELSE %]
+  <div id="content">
+[% END %]
+
 [% IF !config.content_above_navbar_in_html %]
   [% INCLUDE navbar.tt %]
 [% END %]
@@ -10,28 +16,50 @@
 <div id="redirect_message">(redirected from <a href="[% full_cgi_url %]?id=[% oldid %];redirect=0">[% oldid.replace('_', ' ') %]</a>)</div>
 [% END %]
 
-[% IF wgs84_lat AND wgs84_long AND display_google_maps and gmaps_api_key %]
-  <div id="map" style="float:right; width: 300px; height: 200px"></div>
-  <script defer="defer" type="text/javascript">
-  //<![CDATA[
-    var map = new GMap(document.getElementById("map"));
-    map.addControl(new GSmallMapControl());
-    map.centerAndZoom(new GPoint([% wgs84_long %], [% wgs84_lat %]), 3);
-    var point0 = new GPoint([% wgs84_long %], [% wgs84_lat %]);
-    var marker0 = new GMarker(point0,baseIcon);
-    GEvent.addListener(marker0, "click", function() {
-      marker0.openInfoWindowHtml("[% node_name %]");
-      });
-    map.addOverlay(marker0);
-  //]]>
-  </script>
+[% IF wgs84_lat AND wgs84_long AND display_google_maps %]
+  [% IF config.use_leaflet %]
+    <div id="node_map_canvas"></div>
+    <script type="text/javascript">
+      map_div_id = 'node_map_canvas';
+      centre_lat = [% wgs84_lat %];
+      centre_long = [% wgs84_long %];
+      function add_markers() {
+        var position = new L.LatLng( [% wgs84_lat %], [% wgs84_long %] );
+        marker = new L.Marker( position, { icon: new gicon() } );
+        map.addLayer( marker );
+        marker.bindPopup( '[% node_name %]' );
+      }
+    </script>
+  [% ELSIF gmaps_api_key %]
+    <div id="map" style="float:right; width: 300px; height: 200px"></div>
+    <script defer="defer" type="text/javascript">
+    //<![CDATA[
+      var map = new GMap(document.getElementById("map"));
+      map.addControl(new GSmallMapControl());
+      map.centerAndZoom(new GPoint([% wgs84_long %], [% wgs84_lat %]), 3);
+      var point0 = new GPoint([% wgs84_long %], [% wgs84_lat %]);
+      var marker0 = new GMarker(point0,baseIcon);
+      GEvent.addListener(marker0, "click", function() {
+        marker0.openInfoWindowHtml("[% node_name %]");
+        });
+      map.addOverlay(marker0);
+    //]]>
+    </script>
+  [% END %]
 [% END %]
+
+[% INCLUDE node_image.tt %]
 
 <div id="node_title">
 [% IF current %]
-  [% IF backlinks_in_title AND is_indexable_node %]
-    <h2 class="node_name"><a href="[% cgi_url %]?action=index;index_type=[% CGI.escape(index_type) %];index_value=[% CGI.escape(index_value) %]">[% node_name %]</a></h2>
-  [% ELSIF backlinks_in_title %]
+  [% IF config.backlinks_in_title AND is_indexable_node %]
+    [% IF index_type == 'category' %]
+      [% params = ';cat=' _ index_value.lower | html %]
+    [% ELSIF index_type == 'locale' %]
+      [% params = ';loc=' _ index_value.lower | html %]
+    [% END %]
+    <h2 class="node_name"><a href="[% cgi_url %]?action=index[% params %]">[% node_name %]</a></h2>
+  [% ELSIF config.backlinks_in_title %]
     <h2 class="node_name"><a href="[% cgi_url %]?action=show_backlinks;id=[% CGI.escape(node_name) %]">[% node_name %]</a></h2>
   [% ELSE %]
     <h2 class="node_name">[% node_name | replace( '^Category', 'Category:' ) | replace( '^Locale', 'Locale:' ) %]</h2>
@@ -50,9 +78,13 @@
     </span>
   </h2>
 [% END %]
-[% IF not (content || coord_field_1_value || coord_field_2_value || latitude || longitude) %]
+[% IF empty_node %]
 </div>
-We don't have a page called "[% node_name %]". Would you like to <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]">create it</a>?
+<div id="nonexistent_node_message">We don't have a page called "[% node_name %]".
+[% UNLESS read_only %]
+Would you like to <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]">create it</a>?
+[% END %]
+</div>
 
   [% IF node_name.length > 4 %]
     <div id="page_name_suggestions"></div>
@@ -97,7 +129,8 @@ We don't have a page called "[% node_name %]". Would you like to <a href="[% ful
 
 [% ELSE %]
 <div id="title_edit_link">
-  <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]" rel="nofollow">Edit this page</a>
+[% UNLESS read_only %]
+<a href="[% full_cgi_url %]?action=edit;id=[% node_param %]" rel="nofollow">Edit this page</a> [% END %]
 </div>
 [% IF 1 %]
 <div id="title_comment_link">

@@ -79,7 +79,6 @@ function clearAllCriteria() {
   </p>
   <p>
     [% show_map_box %] Show results on map (may be slow for large result sets)
-  <br>Map style: [% map_style_group %]
      <input type="hidden" name="do_search" value="1">
      <input type="submit" name="Search" value="Search" class="form_button">
   </p>

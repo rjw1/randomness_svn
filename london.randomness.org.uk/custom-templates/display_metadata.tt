@@ -4,7 +4,6 @@
        OR hours_text OR map_link OR categories.size OR locales.size OR
        node_image %]
 <div id="metadata" class="vcard">
-[% INCLUDE node_image.tt %]
 
   <!-- For the vcard -->
   <span class="fn" style="display:none">[% node_name %]</span>

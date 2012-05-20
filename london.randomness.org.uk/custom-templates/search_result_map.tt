@@ -1,103 +1,81 @@
-[% INCLUDE gmap_icon_types_apiv3.tt %]
+[% USE JSON.Escape %]
 
-<script type="text/javascript">
-  var map;
-  var markers = [];
-  var content = [];
-  var infowindow;
+[% IF map_style == "osm" %]
+  [% map_type_id = '"OSM"' %]
+[% ELSIF map_style == "mq" %]
+  [% map_type_id = '"MapQuest"' %]
+[% ELSE %]
+  [% map_type_id = "google.maps.MapTypeId.ROADMAP" %]
+[% END %]
 
-  [% IF map_style == "osm" %]
-    [% map_type_id = '"OSM"' %]
-  [% ELSIF map_style == "mq" %]
-    [% map_type_id = '"MapQuest"' %]
-  [% ELSE %]
-    [% map_type_id = "google.maps.MapTypeId.ROADMAP" %]
-  [% END %]
-
-  function initialise() {
-    var map_centre = new google.maps.LatLng( [% lat %], [% long %] );
-    var map_options = {
-                        zoom: 12,
-                        center: map_centre,
-                        mapTypeId: [% map_type_id %],
-                        streetViewControl: 0
-                      };
-    map = new google.maps.Map( document.getElementById( "map" ),
-                               map_options );
-
-    map.mapTypes.set( "OSM",
-      new google.maps.ImageMapType({
-        getTileUrl: function(coord, zoom) {
-          return "http://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
-          },
-        tileSize: new google.maps.Size( 256, 256 ),
-        name: "OpenStreetMap",
-        maxZoom: 18
-      })
-    );
-
-    map.mapTypes.set( "MapQuest",
-      new google.maps.ImageMapType({
-        getTileUrl: function(coord, zoom) {
-          return "http://otile1.mqcdn.com/tiles/1.0.0/osm/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
-          },
-        tileSize: new google.maps.Size( 256, 256 ),
-        name: "MapQuest",
-        maxZoom: 18
-      })
-    );
-
-    map.fitBounds( new google.maps.LatLngBounds(
-                   new google.maps.LatLng( [% min_lat %] - 0.0001, [% min_long %] - 0.0001 ),
-                   new google.maps.LatLng( [% max_lat %] + 0.0001, [% max_long %] + 0.0001 ) ) );
-    google.maps.event.addListenerOnce( map, "idle", function() { 
-      if ( map.getZoom() > 16 ) {
-        map.setZoom( 16 );
-      } 
-    } );
-    infowindow = new google.maps.InfoWindow();
-  }
-
-  function add_markers() {
-    var position;
-    [% i = 0 %]
-    [% FOREACH node = results %]
-      [% i = i + 1 %]
-      position = new google.maps.LatLng( [% node.lat %], [% node.long %] );
-      markers[[% i %]] = new google.maps.Marker({
-        position: position,
-        title: "[% CGI.escapeHTML( node.name ) %]",
-        map: map,
-        icon: [% IF node.markertype %]gmap_icons_apiv3[ "[% node.markertype %]" ][% ELSE %]gmap_icons_apiv3[ "default_icon" ][% END %]
-      });
-      content[[% i %]] = "<a href=\"[% node.url %]\">[% CGI.escapeHTML( node.name ) %]</a><br>[% node.address %]";
-      google.maps.event.addListener( markers[[% i %]], "click", function() {
-        infowindow.setContent( content[[% i %]] );
-        infowindow.open( map, markers[[% i %]] ); 
-      } );
-    [% END %]
-  }
-
-  window.onload = function() {
-    initialise();
-    add_markers();
-  }
-</script>
-
-  <ul style="height:400px; overflow:auto; float:right; max-width:20%; font-size: 0.8em">
-
-    [% i = 0 %]
-    [% FOREACH node = results %]
-      [% i = i + 1 %]
-      [% IF node.type %]
-        <li class="map_search_result_type_[% node.type %]">
-      [% ELSE %]
-        <li class="map_search_result">
+<div id="map_index_node_list">
+  <ul>
+    [% IF no_nodes_on_map %]
+      [% FOREACH node = results %]
+        <li><a href="?[% node.param %]">[% node.name %]</a></li>
       [% END %]
-          <a href="#" onclick="infowindow.setContent( content[[% i %]] ); infowindow.open( map, markers[[% i %]] ); map.panTo( markers[[% i %]].getPosition() ); return false;">[% CGI.escapeHTML( node.name ) %]</a> 
-      </li>
+    [% ELSE %]
+      [% i = 0 %]
+      [% FOREACH node = results %]
+        [% i = i + 1 %]
+        [% IF node.type %]
+          <li class="map_search_result_type_[% node.type %]">
+        [% ELSE %]
+          <li class="map_search_result">
+        [% END %]
+          [% IF node.has_geodata %]
+            <a href="#" onclick="return show_marker( [% i %] )">[% node.name | html %]</a>
+          [% ELSE %]
+            [% node.name | html %] (not on map &#8212;
+              <a href="?[% node.param %]">view info</a>)
+          [% END %]
+        </li>
+      [% END %]
     [% END %]
-
   </ul>
+</div>
 
-  <div id="map" style="float: left; width: 73%; height: 600px"></div>
+<div id="map_index_canvas">
+  [% IF no_nodes_on_map %]
+    <p class="no_nodes_on_map">No pages with geodata - nothing to display
+    on map!</p>
+  [% ELSE %]
+    <span id="map_index_no_js">
+      <p>Sorry! JavaScript is required to view the map - you may prefer to
+      <a href="[% feed_base %]">view the results as a list</a> instead.</p>
+    </span>
+
+    <script type="text/javascript">
+
+      $('#map_index_no_js').hide();
+
+      map_div_id = 'map_index_canvas';
+      centre_lat = [% centre_lat %];
+      centre_long = [% centre_long %];
+      min_lat = [% min_lat %];
+      max_lat = [% max_lat %];
+      min_long = [% min_long %];
+      max_long = [% max_long %];
+
+      function add_markers() {
+        var node;
+        [% i = 0 %]
+        [% FOREACH node = results %]
+          [% i = i + 1 %]
+          [% IF node.has_geodata %]
+            node = {
+              name: [% node.name.json %],
+              param: [% node.param.json %],
+              [% IF node.address %]
+                address: [% node.address.json %],
+              [% END %]
+              lat: [% node.wgs84_lat.json %],
+              long: [% node.wgs84_long.json %],
+            };
+            add_marker( [% i %], node );
+          [% END %]
+        [% END %]
+      }
+    </script>
+  [% END %]
+</div>
