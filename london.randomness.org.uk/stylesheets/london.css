@@ -13,12 +13,17 @@ a:visited { color: #734f37; }
 a:active  { text-decoration: underline; }
 a:hover   { text-decoration: underline; }
 
-input.form_button {
+input.form_button, div.cancel_edit a {
   font-weight: bold;
   font-size: 0.9em;
   color: #FCF8E3;
   background: #595A38;
   border: 1px solid #3A3B22;
+}
+
+div.cancel_edit a {
+  padding: 0.1em 0.4em 0.1em 0.4em;
+  text-decoration: none;
 }
 
 /* Main body */
@@ -58,6 +63,18 @@ div#redirect_message {
 #maincontent {
   float: left;
   width: 70%;
+  padding-left: 1em;
+}
+
+#maincontent.preview {
+  background: #c9c885;
+  margin-bottom: 1em;
+  float: none;
+  margin: auto;
+  padding: 0.5em 1em 0.5em 1em;
+}
+
+#maincontent_no_navbar {
   padding-left: 1em;
 }
 
@@ -200,11 +217,12 @@ div#node_image_box
 {
   float: right;
   padding-left: 0.5em;
-  padding-right: 1em;
-  padding-bottom: 1em;
+  padding-bottom: 0.5em;
+  margin-top: 1.7em;
+  margin-right: -0.5em;
   color: black;
   font-size: 0.8em;
-  margin: -1em -0.8em 0em 1em;
+  text-align: right;
 }
 
 div#node_image_box img {
@@ -371,6 +389,12 @@ div#journeyplanner_link {
   display: none;
 }
 
+/* Maps */
+div#map_index_canvas {
+  height: 600px;
+  margin-top: 1em;
+}
+
 div#map_index_permalink {
   padding: 1em 1em 1em 0em;
 }
@@ -378,6 +402,8 @@ div#map_index_permalink {
 div#map_index_node_list {
   float: right;
   width: 30%;
+  height: 600px;
+  overflow: auto;
 }
 
 div#map_index_node_list li {
@@ -416,6 +442,7 @@ div.new_page_notes {
 /* Category Search page */
 div.category_search_example {
   font-size: 0.8em;
+  padding-top: 1em;
   text-align: right;
 }
 
@@ -437,7 +464,7 @@ div.preview_edit {
   float: left;
   width: 33%;
 }
-div.cancel_edit {
+div.edit_form_actions div.cancel_edit {
   float: left;
   width: 33%;
 }
@@ -447,6 +474,42 @@ div.commit_edit {
 }
 
 /* Edit page global stuff */
+
+div.preview_actions div.cancel_edit {
+  text-align: center;
+  margin-top: -1em;
+}
+
+div.preview_actions div.jump_to_edit_form {
+  font-size: 0.8em;
+  float: left;
+}
+
+div.jump_to_edit_form {
+  clear: both;
+  margin-top: 0.5em;
+}
+
+div.preview_actions {
+  margin-bottom: 1em;
+}
+
+#maincontent.preview div#summary {
+  background: #c9c885;
+  margin-left: 0;
+  font-size: 0.8em;
+  font-style: italic;
+  clear: both;
+}
+
+#maincontent.preview div#summary:before {
+  content: "Summary: ";
+}
+
+#maincontent.preview h2 {
+  text-align: center;
+  margin-bottom: 1em;
+}
 
 h1.edit_form_title {
   text-align: center;
@@ -798,4 +861,9 @@ div.moderation_warning {
   border: 1px dotted #595A38;
   margin: 1em;
   padding: 1em;
+}
+
+div#site_index_feeds {
+  clear: both;
+  padding-left: 1em;
 }
