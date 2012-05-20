@@ -1,7 +1,9 @@
 [% USE CGI %]
 [% INCLUDE header.tt page_title = "Edit $node_name - $site_name" %]
 <div id="content">
-
+[% IF read_only %]
+[% INCLUDE read_only.tt %]
+[% ELSE %]
   <h1 class="edit_form_title">Edit &quot;[% node_name %]&quot;</h1>
 
   [% IF conflict %]
@@ -27,17 +29,10 @@
   [% END %]
 
   [% IF preview_html AND preview_above_edit_box %]
-    <div id="maincontent">
-      <h2>Preview</h2>
-      [% IF summary %]
-        <div id="summary">[% summary %]</div>
-      [% END %]
-      [% INCLUDE display_metadata.tt %]
-      [% preview_html %]
-    </div>
-    <br clear="all" />
+    [% INCLUDE edit_form_preview.tt %]
   [% END %]
 
+  <a name="edit_form_anchor"></a>
   <form id="edit_page_form" action="[% cgi_url %]" method="post"
    enctype="application/x-www-form-urlencoded">
 
@@ -93,8 +88,7 @@
           [% IF conflict %]
             Current locales:
           [% ELSE %]
-            Locales (one per line):
-            <span id="pick_locale"></span>
+            Locales (one per line) (<a href="[% full_cgi_url %]?Category_Locales" target="_blank">view all locales in a new window)</a>:
           [% END %]
         </label>
         <div class="edit_box">
@@ -118,8 +112,7 @@
           [% IF conflict %]
             Current categories:
           [% ELSE %]
-            Categories (one per line):
-            <span id="pick_category"></span>
+            Categories (one per line) (<a href="[% full_cgi_url %]?Category_Category" target="_blank">view all categories in a new window)</a>:
           [% END %]
         </label>
         <div class="edit_box">
@@ -137,42 +130,6 @@
           </div>
         [% END %]
       </div>
-
-	  <script type="text/javascript">
-	     function pick(metadata_type, textbox_id) {
-		    var textbox = document.getElementById(textbox_id);
-
-			// For adding the new metadata to the textarea
-			var add_md = function(picked) {
-			   var last = textbox.value.substring(textbox.value.length - 1);
-			   if(last == "\r" || last == "\n") {
-			      // Already has new line
-			   } else {
-			      textbox.value = textbox.value + "\r\n";
-			   }
-
-			   textbox.value = textbox.value + picked;
-			};
-
-			// Fetch the data
-			$.getJSON("[% cgi_url %]?action=metadata;format=json;type=" + metadata_type, function(data) {
-//				alert(data[metadata_type][0]);
-//				add_md(data[metadata_type][1]);
-			});
-		 }
-
-	     function pick_locale() {
-		    pick("locale", "locales");
-		 }
-	     function pick_category() {
-		    pick("category", "categories");
-		 }
-
-	     $(document).ready(function() {
-		    $("#pick_locale").html("<a href='javascript:pick_locale()'>pick Locale</a>");
-		    $("#pick_category").html("<a href='javascript:pick_category()'>pick Category</a>");
-		 });
-	  </script>
 
       <div class="edit_form_group" id="summary_group">
         [% IF conflict %]
@@ -409,15 +366,7 @@
   </form>
 
   [% IF preview_html AND NOT preview_above_edit_box %]
-    <div id="maincontent">
-      <h2>Preview</h2>
-      [% IF summary %]
-        <div id="summary">[% summary %]</div>
-      [% END %]
-      [% INCLUDE display_metadata.tt %]
-      [% preview_html %]
-    </div>
-    <br clear="all" />
+    [% INCLUDE edit_form_preview.tt %]
   [% END %]
-
+[% END %]
 [% INCLUDE footer.tt omit_footer_search_form = 1 %]
