@@ -3,8 +3,10 @@
 use strict;
 use warnings;
 
-use lib qw( /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/ );
-use lib qw( /export/home/rgl/perl5/lib/perl5 );
+use lib qw(
+    /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/
+    /export/home/rgl/perl5/lib/perl5
+);
 use CGI qw( :standard );
 use CGI::Carp qw( fatalsToBrowser );
 use Data::Dumper;
@@ -157,6 +159,7 @@ sub do_search {
   my $wgs84 = Geo::HelmertTransform::Datum->new( Name => "WGS84" );
 
   my @candidates;
+  my ( $min_lat, $max_lat, $min_long, $max_long, $bd_set );
   while ( my ( $name, $x, $y, $lat, $long ) = $sth->fetchrow_array ) {
     my $vertdist = abs( $y1 + $slope*( $x - $x1 ) - $y );
     if ( $vertdist > $fudge ) {
@@ -165,15 +168,34 @@ sub do_search {
     my $param = $formatter->node_name_to_node_param( $name );
     ( $lat, $long ) =
        Geo::HelmertTransform::convert_datum( $airy, $wgs84, $lat, $long, 0 );
-    my $endpoint = 0;
+    my $type = "midpoint";
     if ( ( $origin && $name eq $origin  ) || ( $dest && $name eq $dest ) ) {
-      $endpoint = 1;
+      $type = "endpoint";
     }
-    push @candidates, { name => $name, x => $x, y => $y, lat => $lat,
-                        long => $long, param => $param, endpoint => $endpoint };
+    if ( !$bd_set ) {
+        $min_lat = $max_lat = $lat;
+        $min_long = $max_long = $long;
+        $bd_set = 1;
+    } else {
+        if ( $lat < $min_lat ) {
+            $min_lat = $lat;
+        }
+        if ( $long < $min_long ) {
+            $min_long = $long;
+        }
+        if ( $lat > $max_lat ) {
+            $max_lat = $lat;
+        }
+        if ( $long > $max_long ) {
+            $max_long = $long;
+        }
+    }
+    push @candidates, { name => $name, x => $x, y => $y, wgs84_lat => $lat,
+                        wgs84_long => $long, param => $param, type => $type,
+                        has_geodata => 1 };
   }
 
-  $tt_vars{nodes} = \@candidates;
+  $tt_vars{results} = \@candidates;
 
   if ( scalar @candidates ) {
     %tt_vars = (
@@ -182,12 +204,17 @@ sub do_search {
                  y1       => $y1,
                  x2       => $x2,
                  y2       => $y2,
-                 long     => $q->param( "long" ) || $config->centre_long,
-                 lat      => $q->param( "lat" ) || $config->centre_lat,
+                 min_lat  => $min_lat,
+                 max_lat  => $max_lat,
+                 min_long => $min_long,
+                 max_long => $max_long,
+                 centre_lat  => ( $min_lat + $max_lat ) / 2,
+                 centre_long => ( $min_long + $max_long ) / 2,
                  zoom     => $q->param( "zoom" )
                                  || $config->default_gmaps_zoom,
                  map_type => $q->param( "map_type" ) || "",
                  base_url => $config->script_url . $config->script_name,
+                 display_google_maps => 1,
                );
   }
 }

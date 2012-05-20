@@ -3,7 +3,7 @@ package Wiki::Toolkit::Formatter::UseMod;
 use strict;
 
 use vars qw( $VERSION @_links_found );
-$VERSION = '0.20';
+$VERSION = '0.23';
 
 use URI::Escape;
 use Text::WikiFormat as => 'wikiformat';
@@ -275,22 +275,6 @@ sub format {
 
     # Now process any macros.
     my %macros = %{$self->{_macros}};
-    $macros{qr/\@MAP_LINK\s+\[\[(Category|Locale)\s+([^\]|]+)\|?([^\]]+)?\]\]/}
-      = sub {
-        if ( UNIVERSAL::isa( $_[0], "Wiki::Toolkit" ) ) {
-          shift;
-        }
-        my $link_title = $_[2] || "View map of pages in $_[0] $_[1]";
-        my $type;
-        if ( $_[0] eq "Category" ) {
-          $type = "cat";
-        } else {
-          $type = "loc";
-        }
-        return qq(<a href="http://london.randomness.org.uk/scripts/locate.cgi?$type=$_[1];map=1">$link_title</a>);
-#        my $script_name = "http://london.randomness.org.uk/wiki.cgi";
-#        return qq(<a href="$script_name?action=index;format=map;index_type=) . uri_escape(lc($_[0])) . qq(;index_value=) . uri_escape($_[1]) . qq(">$link_title</a>);
-    };
     foreach my $key (keys %macros) {
         my $value = $macros{$key};
         if ( ref $value && ref $value eq 'CODE' ) {
@@ -668,7 +652,7 @@ Kake Pugh (kake@earth.li) and the Wiki::Toolkit team.
 =head1 COPYRIGHT
 
      Copyright (C) 2003-2004 Kake Pugh.  All Rights Reserved.
-     Copyright (C) 2006 the Wiki::Toolkit team. All Rights Reserved.
+     Copyright (C) 2006-2009 the Wiki::Toolkit team. All Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

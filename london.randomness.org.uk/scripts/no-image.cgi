@@ -3,8 +3,10 @@
 use strict;
 use warnings;
 
-use lib qw( /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/ );
-use lib qw( /export/home/rgl/perl5/lib/perl5 );
+use lib qw(
+    /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/
+    /export/home/rgl/perl5/lib/perl5
+);
 
 use CGI qw( :standard );
 use CGI::Carp qw( fatalsToBrowser );
@@ -39,7 +41,6 @@ my $latlong_dist = $q->param( "latlong_dist" );
 my $origin = $q->param( "origin" );
 my $origin_dist = $q->param( "origin_dist" );
 my $show_map = $q->param( "show_map" );
-my $map_style = $q->param( "map_style" );
 
 my ( $x, $y, $dist );
 
@@ -220,15 +221,16 @@ while ( my ( $name, $this_locale, $this_category, $content,
     my $this = {
                  name => CGI->escapeHTML( $name ),
                  address => CGI->escapeHTML( $address),
-                 url  => $base_url . $param,
+                 param => $param,
                };
     if ( $show_map && defined $this_lat && defined $this_long ) {
         ( $this_long, $this_lat ) = OpenGuides::Utils->get_wgs84_coords(
                                         latitude  => $this_lat,
                                         longitude => $this_long,
                                         config    => $config );
-        $this->{lat} = $this_lat;
-        $this->{long} = $this_long;
+        $this->{wgs84_lat} = $this_lat;
+        $this->{wgs84_long} = $this_long;
+        $this->{has_geodata} = 1;
         $this->{markertype} = "large_light_red";
         if ( !$bd_set ) {
             $min_lat = $max_lat = $this_lat;
@@ -302,13 +304,6 @@ $tt_vars{exclude_categories_box} = $q->checkbox( -name => "exclude_categories",
                                                  -value => 1, label => "" );
 $tt_vars{show_map_box} = $q->checkbox( -name => "show_map",
                                                  -value => 1, label => "" );
-$tt_vars{map_style_group} = $q->radio_group(
-    -name => "map_style",
-    -values => [ "mq", "osm", "google" ],
-    -default => "google",
-    -labels => { "mq" => "MapQuest", "osm" => "OpenStreetMap",
-                 "google" => "Google Maps" },
-);
 
 my $custom_template_path = $config->custom_template_path || "";
 my $template_path = $config->template_path;
@@ -323,14 +318,13 @@ if ( $show_map ) {
                  enable_gmaps        => 1,
                  display_google_maps => 1,
                  show_map            => 1,
-                 map_style           => $map_style,
                  exclude_navbar      => 1,
                  min_lat             => $min_lat,
                  max_lat             => $max_lat,
                  min_long            => $min_long,
                  max_long            => $max_long,
-                 lat                 => ( $min_lat + $max_lat ) / 2,
-                 long                => ( $min_long + $max_long ) / 2,
+                 centre_lat          => ( $min_lat + $max_lat ) / 2,
+                 centre_long         => ( $min_long + $max_long ) / 2,
                  total_count         => $total_count,
                );
 }
