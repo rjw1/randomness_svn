@@ -4,19 +4,18 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
 
 use strict;
-use lib qw( /export/home/rgl/perl5/lib/perl5 );
-use lib qw( /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/ );
+use lib qw(
+    /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/
+    /export/home/rgl/perl5/lib/perl5
+);
 use warnings;
-use sigtrap die => 'normal-signals';                                            
-
+use sigtrap die => 'normal-signals';
 use vars qw( $VERSION );
-$VERSION = '0.65';
+$VERSION = '0.67';
 
 use CGI qw/:standard/;
 use CGI::Carp qw(croak);
 use Wiki::Toolkit;
-use Geography::NationalGrid;
-use Geography::NationalGrid::GB;
 use OpenGuides;
 use OpenGuides::CGI;
 use OpenGuides::Config;
@@ -38,14 +37,20 @@ eval {
     $guide = OpenGuides->new( config => $config );
     $wiki = $guide->wiki;
     $formatter = $wiki->formatter;
-
-    # Get CGI object, find out what to do.
     $q = CGI->new;
 
-    # Note $q->param('keywords') gives you the entire param string.
-    # We need this to do URLs like foo.com/wiki.cgi?This_Page
-    my $node = $q->param('id') || $q->param('title') || $q->param('keywords') || '';
-    $node = $formatter->node_param_to_node_name( $node );
+    # See if we need to redirect due to spaces in URL.
+    my $redirect = OpenGuides::CGI->check_spaces_redirect(
+                                         cgi_obj => $q, wiki => $wiki );
+
+    if ( $redirect ) {
+        print $q->redirect( -uri => $redirect, -status => 303 );
+        exit 0;
+    }
+
+    # No redirect - carry on.
+    my $node = OpenGuides::CGI->extract_node_name(
+                                         cgi_obj => $q, wiki => $wiki );
 
     # If we did a post, then CGI->param probably hasn't fully de-escaped,
     #  in the same way as a get would've done
@@ -87,9 +92,12 @@ eval {
         show_needing_moderation();
     } elsif ($action eq 'index') {
         $guide->show_index(
+                            cat    => $q->param( "cat" ) || "",
+                            loc    => $q->param( "loc" ) || "",
+                            format => $format,
+                            # Next two for backwards compatibility (deprecated)
                             type   => $q->param("index_type") || "Full",
                             value  => $q->param("index_value") || "",
-                            format => $format,
                           );
     } elsif ($action eq 'random') {
         print $guide->display_random_page(

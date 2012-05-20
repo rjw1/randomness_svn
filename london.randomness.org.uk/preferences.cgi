@@ -5,12 +5,13 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 
 use warnings;
 use strict;
-use lib qw( /export/home/rgl/perl5/lib/perl5 );
-use lib qw( /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/ );
-
+use lib qw(
+    /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/
+    /export/home/rgl/perl5/lib/perl5
+);
 use sigtrap die => 'normal-signals';
-
 use CGI;
+use OpenGuides;
 use OpenGuides::Config;
 use OpenGuides::CGI;
 use OpenGuides::JSON;
@@ -19,7 +20,8 @@ use OpenGuides::Template;
 
 my $config_file = $ENV{OPENGUIDES_CONFIG_FILE} || "wiki.conf";
 my $config = OpenGuides::Config->new( file => $config_file );
-my $wiki = OpenGuides::Utils->make_wiki_object( config => $config );
+my $guide = OpenGuides->new( config => $config );
+my $wiki = $guide->wiki;
 my $cgi = CGI->new();
 my $action = $cgi->param('action') || '';
 my $format = $cgi->param('format') || '';
@@ -32,7 +34,7 @@ if ( $action eq "set_preferences" ) {
     print "Content-type: text/javascript\n\n";
     print $json_writer->make_prefs_json();
 } else {
-    show_form();
+    $guide->display_prefs_form;
 }
 
 sub set_preferences {
@@ -62,19 +64,7 @@ sub set_preferences {
                       not_editable => 1,
                       not_deletable => 1,
                       username => $prefs{username},
-                    }
-    );
-}
-
-sub show_form {
-    print OpenGuides::Template->output(
-        wiki     => $wiki,
-        config   => $config,
-        template => "preferences.tt",
-	vars     => { 
-                      not_editable  => 1,
-                      show_form     => 1,
-                      not_deletable => 1,
+                      return_to_url => $cgi->param( "return_to_url" ) || "",
                     }
     );
 }

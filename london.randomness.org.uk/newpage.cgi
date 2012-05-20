@@ -5,11 +5,11 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 
 use warnings;
 use strict;
-use lib qw( /export/home/rgl/perl5/lib/perl5 );
-use lib qw( /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/ );
-
-use sigtrap die => 'normal-signals';                                            
-
+use lib qw(
+    /export/home/rgl/web/vhosts/london.randomness.org.uk/scripts/lib/
+    /export/home/rgl/perl5/lib/perl5
+);
+use sigtrap die => 'normal-signals';
 use CGI;
 use OpenGuides::Config;
 use OpenGuides::Template;
