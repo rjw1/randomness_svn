@@ -205,6 +205,11 @@ div#pub_info table td ul {
   list-style-type: none;
 }
 
+div.location_accuracy {
+  font-size: 0.8em;
+  font-style: italic;
+}
+
 tr.pub_last_updated {
   font-size: 0.8em;
   font-style: italic;
