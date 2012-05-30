@@ -300,6 +300,32 @@ sub format {
         return $return;
     };
 
+    $macros{qr/\@INDEX_LIST_NO_PREFIX\s+\[\[(Category|Locale)\s+([^\]]+)]]/}
+      = sub {
+        my ($wiki, $type, $value) = @_;
+        unless ( UNIVERSAL::isa( $wiki, "Wiki::Toolkit" ) ) {
+            return "(unprocessed INDEX_LIST macro)";
+        }
+        my @nodes = sort $wiki->list_nodes_by_metadata(
+                       metadata_type  => $type,
+                       metadata_value => $value,
+                       ignore_case    => 1,
+        );
+        unless ( scalar @nodes ) {
+            return "\n* No pages currently in " . lc($type) . " $value\n";
+        }
+        my $return = "\n";
+        foreach my $node ( @nodes ) {
+            my $title = $node;
+            $title =~ s/^(Category|Locale) //;
+            my $link = $wiki->formatter->format_link( wiki => $wiki,
+                           link => "$node|$title" );
+            
+            $return .= "* $link\n";
+        }
+        return $return;
+    };
+
     $macros{qr/\@THUMB\s+\[\[([^|]+)\|([^]]+).*/}
       = sub {
         my ($wiki, $node, $image) = @_;
