@@ -1,0 +1,17 @@
+<div id="navbar_tools">
+  <div class="navbar_group_title">Using this guide:</div>
+   <ul>
+    <li><a href="[% full_cgi_url %]?FAQ">FAQ</a></li>
+    <li><a href="[% full_cgi_url %]?Tools">Tools</a></li>
+    <li>
+      <a href="[% script_url %]preferences.cgi">Set username/prefs</a>
+      [% IF username %]
+        <div id="navbar_username">
+          Currently: [% username %]
+          [% IF is_admin %](admin)[% END %]
+        </div>
+      [% END %]
+    </li>
+  </ul>
+</div>
+

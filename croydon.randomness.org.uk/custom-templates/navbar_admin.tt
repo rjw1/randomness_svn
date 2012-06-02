@@ -1,0 +1,15 @@
+[% IF is_admin %]
+  <div id="navbar_admin">
+    <div class="navbar_group_title">Admin:</div>
+    <ul>
+      [% UNLESS read_only %]
+        <li><a class="edit_page_link" href="[% source_site or full_cgi_url %]?id=[% node_param %];action=edit">Edit this page</a></li>
+      [% END %]
+      <li><a href="[% full_cgi_url %]?action=show_backlinks;id=[% node_param %]">Pages linking to this page</a></li>
+      [% IF enable_page_deletion AND NOT not_deletable %]
+        <li><a href="[% full_cgi_url %]?id=[% node_param %];action=delete">Delete this page</a></li>
+      [% END %]
+    </ul>
+  </div>
+[% END %]
+
