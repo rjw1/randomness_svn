@@ -2,6 +2,7 @@
   <div id="navbar_admin">
     <div class="navbar_group_title">Admin:</div>
     <ul>
+      <li><a href="[% full_cgi_url %]?action=rc">Recent changes</a></li>
       [% UNLESS read_only %]
         <li><a class="edit_page_link" href="[% source_site or full_cgi_url %]?id=[% node_param %];action=edit">Edit this page</a></li>
       [% END %]
