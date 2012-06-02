@@ -851,12 +851,32 @@ div.moderation_warning {
 }
 
 div.neighbours {
+  clear: both;
   text-align: center;
   border: 1px dotted black;
-  padding: 1em;
+  padding: 1.5em 1em 1em 1em;
+  position: relative;
 }
 
 div.neighbours img {
   vertical-align: middle;
   border: 1px solid black;
+}
+
+/* Position the road name label */
+div.neighbours span:first-child {
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+/* But make sure the thumbnails don't get screwed up if road name is missing */
+div.neighbours span.neighbour_thumb {
+  position: relative;
+  top: auto;
+  left: auto;
+  font-size: 1em;
+  font-weight: normal;
 }
