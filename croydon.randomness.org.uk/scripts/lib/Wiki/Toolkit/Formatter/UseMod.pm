@@ -276,6 +276,15 @@ sub format {
     # Now process any macros.
     my %macros = %{$self->{_macros}};
 
+    my $index_list_re = qr/\@INDEX_LIST\s+\[\[(Category|Locale)\s+([^\]]+)]]/;
+    my $index_list_sub = $macros{$index_list_re};
+    $macros{$index_list_re} = sub {
+        my ($wiki, $type, $value) = @_;
+        return qq(\n<div class="macro_index_list">)
+               . $index_list_sub->( $wiki, $type, $value )
+               . "</div>";
+    };
+
     $macros{qr/\@INDEX_ADDR_LIST\s+\[\[(Category|Locale)\s+([^\]]+)]]/}
       = sub {
         my ($wiki, $type, $value) = @_;
@@ -288,15 +297,18 @@ sub format {
                        metadata_value => $value,
                        ignore_case    => 1 );
         unless ( scalar @nodes ) {
-          return "\n* No pages currently in " . lc($type) . " $value\n";
+          return qq(\n<div class="macro_index_addr_list">)
+                 . "\n* No pages currently in " . lc($type) . " $value\n"
+                 . "</div>";
         }
-        my $return = "\n";
+        my $return = qq(\n<div class="macro_index_addr_list">\n);
         @nodes = sort { $self->cmp_addr( $a, $b ) } @nodes;
         foreach my $node ( @nodes ) {
             $return .= "* "
                     . $wiki->formatter->format_link( wiki => $wiki,
                                                      link => $node ) . "\n";
         }
+        $return .= "</div>";
         return $return;
     };
 
@@ -312,9 +324,11 @@ sub format {
                        ignore_case    => 1,
         );
         unless ( scalar @nodes ) {
-            return "\n* No pages currently in " . lc($type) . " $value\n";
+            return qq(\n<div class="macro_index_list_no_prefix">)
+                   . "\n* No pages currently in " . lc($type) . " $value\n"
+                   . "</div>";
         }
-        my $return = "\n";
+        my $return = qq(\n<div class="macro_index_list_no_prefix">\n);
         foreach my $node ( @nodes ) {
             my $title = $node;
             $title =~ s/^(Category|Locale) //;
@@ -323,6 +337,7 @@ sub format {
             
             $return .= "* $link\n";
         }
+        $return .= "</div>";
         return $return;
     };
 
@@ -409,7 +424,14 @@ sub format {
         },
     );
 
-    return wikiformat($safe, \%format_tags, \%format_opts );
+
+    my $rendered = wikiformat($safe, \%format_tags, \%format_opts );
+
+    # Strip out erroneous <p> stuff.
+    $rendered =~ s|<p>(<div class="[^"]+">)</p>|$1|gs;
+    $rendered =~ s|<p></div></p>|</div>|gs;
+
+    return $rendered;
 }
 
 sub cmp_addr {
