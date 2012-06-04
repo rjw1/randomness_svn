@@ -213,6 +213,20 @@ div#navbar_username {
   padding-right: 0.5em;
 }
 
+/* Macro lists */
+
+div.macro_index_list ul li {
+  list-style: none;
+  margin-left: -1em;
+  padding-bottom: 0.5em;
+}
+
+div.macro_index_list ul {
+  padding-top: 0.5em;
+}
+
+/* Recent changes */
+
 #recent_changes_feeds {
   display: none;
 }
