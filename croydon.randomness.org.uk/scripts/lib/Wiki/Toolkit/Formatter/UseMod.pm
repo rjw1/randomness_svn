@@ -276,13 +276,36 @@ sub format {
     # Now process any macros.
     my %macros = %{$self->{_macros}};
 
-    my $index_list_re = qr/\@INDEX_LIST\s+\[\[(Category|Locale)\s+([^\]]+)]]/;
-    my $index_list_sub = $macros{$index_list_re};
-    $macros{$index_list_re} = sub {
+    $macros{qr/\@INDEX_LIST\s+\[\[(Category|Locale)\s+([^\]]+)]]/}
+      = sub {
         my ($wiki, $type, $value) = @_;
-        return qq(\n<div class="macro_index_list">)
-               . $index_list_sub->( $wiki, $type, $value )
-               . "</div>";
+        unless ( UNIVERSAL::isa( $wiki, "Wiki::Toolkit" ) ) {
+            return "(unprocessed INDEX_LIST macro)";
+        }
+
+        my @nodes = sort $wiki->list_nodes_by_metadata(
+                       metadata_type  => $type,
+                       metadata_value => $value,
+                       ignore_case    => 1,
+        );
+        unless ( scalar @nodes ) {
+            return qq(\n<div class="macro_index_list">)
+                   . "\n* No pages currently in "
+                   . lc($type) . " $value\n</div>";
+        }
+        my $return = qq(\n<div class="macro_index_list">\n);
+        foreach my $node ( @nodes ) {
+            my ( $title, $address ) = split( /, /, $node );
+            $return .= "* "
+                    . $wiki->formatter->format_link( wiki => $wiki,
+                                                     link => "$node|$title" );
+            if ( $address ) {
+                $return .= ", $address";
+            }
+            $return .= "\n";
+	}
+        $return .= "</div>";
+        return $return;
     };
 
     $macros{qr/\@INDEX_ADDR_LIST\s+\[\[(Category|Locale)\s+([^\]]+)]]/}
