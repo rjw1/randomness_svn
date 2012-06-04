@@ -214,9 +214,7 @@ div#navbar_username {
 }
 
 #recent_changes_feeds {
-  float: right;
-  width: 25%;
-  font-size: 0.8em;
+  display: none;
 }
 
 .recentchanges_node_name {
