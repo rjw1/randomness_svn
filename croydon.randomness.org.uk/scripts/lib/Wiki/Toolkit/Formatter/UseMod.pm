@@ -335,9 +335,14 @@ sub format {
         my $return = qq(\n<div class="macro_index_addr_list">\n);
         @nodes = sort { $self->cmp_addr( $a, $b ) } @nodes;
         foreach my $node ( @nodes ) {
+            my ( $title, $address ) = split( /, /, $node );
             $return .= "* "
                     . $wiki->formatter->format_link( wiki => $wiki,
-                                                     link => $node ) . "\n";
+                                                     link => "$node|$title" );
+            if ( $address ) {
+                $return .= ", $address";
+            }
+            $return .= "\n";
         }
         $return .= "</div>";
         return $return;
