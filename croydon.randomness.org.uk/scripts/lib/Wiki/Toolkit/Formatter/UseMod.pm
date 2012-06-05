@@ -293,8 +293,16 @@ sub format {
                    . "\n* No pages currently in "
                    . lc($type) . " $value\n</div>";
         }
+
+        # Split off address-only pages, and list them last.
+        my @addr_only_nodes = sort { $self->cmp_addr( $a, $b ) }
+                              grep( /^[-\d]+ /, @nodes );
+        my %tmphash = map { $_ => 1 } @addr_only_nodes;
+        my @occupied_nodes = grep( !$tmphash{$_}, @nodes );
+                             
+
         my $return = qq(\n<div class="macro_index_list">\n);
-        foreach my $node ( @nodes ) {
+        foreach my $node ( @occupied_nodes, @addr_only_nodes ) {
             my ( $title, $address ) = split( /, /, $node );
             $return .= "* "
                     . $wiki->formatter->format_link( wiki => $wiki,
@@ -460,9 +468,20 @@ sub format {
 sub cmp_addr {
     my ( $self, $c, $d ) = @_;
     my %ad; my %bd;
-    ( $ad{name}, $ad{addr} ) = split( ",", $c );
+    if ( $c =~ /,/ ) {
+        ( $ad{name}, $ad{addr} ) = split( ",", $c );
+    } else {
+        $ad{name} = "";
+        $ad{addr} = $c;
+    }
     ( $ad{num}, $ad{street} ) = split( " ", $ad{addr} );
-    ( $bd{name}, $bd{addr} ) = split( ",", $d );
+
+    if ( $d =~ /,/ ) {
+        ( $bd{name}, $bd{addr} ) = split( ",", $d );
+    } else {
+        $bd{name} = "";
+        $bd{addr} = $d;
+    }
     ( $bd{num}, $bd{street} ) = split( " ", $bd{addr} );
     if ( $ad{street} ne $bd{street} ) {
         return $ad{street} cmp $bd{street};
