@@ -1,0 +1,8 @@
+Title: World IPv6 Launch day woke me up
+Tags: nagios, ipv6, alerting
+Date: 06 June 2012
+
+<p>Early this morning I got alerts from several of our nagios installations saying they couldnt reach www.google.com. I logged into a production machine from my phone and cheked it was still talking to the internet properly. They went back to sleepwith an inkling this maybe an issue with <a href="http://www.worldipv6launch.org/">World IPv6 Launch</a> day.</p> 
+
+<p>When I woke up refreshed and ready for action I went an investigated and it would seem that on our servers check_ping will default to resolving the AAAA record which isnt good when you dont have IPv6 connectivity. So the easy fix is specify -4 to check ping. Although im tempted to just remove the check since if the internet is that broken the alert cant be sent anyway.</p>
+
