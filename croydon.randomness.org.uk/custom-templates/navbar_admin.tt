@@ -10,6 +10,8 @@
       [% IF enable_page_deletion AND NOT not_deletable %]
         <li><a href="[% full_cgi_url %]?id=[% node_param %];action=delete">Delete this page</a></li>
       [% END %]
+      <li><a href="[% full_cgi_url %]?action=random">Random page</a></li>
+      <li><a href="[% full_cgi_url %]?action=admin">Admin centre</a></li>
     </ul>
   </div>
 [% END %]
