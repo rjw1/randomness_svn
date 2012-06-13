@@ -215,13 +215,13 @@ div#navbar_username {
 
 /* Macro lists */
 
-div.macro_index_list ul li {
+div.macro_index_list ul li, div.macro_index_addr_list ul li {
   list-style: none;
   margin-left: -1em;
   padding-bottom: 0.5em;
 }
 
-div.macro_index_list ul {
+div.macro_index_list ul, div.macro_index_addr_list ul {
   padding-top: 0.5em;
 }
 
@@ -247,6 +247,7 @@ div.macro_index_list ul {
 
 div#node_image_box
 {
+  clear: both;
   float: right;
   padding-left: 0.5em;
   padding-right: 0.4em;
@@ -434,6 +435,15 @@ div#map {
 
 li.map_search_result {
   margin-left: -2em;
+}
+
+div#node_map_canvas {
+  clear: both;
+  float: right;
+  width: 240px;
+  height: 200px;
+  border: thin solid black;
+  margin-top: 1em;
 }
 
 /* Create new page stuff */
