@@ -11,10 +11,9 @@
   <p>Find me things in category [% catbox2 %] within [% distbox %] of things in
       category [% catbox1 %].</p>
   <p>[% show_map_box %] Show them on a map
-     [% small_pointers_box %] Use smaller map markers
      [% include_all_origins_box %] Show markers for <em>everything</em> in second category
   </p>
-  <p>Map style: [% map_style_group %]
+  <p>
      <input type="hidden" name="do_search" value="1">
      <input type="submit" name="Search" value="Search" class="form_button">
   </p>

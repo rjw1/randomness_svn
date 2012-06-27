@@ -79,7 +79,6 @@ function clearAllCriteria() {
   </p>
   <p>
     [% show_map_box %] Show results on map (may be slow for large result sets)
-  <br>Map style: [% map_style_group %]
      <input type="hidden" name="do_search" value="1">
      <input type="submit" name="Search" value="Search" class="form_button">
   </p>
@@ -105,7 +104,7 @@ function clearAllCriteria() {
     [% results.size %]</p>
     <ul>
       [% FOREACH node = results %]
-        <li><a href="[% node.url %]">[% node.name %]</a></li>
+        <li><a href="[% full_cgi_url %]?[% node.param %]">[% node.name %]</a></li>
       [% END %]
     </ul>
   [% END %]
