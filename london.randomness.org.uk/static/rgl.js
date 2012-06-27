@@ -49,6 +49,7 @@ function hide_map_links() {
   $( '#show_map_links' ).click(
     function() {
       show_map_links();
+      return false;
     }
   );
 }
@@ -58,6 +59,7 @@ function show_map_links() {
   $( '#hide_map_links' ).click(
     function() {
       hide_map_links();
+      return false;
     }
   );
 }
