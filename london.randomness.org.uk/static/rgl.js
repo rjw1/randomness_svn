@@ -1,7 +1,12 @@
-var node_param;
+var node_param, map_links;
 
 $(
   function() {
+    // Click to reveal the map links.
+    map_links = $( '.map_links' ).html();
+    hide_map_links();
+
+    // Nearby Tube stuff.
     $( '#nearby_tubes' ).css( { height: '2.5em' } );
     $( '#nearby_tube_results' ).css( { 'padding-left': '0.5em' } );
     $( '#nearby_tube_text' ).text( 'Nearby Tube stations: ' );
@@ -35,3 +40,24 @@ $(
     );
   }
 );
+
+var show_button = '(<a href="#" id="show_map_links">show map links</a>)';
+var hide_button = '(<a href="#" id="hide_map_links">hide map links</a>)';
+
+function hide_map_links() {
+  $( '.map_links' ).html( show_button );
+  $( '#show_map_links' ).click(
+    function() {
+      show_map_links();
+    }
+  );
+}
+
+function show_map_links() {
+  $( '.map_links' ).html( map_links + hide_button );
+  $( '#hide_map_links' ).click(
+    function() {
+      hide_map_links();
+    }
+  );
+}
