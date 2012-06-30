@@ -380,27 +380,26 @@ sub format {
     $macros{qr/\@THUMB\s+\[\[([^|]+)\|([^]]+).*/}
       = sub {
         my ($wiki, $node, $image) = @_;
-        unless ( UNIVERSAL::isa( $wiki, "Wiki::Toolkit" ) ) {
-          return "(unprocessed THUMB macro)";
-        }
-        $image =~ s/<a href="//;
-        return qq(<span class="neighbour_thumb"><a href="wiki.cgi?)
-               . $wiki->formatter->node_name_to_node_param( $node )
-               . qq("><img src="$image" width="75" height="75" )
-               . qq(alt="$node" title="$node" /></a></span>);
+        return $self->do_thumb( wiki => $wiki, node => $node, image => $image);
     };
 
     $macros{qr/\@THUMB\s+\[\[([^|\]]+)\]\].*/}
       = sub {
         my ($wiki, $node) = @_;
-        unless ( UNIVERSAL::isa( $wiki, "Wiki::Toolkit" ) ) {
-          return "(unprocessed THUMB macro)";
-        }
-        my $image = "http://croydon.randomness.org.uk/static/no-photo.png";
-        return qq(<span class="neighbour_thumb"><a href="wiki.cgi?)
-               . $wiki->formatter->node_name_to_node_param( $node )
-               . qq("><img src="$image" width="75" height="75" )
-               . qq(alt="$node" title="$node" /></a></span>);
+        return $self->do_thumb( wiki => $wiki, node => $node );
+    };
+
+    $macros{qr/\@THIS_THUMB\s+\[\[([^|]+)\|([^]]+).*/}
+      = sub {
+        my ($wiki, $node, $image) = @_;
+        return $self->do_thumb( wiki => $wiki, node => $node, image => $image,
+                                this => 1 );
+    };
+
+    $macros{qr/\@THIS_THUMB\s+\[\[([^|\]]+)\]\].*/}
+      = sub {
+        my ($wiki, $node) = @_;
+        return $self->do_thumb( wiki => $wiki, node => $node, this => 1 );
     };
 
     foreach my $key (keys %macros) {
@@ -468,6 +467,25 @@ sub format {
     $rendered =~ s|<p></div></p>|</div>|gs;
 
     return $rendered;
+}
+
+sub do_thumb {
+    my $self = shift;
+    my %args = @_;
+    unless ( $args{wiki}
+             && UNIVERSAL::isa( $args{wiki}, "Wiki::Toolkit" ) ) {
+        return "(unprocessed THUMB macro)";
+    }
+    if ( $args{image} ) {
+        $args{image} =~ s/<a href="//;
+    } else {
+        $args{image} = "http://croydon.randomness.org.uk/static/no-photo.png";
+    }
+    my $class = $args{this} ? "this_thumb" : "neighbour_thumb";
+    return qq(<span class="$class"><a href="wiki.cgi?)
+           . $args{wiki}->formatter->node_name_to_node_param( $args{node} )
+           . qq("><img src="$args{image}" width="75" height="75" )
+           . qq(alt="$args{node}" title="$args{node}" /></a></span>);
 }
 
 sub cmp_addr {
