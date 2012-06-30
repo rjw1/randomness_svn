@@ -1,5 +1,6 @@
 /* Global stuff */
 body {
+  margin: 0;
   background: #3a5c9c;
   color: #000000;
   font-family: lucida, verdana, arial, sans-serif;
@@ -29,10 +30,15 @@ div.cancel_edit a {
 /* Main body */
 div#body_wrapper {
   background: #e7eeff;
-  margin-left: 5%;
-  margin-right: 5%;
-  margin-top: 1.5em;
-  border: 1px solid #000;
+}
+
+@media only screen and (min-width: 800px) {
+  div#body_wrapper {
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 1.5em;
+    border: 1px solid #000;
+  }
 }
 
 #banner {
@@ -858,6 +864,8 @@ div.moderation_warning {
   padding: 1em;
 }
 
+/* Neighbour stuff */
+
 div.neighbours {
   clear: both;
   text-align: center;
@@ -866,9 +874,15 @@ div.neighbours {
   position: relative;
 }
 
-div.neighbours img {
+div.neighbours span.neighbour_thumb img {
   vertical-align: middle;
   border: 1px solid black;
+}
+
+div.neighbours span.this_thumb img {
+  vertical-align: middle;
+  border: 3px solid black;
+  padding: 2px;
 }
 
 /* Position the road name label */
@@ -881,7 +895,7 @@ div.neighbours span:first-child {
 }
 
 /* But make sure the thumbnails don't get screwed up if road name is missing */
-div.neighbours span.neighbour_thumb {
+div.neighbours span.neighbour_thumb, div.neighbours span.this_thumb {
   position: relative;
   top: auto;
   left: auto;
