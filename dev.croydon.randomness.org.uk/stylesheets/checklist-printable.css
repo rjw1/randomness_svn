@@ -1,0 +1,31 @@
+html {
+  padding: 0;
+  margin: 0;
+}
+
+div.checklist_odd_numbers {
+  float: left;
+  width: 48%
+}
+
+div.checklist_even_numbers {
+  float: right;
+  width: 48%
+}
+
+div.checklist_other_numbers {
+  clear: both;
+  padding-top: 1em;
+  width: 96%;
+}
+
+table.checklist {
+  border: thin solid black;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.checklist td {
+  border: thin solid black;
+  padding-left: 5px;
+}

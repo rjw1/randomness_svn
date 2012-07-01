@@ -1,0 +1,6 @@
+[% IF index_type == "Category" %]
+Things in this category (@MAP_LINK [[[% node_name %]|view them on a map]]):
+[% ELSE %]
+Things in/on [% index_value %] (@MAP_LINK [[[% node_name %]|view them on a map]]):
+[% END %]
+@INDEX_LIST [[[% node_name %]]]

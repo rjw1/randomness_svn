@@ -1,0 +1,16 @@
+<div id="navbar_categories">
+
+  <div class="navbar_group_title">Food and drink:</div>
+  <ul class="navbar_group">
+    <li><a href="[% config.script_url _ config.script_name %]?Category_Cafes" title="View a list of all cafes">Cafes</a></li>
+    <li><a href="[% config.script_url _ config.script_name %]?Category_Pubs" title="View a list of all pubs">Pubs</a></li>
+    <li><a href="[% config.script_url _ config.script_name %]?Category_Restaurants" title="View a list of all restaurants">Restaurants</a></li>
+  </ul>
+
+  <div class="navbar_group_title">Other things:</div>
+  <ul class="navbar_group">
+    <li><a href="[% config.script_url _ config.script_name %]?Category_Retail_Shops" title="View types of retail shop">Shops</a></li>
+    <li><a href="[% config.script_url _ config.script_name %]?Category_Category">All categories</a></li>
+  </ul>
+
+</div>

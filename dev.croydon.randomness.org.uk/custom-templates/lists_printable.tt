@@ -1,0 +1,64 @@
+<html>
+<head>
+  <title>Checklist</title>
+  <link rel="stylesheet" href="http://croydon.randomness.org.uk/stylesheets/checklist-printable.css" type="text/css" />
+</head>
+<body>
+
+[% IF !streets.size %]
+  <p>No streets specified!</p>
+[% END %]
+
+[% FOREACH street IN streets %]
+
+<div class="checklist_odd_numbers">
+  <table class="checklist">
+    <tr>
+      <th class="checklist_number">Odd numbers</th>
+      <th class="checklist_status">Status</th>
+    </tr>
+
+    [% FOREACH node IN street.odds %]
+      <tr>
+        <td class="checklist_address">[% node.name | html %]</td>
+        <td class="checklist_status">&nbsp;</td>
+      </tr>
+    [% END %]
+  </table>
+</div>
+  
+<div class="checklist_even_numbers">
+  <table class="checklist">
+    <tr>
+      <th class="checklist_number">Even numbers</th>
+      <th class="checklist_status">Status</th>
+    </tr>
+
+    [% FOREACH node IN street.evens %]
+      <tr>
+        <td class="checklist_address">[% node.name | html %]</td>
+        <td class="checklist_status">&nbsp;</td>
+      </tr>
+    [% END %]
+  </table>
+</div>
+
+<div class="checklist_other_numbers">
+  <table class="checklist">
+    <tr>
+      <th class="checklist_number">Other addresses</th>
+      <th class="checklist_status">Status</th>
+    </tr>
+
+    [% FOREACH node IN street.others %]
+      <tr>
+        <td class="checklist_address">[% node.name | html %]</td>
+        <td class="checklist_status">&nbsp;</td>
+      </tr>
+    [% END %]
+  </table>
+</div>
+  
+[% END %]
+
+</body>
