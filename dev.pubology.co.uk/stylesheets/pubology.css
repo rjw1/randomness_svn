@@ -1,0 +1,235 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #e0e0e0;
+  color: #000000;
+  font-family: calibri, sans-serif;
+}
+
+div#banner {
+  background-color: #ed002f;
+  margin: -2.5em -1em -1em -1em;
+  padding-left: 1em;
+  padding-top: 1em;
+  padding-bottom: 0.1em;
+}
+
+h1.page_header {
+  text-transform: uppercase;
+  padding: 0;
+  margin: 0;
+}
+
+h1.page_header a {
+  color: #000000;
+  text-decoration: none;
+  display: block;
+  margin: 0;
+}
+
+div#navbar_wrapper {
+  float: left;
+  width: 8%;
+  margin-left: -2em;
+  margin-top: 0.9em;
+  padding-right: 3em;
+  white-space: nowrap;
+  background-image: url(http://www.pubology.co.uk/images/bricks-150px.jpg);
+  background-repeat: repeat-y;
+  background-size: contain;
+  height: 100%;
+}
+
+div#navbar ul {
+  list-style: none;
+}
+
+div#navbar ul li a {
+  color: #e0e0e0;
+  text-decoration: none;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+}
+
+div#navbar a:hover {
+  background-color: #ed002f;
+}
+
+div#navbar ul#internal_links li#home_link {
+  margin-bottom: 1em;
+}
+
+div#navbar ul#internal_links li#postal_district_link, li#map_link {
+  padding-left: 1em;
+}
+
+div#navbar li#postal_district_nolink, li#map_nolink {
+  padding-left: 1.2em;
+}
+
+#portamento_container {
+  float: left; 
+  position: relative;
+}
+
+#portamento_container #navbar {
+  float: none; 
+  position: absolute;
+}
+
+#portamento_container #navbar.fixed {
+  position: fixed;
+}
+
+div#body_wrapper {
+  margin: 0;
+  padding: 1em;
+  position: relative;
+}
+
+div#main_content {
+  float: right;
+  width: 88%;
+  padding-top: 0.8em;
+}
+
+div#main_content a {
+  color: #9a001e;
+}
+
+div#main_content a:hover {
+  color: #ed002f;
+}
+
+div#front_page_text {
+  padding-top: 0.5em;
+}
+
+div.pub_table_key th.status span {
+  font-size: 0.8em;
+  font-weight: bold;
+  border: thin solid black;
+  width: 1.5em;
+  text-align: center;
+  display: block;
+}
+
+div.pub_table_key {
+  float: right;
+  padding-bottom: 1em;
+}
+
+table.postal_district_pub_list th {
+  text-align: left;
+  padding-left: 0.5em;
+}
+
+table.postal_district_pub_list td.status {
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+table.postal_district_pub_list td.status span {
+  border: thin solid black;
+  width: 1.5em;
+  display: block;
+  text-align: center;
+}
+
+table.postal_district_pub_list td.demolished span,
+  div.pub_table_key th.demolished span {
+  background-color: #fc6355;
+}
+
+table.postal_district_pub_list td.closed span,
+  div.pub_table_key th.closed span {
+  background-color: #fcf357;
+}
+
+table.postal_district_pub_list td.open span,
+  div.pub_table_key th.open span {
+  background-color: #00e13c;
+}
+
+div#map_canvas {
+  float: right;
+  width: 75%;
+  margin-top: -3em;
+}
+
+div#pub_list {
+  float: left;
+  max-width: 20%;
+  height: 90%;
+  margin-top: -2em;
+}
+
+div#pub_list ul {
+  height: 400px;
+  overflow: auto;
+}
+
+div#pub_photo {
+  float:right;
+  padding-right:1em;
+}
+
+div#pub_info {
+  float: left;
+}
+
+div.pub_info_with_photo {
+  max-width: 45%;
+}
+
+div#pub_info table {
+  text-align: left;
+  font-family: helvetica, arial, sans-serif;
+}
+
+div#pub_info table th, td {
+  padding: 0.5em;
+  vertical-align: top;
+}
+
+div#pub_info table th {
+  width: 6em;
+}
+
+div#pub_info table td ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+div.location_accuracy {
+  font-size: 0.8em;
+  font-style: italic;
+}
+
+tr.pub_last_updated {
+  font-size: 0.8em;
+  font-style: italic;
+}
+
+img.pub_photo {
+  border: thin solid black;
+}
+
+ul.upload_form_type_selection {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+div.upload_error {
+  color: #000000;
+  background-color: #ff0000;
+  border: 0.2em solid black;
+  padding: 1em;
+}
