@@ -75,14 +75,15 @@
       <label for="track_recent_changes_views">Track my visits to Recent Changes and offer me a link for &#8220;changes since I last viewed Recent Changes&#8221;.</label>
     </p>
 
-    [% IF gmaps_api_key AND config.show_gmap_in_node_display %]
+    [% IF ( config.use_leaflet OR gmaps_api_key )
+       AND config.show_gmap_in_node_display %]
       <p>
         [% IF prefs.display_google_maps %]
           <input type="checkbox" id="display_google_maps" name="display_google_maps" value="1" checked="1" />
         [% ELSE %]
           <input type="checkbox" id="display_google_maps" name="display_google_maps" value="1" />
         [% END %]
-        <label for="display_google_maps">Display Google Maps.</label>
+        <label for="display_google_maps">Display a map on every page with geodata.</label>
       </p>
     [% END %]
 
@@ -102,24 +103,28 @@
     <p>
       <label for="cookie_expires">Preferences expire:</label>
       <select name="cookie_expires" id="cookie_expires">
-        [% IF prefs.cookie_expires == 'never' %]
-          <option value="month">in one month</option>
+        [% IF prefs.cookie_expires == 'month' %]
+          <option value="month" selected="1">in one month</option>
           <option value="year">in one year</option>
-          <option value="never" selected="1">never</option>
+          <option value="never">never</option>
         [% ELSIF prefs.cookie_expires == "year" %]
           <option value="month">in one month</option>
           <option value="year" selected="1">in one year</option>
           <option value="never">never</option>
         [% ELSE %]
-          <option value="month" selected="1">in one month</option>
+          <option value="month">in one month</option>
           <option value="year">in one year</option>
-          <option value="never">never</option>
+          <option value="never" selected="1">never</option>
         [% END %]
       </select>
     </p>
 
     <input type="submit" value="Set it" class="form_button" />
     <input type="hidden" name="action" value="set_preferences">
+    [% IF return_to_url %]
+      <input type="hidden" name="return_to_url"
+             value="[% return_to_url | html %]" />
+    [% END %]
   </form>
 
 [% ELSE %]
@@ -165,10 +170,11 @@
     [% UNLESS prefs.track_recent_changes_views %] not [% END %]
   be tracked.</p>
 
-  [% IF prefs.gmaps_api_key AND config.show_gmap_in_node_display %]
-    <p>Google Maps will
-      [% UNLESS display_google_maps %] not [% END %]
-    be displayed.</p>
+  [% IF ( config.use_leaflet OR gmaps_api_key )
+     AND config.show_gmap_in_node_display %]
+    <p>Maps will
+      [% UNLESS prefs.display_google_maps %] not [% END %]
+    be displayed on pages with geodata.</p>
   [% END %]
 
   <p>Default edit type set to
@@ -190,7 +196,7 @@
   </p>
 
 <ul>
-  <li><a href="[% full_cgi_url %]">Return to [% site_name %]</a></li>
+  <li><a href="[% IF return_to_url %][% return_to_url | html %][% ELSE %][% full_cgi_url %][% END %]">Return to [% site_name %]</a></li>
   <li><a href="preferences.cgi">Change preferences</a></li>
 </ul>
 

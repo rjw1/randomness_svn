@@ -1,7 +1,6 @@
-[% IF criterion %]
+[% IF criteria %]
   [% INCLUDE header.tt 
-      page_title = "Index of $criterion.name - $site_name"
-	  feed_base = "$cgi_url?action=index;index_type=$criterion.type;index_value=$criterion.value"
+      page_title = "Index of $criteria_title - $site_name"
    %]
 [% ELSE %]
   [% INCLUDE header.tt page_title = "Things within $limit of $origin - $site_name" %]
@@ -10,18 +9,23 @@
 <div id="content">
 [% INCLUDE navbar.tt %]
 <div id="maincontent">
-<h2>Node List
-  [%- IF criterion -%]
-    [%- IF criterion.url -%]
-      - <a href="[% criterion.url %]">[%- criterion.name -%]</a>
-    [%- ELSE -%]
-      - [%- criterion.name -%]
-    [%- END -%]
+<h2>Index of
+  [% IF criteria %]
+    [% links = [] %]
+    [% FOREACH criterion = criteria %]
+      [% links.push( '<a href="' _ cgi_url _ '?' _ criterion.param _ '">' _ criterion.name _ '</a>' ) %]
+    [% END %]
+    [% links.join( ' and ' ) %]
+  [% ELSIF origin -%]
+    things within [%- limit -%] of <a href="[% cgi_url %]?[%- origin_param -%]">[%- origin -%]</a>
+  [% ELSE %]
+    everything on this guide
   [%- END -%]
-  [%- IF origin -%]
-    - Things within [%- limit -%] of <a href="[% cgi_url %]?[%- origin_param -%]">[%- origin -%]</a>
-  [%- END -%]
+  (<a href="[% feed_base %];format=map">view on a map</a>)
 </h2>
+
+[% INCLUDE index_form.tt %]
+
 <ol>
   [% FOREACH node = nodes %]
      <li><a href="[% cgi_url %]?[% node.param %]">[% node.name %]</a>
@@ -31,13 +35,15 @@
 </ol>
 </div>
 
-<p>
-  This list is available as
-  <a href="[% cgi_url %]?action=index;index_type=[% criterion.type %];index_value=[% criterion.value %];format=rdf">rdf</a>,
-  or as a
-  <a href="[% cgi_url %]?action=index;index_type=[% criterion.type %];index_value=[% criterion.value %];format=rss">rss feed</a>,
-  or as an
-  <a href="[% cgi_url %]?action=index;index_type=[% criterion.type %];index_value=[% criterion.value %];format=atom">atom feed</a>.
-</p>
+<div id="site_index_feeds">
+  <p>
+    This list is available as
+    <a href="[% feed_base %];format=rdf">rdf</a>,
+    or as a
+    <a href="[% feed_base %];format=rss">rss feed</a>,
+    or as an
+    <a href="[% feed_base %];format=atom">atom feed</a>.
+  </p>
+</div>
 
 [% INCLUDE footer.tt %]
