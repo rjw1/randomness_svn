@@ -481,11 +481,16 @@ sub do_thumb {
     } else {
         $args{image} = "http://croydon.randomness.org.uk/static/no-photo.png";
     }
-    my $class = $args{this} ? "this_thumb" : "neighbour_thumb";
-    return qq(<span class="$class"><a href="wiki.cgi?)
-           . $args{wiki}->formatter->node_name_to_node_param( $args{node} )
-           . qq("><img src="$args{image}" width="75" height="75" )
-           . qq(alt="$args{node}" title="$args{node}" /></a></span>);
+    if ( $args{this} ) {
+        return qq(<span class="this_thumb">)
+               . qq(<img src="$args{image}" width="75" height="75" )
+               . qq(alt="$args{node}" title="$args{node}" /></span>);
+    } else {
+        return qq(<span class="neighbour_thumb"><a href="wiki.cgi?)
+               . $args{wiki}->formatter->node_name_to_node_param( $args{node} )
+               . qq("><img src="$args{image}" width="75" height="75" )
+               . qq(alt="$args{node}" title="$args{node}" /></a></span>);
+    }
 }
 
 sub cmp_addr {
