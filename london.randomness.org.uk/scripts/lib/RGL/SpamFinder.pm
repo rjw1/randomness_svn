@@ -55,24 +55,15 @@ sub looks_like_spam {
             return 1;
         }
 
-        if ( $name eq "Old Salt Quay, SE16 5QU"
-              && $comment =~ m|multiply\.com| ) {
-            $class->notify_admins( %args, id => "00040",
-                                  reason => "multiply comment on $name" );
+        if ( $comment =~ /online-pharmacy-bs.com/ ) {
+            $class->notify_admins( %args, id => "00035",
+                                   reason => "online-pharmacy-bs.com" );
             return 1;
         }
 
-        if ( $name eq "Old Salt Quay, SE16 5QU"
-              && $comment =~ m|lefora\.com| ) {
+        if ( $host eq "94.23.1.28" ) {
             $class->notify_admins( %args, id => "00041",
-                                  reason => "lefora comment on $name" );
-            return 1;
-        }
-
-       if ( ( $name eq "Dagenham Vue" || $name eq "Green Park Station" )
-              && $comment =~ m|^\w{11},.*https?://| ) {
-            $class->notify_admins( %args, id => "00042",
-                                  reason => "11 char + URL comment on $name" );
+                                  reason => "host is $host" );
             return 1;
         }
 
@@ -95,10 +86,31 @@ sub looks_like_spam {
             return 1;
         }
 
+        if ( $name eq "Indian Ocean, CM16 7ES"
+              && $comment =~ m|^\w{11},.*https?://| ) {
+            $class->notify_admins( %args, id => "00047",
+                                  reason => "11 char + URL comment on $name" );
+            return 1;
+        }
+
         if ( $name eq "Old Salt Quay, SE16 5QU"
-              && $comment =~ m|http://[a-z]+.de.tl| ) {
-            $class->notify_admins( %args, id => "00046",
-                                   reason => "de.tl comment on $name" );
+              && $comment =~ m|http://.*bharatstudent.com| ) {
+            $class->notify_admins( %args, id => "00049",
+                                  reason => "bharatstudent comment on $name" );
+            return 1;
+        }
+
+        if ( $name eq "Old Salt Quay, SE16 5QU"
+              && $comment =~ m|http://.*springnote.com| ) {
+            $class->notify_admins( %args, id => "00050",
+                                  reason => "springnote comment on $name" );
+            return 1;
+        }
+
+        if ( $name eq "Abercorn Arms, HA7 3BU"
+              && $comment =~ m|^\w{11},.*https?://| ) {
+            $class->notify_admins( %args, id => "00051",
+                                  reason => "11 char + URL comment on $name" );
             return 1;
         }
 
