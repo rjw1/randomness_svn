@@ -1,8 +1,14 @@
 [% INCLUDE header.tt page_title = "Missing Metadata - $site_name" %]
 [% INCLUDE banner.tt %]
 <div id="content">
-[% INCLUDE navbar.tt %]
-<div id="maincontent">
+
+[% IF no_nodes_on_map OR !show_map %]
+  [% INCLUDE navbar.tt %]
+  <div id="maincontent">
+[% ELSE %]
+  <div id="maincontent_no_navbar">
+[% END %]
+
 <h2>Pages Missing Metadata</h2>
 
 [% options = [ "category", "locale", "address", "postcode", "phone", "fax",
