@@ -2272,6 +2272,7 @@ sub show_missing_metadata {
             my %this_node = (
                 name => $node,
                 param => $node_param,
+                address => $data{metadata}{address}[0],
                 view_url => "$script_name?$node_param",
                 edit_url => "$script_name?id=$node_param;action=edit",
             );
