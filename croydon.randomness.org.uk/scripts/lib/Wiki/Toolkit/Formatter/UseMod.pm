@@ -296,7 +296,7 @@ sub format {
 
         # Split off address-only pages, and list them last.
         my @addr_only_nodes = sort { $self->cmp_addr( $a, $b ) }
-                              grep( /^[-\d]+ /, @nodes );
+                              grep( /^[-\d]+[ab]? /, @nodes );
         my %tmphash = map { $_ => 1 } @addr_only_nodes;
         my @occupied_nodes = grep( !$tmphash{$_}, @nodes );
                              
