@@ -303,12 +303,19 @@ sub format {
 
         my $return = qq(\n<div class="macro_index_list">\n);
         foreach my $node ( @occupied_nodes, @addr_only_nodes ) {
-            my ( $title, $address ) = split( /, /, $node );
-            $return .= "* "
+            if ( $node =~ /,/ ) {
+                my $title = $node;
+                my $address = $node;
+                $address =~ s/^.*, //;
+                $title =~ s/, $address//;
+                $return .= "* "
                     . $wiki->formatter->format_link( wiki => $wiki,
-                                                     link => "$node|$title" );
-            if ( $address ) {
-                $return .= ", $address";
+                                                     link => "$node|$title" )
+                    . ", $address";
+            } else {
+                $return .= "* "
+                    . $wiki->formatter->format_link( wiki => $wiki,
+                                                     link => "$node" )
             }
             $return .= "\n";
 	}
