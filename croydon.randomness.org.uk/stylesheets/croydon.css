@@ -916,3 +916,39 @@ div.neighbours span.neighbour_thumb, div.neighbours span.this_thumb {
   font-size: 1em;
   font-weight: normal;
 }
+
+/* Front page stuff */
+div#front_page_modules dl {
+  margin: 1em 1em;
+  padding: 0;
+  width: 14em;
+  float: left;
+}
+
+div#front_page_modules dl dt {
+  background-color: #585c7e;
+  color: #e7eeff;
+  padding: .5em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  border-left: 1px solid #131210;
+  border-right: 1px solid #131210;
+  border-top: 1px solid #131210;
+  height: 2em;
+}
+
+div#front_page_modules dl dt a {
+  color: #e7eeff;
+}
+
+div#front_page_modules dl dd {
+  margin: 0 0 1em 0;
+  background: #DBD8D8;
+  padding: 1em .5em;
+  font-style: italic;
+  border-left: 1px solid #131210;
+  border-right: 1px solid #131210;
+  border-bottom: 1px solid #131210;
+  height: 3em;
+}
