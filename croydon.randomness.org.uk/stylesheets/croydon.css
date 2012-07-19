@@ -6,13 +6,27 @@ body {
   font-family: lucida, verdana, arial, sans-serif;
 }
 
+/* Links */
 a {
   color: #3a5c9c;
   font-family: lucida, verdana, arial, sans-serif;
 }
+
 a:visited { color: #446688; }
 a:active  { text-decoration: underline; }
 a:hover   { text-decoration: underline; }
+
+a.external {
+  background: url("http://croydon.randomness.org.uk/static/images/external-link.png") no-repeat scroll right center transparent;
+  padding-right: 13px;
+}
+
+a.photo:before {
+  content: "[";
+}
+a.photo:after {
+  content: "]";
+}
 
 input.form_button, div.cancel_edit a {
   font-weight: bold;
