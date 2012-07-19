@@ -5,6 +5,5 @@
     <input type="submit" value="Search" class="form_button" />
   </form>
   <div id="advanced_search_link">
-    <a href="[% script_url %]search.cgi">See more search options</a>
   </div>
 </div>

@@ -14,22 +14,20 @@
       <h3>[% total_num %] matches found, showing [% first_num %] - [% last_num %]</h3>
     [% END %]
   [% ELSE %]
-  <h2>Search [% site_name %]</h2>
+  <h2>Search the [% site_name %]</h2>
+  <p>To find information on a specific business, just use the search box
+  below.</p>
   [% END %]
 
-  <p><small>
-    Version [% ss_version %].  See the
-    <a href="[% ss_info_url %]">information page</a> for help and more details.
-  </small></p>
-
   <form method="get" action="search.cgi">
+  [% IF dist %]
     <table border="1">
       <tr>
          <th>
            <label for="search_upper">Pages containing text:</label>
          </th>
          <td>
-           <input type="text" name="search" value="[% IF search_terms %][% search_terms %][% END %]" size="50" maxlength="80" id="search_upper" />
+           <input type="text" name="search" value="[% IF search_terms %][% search_terms | html %][% END %]" size="50" maxlength="80" id="search_upper" />
          </td>
        </tr>
       <tr>
@@ -55,6 +53,11 @@
         </td>
       </tr>
     </table>
+  [% ELSE %]
+    <label for="search_upper">Find pages containing text:</label>
+    <input type="text" name="search" value="[% IF search_terms %][% search_terms | html %][% END %]" size="50" maxlength="80" id="search_upper" />
+    <input type="submit" name="go" class="form_button" value="Go" />
+  [% END %]
   </form>
 
   [% IF search_terms OR dist %]
@@ -102,13 +105,13 @@
     [% ELSE %]
       <h2>No Items Matched</h2>
     [% END %]  
-
-  <form method="get" action="search.cgi">
-    <label for="search_lower">Search:</label> 
-    <input type="text" name="search" id="search_lower" value="[% search_terms %]" size="50" maxlength="80" value="Search text" onclick="this.value=''" />
-    <input type="submit" name="go" class="form_button" value="Go" />
-  </form>
   [% END %]
 
+  <p><small>
+    Search version [% ss_version %].  See the
+    <a href="[% ss_info_url %]">information page</a> for help and more details.
+  </small></p>
+
 </div>
+
 [% INCLUDE footer.tt %]
