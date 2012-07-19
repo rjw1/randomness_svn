@@ -306,7 +306,7 @@ sub format {
             if ( $node =~ /,/ ) {
                 my $title = $node;
                 my $address = $node;
-                $address =~ s/^.*, //;
+                $address =~ s/^.*?, //;
                 $title =~ s/, $address//;
                 $return .= "* "
                     . $wiki->formatter->format_link( wiki => $wiki,
