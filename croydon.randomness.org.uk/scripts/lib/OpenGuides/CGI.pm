@@ -524,6 +524,14 @@ sub _make_dropdown_html {
     );
     @options = map { s/^Category //; s/^Locale //; $_ } @options;
     my %labels = map { lc( $_ ) => $_ } @options;
+
+    # Things we don't want for the Croydon Guide dropdowns.
+    delete $labels{"category"};
+    delete $labels{"food and drink"};
+    delete $labels{"locales"};
+    delete $labels{"meta"};
+    delete $labels{"retail shops"};
+
     my @values = sort keys %labels;
     my $default = lc( $args{value} || "");
 
