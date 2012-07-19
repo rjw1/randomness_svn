@@ -320,6 +320,7 @@ sub format {
             $return .= "\n";
 	}
         $return .= "</div>";
+        $return =~ s/%2C/,/gs;
         return $return;
     };
 
