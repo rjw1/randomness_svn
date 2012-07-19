@@ -531,6 +531,7 @@ sub _make_dropdown_html {
     delete $labels{"locales"};
     delete $labels{"meta"};
     delete $labels{"retail shops"};
+    delete $labels{"services"};
 
     my @values = sort keys %labels;
     my $default = lc( $args{value} || "");
