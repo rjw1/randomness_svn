@@ -825,15 +825,15 @@ link like so:
 
 sub make_external_link {
     my ($self, %args) = @_;
-    my ($open, $close) = ( "[", "]" );
-    if ( $args{title} eq $args{url} ) {
-        ($open, $close) = ( "", "" );
+    my $class = "external";
+    if ( $args{title} eq "photo" ) {
+        $class .= " photo";
     }
-    return qq|$open<a href="$args{url}"|
+    return qq|<a href="$args{url}" class="$class"|
            . ( ( $args{url} =~ /qype\.co/ || $args{url} =~ /beerintheevening/
                  ||$args{url} =~ /london-eating\.co\.uk/
                ) ? qq| rel="nofollow" | : "" )
-           . qq|>$args{title}</a>$close|;
+           . qq|>$args{title}</a>|;
 }
 
 =back
