@@ -14,6 +14,7 @@
 	<li><a href="#categories">Recent categories</a></li>
 	<li><a href="[% cgi_url %]?action=show_needing_moderation">Pages needing moderation</a>
 	<li><a href="[% cgi_url %]?action=show_missing_metadata">Pages missing metadata</a>
+        <li><a href="http://maps.google.co.uk/maps/ms?msid=210131270935033819755.0004aa624d73b26f864ea&msa=0" class="external">Boundary map</a></li>
 </ul>
 
 <p>The lists below show the 100 most recently modified nodes.</p>
