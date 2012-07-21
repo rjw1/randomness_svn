@@ -1,4 +1,4 @@
-var centre_lat, centre_long, min_lat, min_long, max_lat, max_long, map, map_div_id;
+var centre_lat, centre_long, min_lat, min_long, max_lat, max_long, map, map_div_id, showing_full_map;
 var positions = [], markers = [];
 
 var gicon = L.Icon.extend( {
@@ -42,6 +42,10 @@ $(
         var bounds = new L.LatLngBounds( new L.LatLng( min_lat, min_long ),
                                          new L.LatLng( max_lat, max_long ) );
         map.fitBounds( bounds );
+      }
+
+      if ( showing_full_map ) {
+        map.setZoom( 16 );
       }
 
       var layersControl = new L.Control.Layers( {
