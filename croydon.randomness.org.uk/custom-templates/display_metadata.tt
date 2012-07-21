@@ -26,12 +26,12 @@
         <span class="metadata_label">Address:</span>
         <span class="adr"><span class="street-address">[% CGI.escapeHTML(address) %]</span>[% IF postcode %], <span class="postal-code">[% CGI.escapeHTML(postcode) %]</span>[% END %]</span>
         [% IF map_link %]
-          (<a href="[% map_link %]">map</a>)
+          (<a href="[% map_link %]" class="external">map</a>)
         [% END %]
         [% IF wgs84_lat AND wgs84_long %]
-          (<a href="http://www.openstreetmap.org/?mlat=[% wgs84_lat %]&mlon=[% wgs84_long %]&zoom=15">osm</a>)
-          (<a href="http://maps.google.co.uk/maps?q=[% FILTER replace( '\s', '+' ) %][% node_name %][% END %]@[% wgs84_lat %],[% wgs84_long %]&z=15">gmap</a>)
-          (<a href="http://maps.google.co.uk/maps?q=[% wgs84_lat %],[% wgs84_long %]&cbll=[% wgs84_lat %],[% wgs84_long %]&layer=c&cbp=12,0,,0,5">streetview</a>)
+          (<a href="http://www.openstreetmap.org/?mlat=[% wgs84_lat %]&mlon=[% wgs84_long %]&zoom=15" class="external">osm</a>)
+          (<a href="http://maps.google.co.uk/maps?q=[% FILTER replace( '\s', '+' ) %][% node_name %][% END %]@[% wgs84_lat %],[% wgs84_long %]&z=15" class="external">gmap</a>)
+          (<a href="http://maps.google.co.uk/maps?q=[% wgs84_lat %],[% wgs84_long %]&cbll=[% wgs84_lat %],[% wgs84_long %]&layer=c&cbp=12,0,,0,5" class="external">streetview</a>)
         [% END %]
       </li>
     [% ELSIF map_link %]
@@ -47,7 +47,7 @@
     [% END %]
     [% IF formatted_website_text %]
       <li class="website_link">
-        <span class="metadata_label">Website:</span> <span class="url">[% formatted_website_text %]</span>
+        <span class="metadata_label">Website:</span> <span class="url">[% formatted_website_text.replace( 'a href', 'a class="external" href' ) %]</span>
       </li>
     [% END %]
     [% IF hours_text %]
