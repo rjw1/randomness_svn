@@ -11,6 +11,12 @@
 
   <div id="maincontent_no_navbar">
 
+  [% IF criteria_title == "Locale Croydon" %]
+    <script type="text/javascript">
+      showing_full_map = 1;
+    </script>
+  [% END %]
+
     <h2>Map of
       [% IF criteria %]
         [% links = [] %]
