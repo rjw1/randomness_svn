@@ -69,7 +69,7 @@
       <ol start="[% first_num %]">
         [% FOREACH result = results %]
           <li>
-            <a href="[% result.url %]"><b>[% result.name %]</b></a>
+            <a href="[% result.url %]"><b>[% result.name | replace( '^Category', 'Category:' ) | replace( '^Locale', 'Locale:' ) %]</b></a>
             [% IF result.score %]
               (score: [% result.score %])
             [% END %]
