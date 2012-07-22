@@ -6,7 +6,7 @@ var gicon = L.Icon.extend( {
     shadowUrl: null,
     iconSize: new L.Point( 32, 32 ),
     iconAnchor: new L.Point( 15, 32 ),
-    popupAnchor: new L.Point( 0, -40 )
+    popupAnchor: new L.Point( 0, -29 )
 } );
 
 var gicon_blue = L.Icon.extend( {
@@ -14,7 +14,7 @@ var gicon_blue = L.Icon.extend( {
     shadowUrl: null,
     iconSize: new L.Point( 32, 32 ),
     iconAnchor: new L.Point( 15, 32 ),
-    popupAnchor: new L.Point( 0, -40 )
+    popupAnchor: new L.Point( 0, -29 )
 } );
 
 $(
