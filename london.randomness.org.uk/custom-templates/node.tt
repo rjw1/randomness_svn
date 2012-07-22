@@ -128,16 +128,17 @@ Would you like to <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]">c
   [% END %]
 
 [% ELSE %]
-<div id="title_edit_link">
-[% UNLESS read_only %]
-<a href="[% full_cgi_url %]?action=edit;id=[% node_param %]" rel="nofollow">Edit this page</a> [% END %]
-</div>
-[% IF 1 %]
-<div id="title_comment_link">
-<a href="[% script_url %]scripts/add-comment2.cgi?id=[% node_param %]" rel="nofollow">Add a comment</a>
-</div>
+
+[% IF username AND !read_only %]
+  <div id="title_edit_link">
+    <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]" rel="nofollow">Edit this page</a>
+  </div>
+  <div id="title_comment_link">
+    <a href="[% script_url %]scripts/add-comment2.cgi?id=[% node_param %]" rel="nofollow">Add a comment</a>
+  </div>
 [% END %]
 </div>
+
 [% INCLUDE display_metadata.tt %]
 
 <!-- NODE CONTENT STARTS -->
@@ -150,7 +151,7 @@ Would you like to <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]">c
   [% INCLUDE custom_node.tt %]
 [% CATCH %]
 [% END %]
-                          
+
 [% INCLUDE location_stuff.tt %]
 
 [% IF (latitude AND longitude) OR (os_x AND os_y) OR (osie_x AND osie_y) %]
@@ -181,6 +182,11 @@ Would you like to <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]">c
   node</a>
   <a href="[% cgi_url %]?id=[% node_param %];format=json">JSON for this
   node</a>
+  [% UNLESS read_only %]
+    <div id="trailing_comment_link">
+      <a href="[% script_url %]scripts/add-comment2.cgi?id=[% node_param %]" rel="nofollow">Send us a comment on this entry</a>
+    </div>
+  [% END %]
   [% IF rss_locale_url %]
     / <a href="[% rss_locale_url %]">RSS feed for this locale</a>
   [% END %]
