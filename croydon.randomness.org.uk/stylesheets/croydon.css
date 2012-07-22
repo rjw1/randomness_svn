@@ -952,3 +952,10 @@ div#front_page_modules dl dd {
   border-bottom: 1px solid #131210;
   height: 3em;
 }
+
+/* Leaflet */
+.leaflet-popup-tip {
+  border: 1px solid #9c9c9c;
+  position: relative;
+  top: -1px;
+}
