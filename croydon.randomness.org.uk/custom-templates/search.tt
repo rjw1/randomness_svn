@@ -15,8 +15,8 @@
     [% END %]
   [% ELSE %]
   <h2>Search the [% site_name %]</h2>
-  <p>To find information on a specific business, just use the search box
-  below.</p>
+  <p>To find information on a specific business, just type its name into the
+  search box below.</p>
   [% END %]
 
   <form method="get" action="search.cgi">
