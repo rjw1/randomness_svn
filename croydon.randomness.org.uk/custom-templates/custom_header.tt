@@ -5,7 +5,3 @@
   <script type="text/javascript"
           src="http://maps.stamen.com/js/tile.stamen.js"></script>
 [% END %]
-<script src="[% config.static_url %]jquery-ui-1.8.19.custom.min.js"
-        type="text/javascript"></script>
-<script src="[% config.static_url %]cgc.js" type="text/javascript"></script>
-<link rel="stylesheet" href="http://croydon.randomness.org.uk/stylesheets/jquery-ui-1.8.19.custom.css" type="text/css" />
