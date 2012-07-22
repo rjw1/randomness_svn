@@ -11,7 +11,7 @@
 
   <div id="maincontent_no_navbar">
 
-  [% IF criteria_title == "Locale Croydon" %]
+  [% IF criteria_title == "Locale Croydon" OR !criteria %]
     <script type="text/javascript">
       showing_full_map = 1;
     </script>
