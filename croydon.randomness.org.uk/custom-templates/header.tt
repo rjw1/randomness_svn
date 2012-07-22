@@ -5,7 +5,7 @@
     <title>[% page_title %]</title>
     <meta name="DC.title" content="[% page_title %]" />
   [% ELSE %]
-    <title>[% node_name %] - [% site_name %]</title>
+    <title>[% node_name| replace( '^Category', 'Category:' ) | replace( '^Locale', 'Locale:' ) %] - [% site_name %]</title>
     <meta name="DC.title" content="[% node_name %] - [% site_name %]" />
   [% END %]
     <meta name="DC.publisher" content="[% site_name %]" />
