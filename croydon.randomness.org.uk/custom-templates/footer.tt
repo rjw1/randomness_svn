@@ -30,13 +30,15 @@ This guide is in read-only mode.
     </p>
     [% IF licence_name %]
       <p>
-        This work is licensed under the 
+        The textual content of this work is licensed under the 
         [% IF licence_url %]
            <a href="[% licence_url %]">[% licence_name %]</a>
 		[% ELSE %]
 			[% licence_name %]
         [% END %]
-        licence
+        licence.  Photographic content remains the property of the original
+        photographer, and is used here either under Creative Commons or by
+        permission.
         [% IF licence_info_url %]
            (<a href="[% licence_info_url %]">more info</a>)
         [% END %]
