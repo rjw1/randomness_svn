@@ -407,9 +407,8 @@ div#journeyplanner_link {
 
 /* The footer that appears on all nodes */
 #footer {
-  font-size: smaller;
-  text-align: right;
-  padding-right: 1em;
+  font-size: 0.8em;
+  padding-left: 1em;
 }
 
 /* The delete-this-page link in the footer */
