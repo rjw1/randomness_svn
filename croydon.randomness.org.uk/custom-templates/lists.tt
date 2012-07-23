@@ -28,7 +28,7 @@
        [% non_existent.join( "; " ) %]</p>
   [% END %]
   [% IF not_updated.size %]
-    <p>Not updated (already been checked this month):
+    <p>Not updated (already been checked in the past two months):
        [% not_updated.join( "; " ) %]</p>
   [% END %]
 [% ELSIF !street %]
