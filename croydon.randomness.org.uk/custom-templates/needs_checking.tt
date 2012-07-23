@@ -1,0 +1,9 @@
+[% INCLUDE header.tt page_title = "Pages needing checking - $site_name" %]
+[% INCLUDE banner.tt %]
+<div id="content">
+<div id="maincontent_no_navbar">
+<h2>Pages needing checking</h2>
+
+[% INCLUDE search_results_leaflet.tt %]
+
+[% INCLUDE footer.tt %]
