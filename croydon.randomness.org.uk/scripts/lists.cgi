@@ -1,12 +1,12 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 use strict;
-use warnings;
 
 use lib qw(
-            /export/home/rgc/perl5/lib/perl5/
-            /export/home/rgc/web/vhosts/croydon.randomness.org.uk/scripts/lib/
+    /export/home/rgc/web/vhosts/croydon.randomness.org.uk/scripts/lib/
+    /export/home/rgc/perl5/lib/perl5/
 );
+use CGC;
 use CGI;
 use OpenGuides;
 use OpenGuides::CGI;
@@ -140,22 +140,15 @@ sub update_and_exit {
 sub update_last_verified {
   my $pagename = shift;
   my %node = $wiki->retrieve_node( $pagename );
-  my $to_edit;
-  my $monthyear = strftime( "%B %Y", localtime );
-  my $div = qq(<div class="last_verified">Existence last checked in)
-             . " $monthyear.</div>";
-  my $re = qr/$div/;
+  my $now = strftime( "%B %Y", localtime );
 
-  my $content = $node{content};
-  if ( $content !~ m|<div class="last_verified"| ) {
-    $content .= "\n\n$div";
-    $to_edit = 1;
-  } elsif ( $content !~ m/$re/ ) {
-    $content =~ s|<div class="last_verified">[^<]*</div>|$div|s;
-    $to_edit = 1;
-  }
+  # If it's been verified in the last two months, do nothing.
+  my $last_checked = CGC->months_since_last_verified( text => $node{content},
+                                                      date => $now );
+  return if $last_checked > -1 && $last_checked < 2;
 
-  return unless $to_edit;
+  my $new_content = CGC->update_last_verified( text => $node{content},
+                                               date => $now );
 
   my %prefs = OpenGuides::CGI->get_prefs_from_cookie( config => $config );
   $node{metadata}{username} = $prefs{username};
@@ -164,7 +157,8 @@ sub update_last_verified {
   $node{metadata}{major_change} = 0;
   $node{metadata}{comment} = "Updated last verified.";
 
-  $wiki->write_node( $pagename, $content, $node{checksum}, $node{metadata} )
+  $wiki->write_node( $pagename, $new_content, $node{checksum},
+                     $node{metadata} )
     or die "Can't write node!";
   return 1;
 }
