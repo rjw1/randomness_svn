@@ -627,12 +627,6 @@ fieldset#additional_information div.edit_form_group {
   clear: both;
 }
 
-/* Additional imformation */
-
-div#fax_group {
-  display: none;
-}
-
 /* Edit page image stuff */
 span.photo_note {
   font-size: 0.8em;
