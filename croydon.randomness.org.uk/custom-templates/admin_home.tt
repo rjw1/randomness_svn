@@ -15,6 +15,7 @@
 	<li><a href="[% cgi_url %]?action=show_needing_moderation">Pages needing moderation</a>
 	<li><a href="[% cgi_url %]?action=show_missing_metadata">Pages missing metadata</a>
 	<li><a href="[% script_url %]scripts/needs-checking.cgi">Pages needing verification</a>
+        <li><a href="[% cgi_url %]?action=show_wanted_pages">Wanted pages</a></li>
         <li><a href="http://maps.google.co.uk/maps/ms?msid=210131270935033819755.0004aa624d73b26f864ea&msa=0" class="external">Boundary map</a></li>
 </ul>
 
