@@ -3,16 +3,28 @@
     <div class="navbar_group_title">Admin:</div>
     <ul>
       <li><a href="[% full_cgi_url %]?action=rc">Recent changes</a></li>
-      [% UNLESS read_only %]
-        <li><a class="edit_page_link" href="[% source_site or full_cgi_url %]?id=[% node_param %];action=edit">Edit this page</a></li>
-      [% END %]
-      <li><a href="[% full_cgi_url %]?action=show_backlinks;id=[% node_param %]">Pages linking to this page</a></li>
-      [% IF enable_page_deletion AND NOT not_deletable %]
-        <li><a href="[% full_cgi_url %]?id=[% node_param %];action=delete">Delete this page</a></li>
-      [% END %]
       <li><a href="[% full_cgi_url %]?action=random">Random page</a></li>
-      <li><a href="[% script_url %]newpage.cgi">Create new page</a></li>
+      [% IF read_only %]
+        <li><a href="[% script_url %]edit/newpage.cgi">Create new page</a></li>
+      [% ELSE %]
+        <li><a href="[% script_url %]newpage.cgi">Create new page</a></li>
+      [% END %]
       <li><a href="[% full_cgi_url %]?action=admin">Admin centre</a></li>
+      [% UNLESS not_deletable %]
+        <li><a href="[% full_cgi_url %]?action=show_backlinks;id=[% node_param %]">Pages linking to this page</a></li>
+        [% IF read_only %]
+          <li><a class="edit_page_link" href="[% script_url %]edit/[% config.script_name %]?id=[% node_param %];action=edit">Edit this page</a></li>
+        [% ELSE %]
+          <li><a class="edit_page_link" href="[% script_url %][% config.script_name %]?id=[% node_param %];action=edit">Edit this page</a></li>
+        [% END %]
+        [% IF enable_page_deletion %]
+          [% IF read_only %]
+            <li><a href="[% script_url %]edit/[% config.script_name %]?id=[% node_param %];action=delete">Delete this page</a></li>
+          [% ELSE %]
+            <li><a href="[% full_cgi_url %]?id=[% node_param %];action=delete">Delete this page</a></li>
+          [% END %]
+        [% END %]
+      [% END %]
     </ul>
   </div>
 [% END %]
