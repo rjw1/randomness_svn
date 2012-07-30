@@ -87,11 +87,15 @@ Would you like to <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]">c
 [% END %]
 </div>
 [% ELSE %]
-<div id="title_edit_link">
-[% UNLESS read_only %]
-<a href="[% full_cgi_url %]?action=edit;id=[% node_param %]">Edit this page</a>
+[% IF is_admin %]
+  <div id="title_edit_link">
+    [% IF read_only %]
+      <a href="[% script_url %]edit/[% config.script_name %]?action=edit;id=[% node_param %]">Edit this page</a>
+    [% ELSE %]
+      <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]">Edit this page</a>
+    [% END %]
+  </div>
 [% END %]
-</div>
 </div>
 [% INCLUDE display_metadata.tt %]
 
