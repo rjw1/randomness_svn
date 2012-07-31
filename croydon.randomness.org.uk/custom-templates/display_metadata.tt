@@ -83,10 +83,12 @@
       <li class="locales_list">
         <span class="metadata_label">Locales:</span>
         [% FOREACH locale = locales %]
-          [% IF locale.url != "" %]
-            <a href="[% locale.url %]" class="addr locality">[% locale.name %]</a>[%- "," UNLESS loop.last %]
-          [% ELSE %]
-            [% locale.name %][%- "," UNLESS loop.last %]
+          [% IF locale.name != "Croydon" %]
+            [% IF locale.url != "" %]
+              <a href="[% locale.url %]" class="addr locality">[% locale.name %]</a>[%- "," UNLESS loop.last %]
+            [% ELSE %]
+              [% locale.name %][%- "," UNLESS loop.last %]
+            [% END %]
           [% END %]
         [% END %]
       </li>
