@@ -7,7 +7,7 @@
     [% IF node_image_copyright %]
       <div id="node_image_copyright">
         [% IF node_image_licence %]
-          <a href="[% node_image_licence %]">&copy;
+          <a href="[% node_image_licence %]">Image &copy;
             [% node_image_copyright %]</a>
         [% ELSE %]
           &copy; [% node_image_copyright %]
