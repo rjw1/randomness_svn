@@ -264,8 +264,8 @@ div#node_image_box
 {
   clear: both;
   float: right;
+  text-align: right;
   padding-left: 0.5em;
-  padding-right: 0.4em;
   padding-bottom: 0.3em;
   color: black;
   font-size: 0.8em;
