@@ -51,6 +51,7 @@ div#body_wrapper {
     margin-left: 5%;
     margin-right: 5%;
     margin-top: 1.5em;
+    margin-bottom: 1em;
   }
 }
 
@@ -309,7 +310,6 @@ div#node_image_copyright a {
 /* The name of a node */
 
 h2.node_name {
-  color: #2d2f41;
   font-style: italic;
   font-size: 1.2em;
   padding-top: 0.5em;
@@ -404,6 +404,7 @@ div#journeyplanner_link {
 #footer {
   font-size: 0.8em;
   padding-left: 1em;
+  padding-bottom: 0.2em;
 }
 
 /* The delete-this-page link in the footer */
