@@ -1,23 +1,23 @@
 /* Global stuff */
 body {
   margin: 0;
-  background: #3a5c9c;
+  background: #7a0088;
   color: #000000;
   font-family: lucida, verdana, arial, sans-serif;
 }
 
 /* Links */
 a {
-  color: #3a5c9c;
+  color: #7a0088;
   font-family: lucida, verdana, arial, sans-serif;
 }
 
-a:visited { color: #446688; }
+a:visited { color: #47004f; }
 a:active  { text-decoration: underline; }
 a:hover   { text-decoration: underline; }
 
 a.external {
-  background: url("http://croydon.randomness.org.uk/static/images/external-link.png") no-repeat scroll right center transparent;
+  background: url("http://croydon.randomness.org.uk/static/images/external-link-purple.png") no-repeat scroll right center transparent;
   padding-right: 13px;
 }
 
@@ -32,7 +32,7 @@ input.form_button, div.cancel_edit a {
   font-weight: bold;
   font-size: 0.9em;
   color: #e7eeff;
-  background: #585c7e;
+  background: #47004f;
   border: 1px solid #000000;
 }
 
@@ -43,7 +43,7 @@ div.cancel_edit a {
 
 /* Main body */
 div#body_wrapper {
-  background: #e7eeff;
+  background: #e3cfe6;
 }
 
 @media only screen and (min-width: 800px) {
@@ -51,26 +51,23 @@ div#body_wrapper {
     margin-left: 5%;
     margin-right: 5%;
     margin-top: 1.5em;
-    border: 1px solid #000;
   }
 }
 
 #banner {
-  padding-left: 0.5em;
   padding-bottom: 0.1em;
   margin-top: -1.35em;
-  background: #585c7e;
+  background: #7a0088;
   color: #fff;
   letter-spacing: 0.1em;
 }
 
 #banner h1 {
   padding-top: 0.5em;
-  padding-left: 0.5em;
 }
 
 #banner a {
-  color: #c0c6dc;
+  color: #e3cfe6;
   font-size: 0.8em;
   text-decoration: none;
   font-weight: normal;
@@ -141,12 +138,10 @@ div.cancel_edit a {
 #navbar {
   float: right;
   color: black;
-  background: #c9daff;
+  background: #e3cfe6;
   width: 20%;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
-  border-left: 1px solid #585c7e;
-  border-bottom: 1px solid #585c7e;
 }
 
 #navbar a {
@@ -165,7 +160,7 @@ div.cancel_edit a {
   font-weight: bold;
   font-size: 0.75em;
   color: #e7eeff;
-  background: #585c7e;
+  background: #47004f;
   padding: 0.4em;
   margin-left: 0.5em;
   margin-right: 0.5em;
@@ -192,7 +187,7 @@ div.cancel_edit a {
 }
 
 #nav_search {
-  color: #585c7e;
+  color: #47004f;
   background: #e7eeff;
   padding-left: 0.2em;
   border: 1px solid #58078E;
@@ -919,8 +914,8 @@ div#front_page_modules dl {
 }
 
 div#front_page_modules dl dt {
-  background-color: #585c7e;
-  color: #e7eeff;
+  background-color: #47004f;
+  color: #e3cfe6;
   padding: .5em;
   font-weight: bold;
   text-align: center;
@@ -932,7 +927,11 @@ div#front_page_modules dl dt {
 }
 
 div#front_page_modules dl dt a {
-  color: #e7eeff;
+  color: #e3cfe6;
+  text-decoration: none;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 div#front_page_modules dl dd {
@@ -951,4 +950,8 @@ div#front_page_modules dl dd {
   border: 1px solid #9c9c9c;
   position: relative;
   top: -1px;
+}
+
+div.leaflet-control a {
+  color: #7a0088;
 }
