@@ -1,4 +1,10 @@
 <div id="banner">
+
+  <div id="about_and_contact">
+    <a href="[% full_cgi_url %]?id=About_Us">About</a>
+    <a href="[% full_cgi_url %]?id=Contact_Us">Contact</a>
+  </div>
+
   [% TRY %]
     [% INCLUDE custom_banner.tt %]
   [% CATCH %]
