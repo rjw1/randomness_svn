@@ -8,6 +8,15 @@
   [% TRY %]
     [% INCLUDE custom_banner.tt %]
   [% CATCH %]
-    <h1><a href="[% home_link %]">[% site_name %]</a></h1>
+    <h1>
+      <a href="[% home_link %]">[% site_name %]</a>
+      [% USE CGI %]
+      [% UNLESS read_only %]
+        [% url = CGI.url( query => 1 ) %]
+        [% IF url.match( '/edit/' ) %]
+          <a href="[% url | replace( '/edit', '' ) | replace( 'keywords=', '' ) %]">[x]</a>
+        [% END %]
+      [% END %]
+    </h1>
   [% END %]
 </div>
