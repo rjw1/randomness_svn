@@ -50,14 +50,14 @@ foreach my $node ( @nodes ) {
   # Only flag things if they've not been checked for 6 months.
   next if $n > -1 && $n < $months;
 
-  # Don't flag things that have the same name and address (these are vacant).
-  my $address = $data{metadata}{address}[0];
-  next if $node eq $address;
+  # Don't flag things that are vacant, or things in the meta category.
+  my %cats = map { lc( $_ ) => 1 } @{ $data{metadata}{category} };
+  next if $cats{vacant} || $cats{meta};
 
   my %this_node = (
     name => $node,
     param => $formatter->node_name_to_node_param( $node ),
-    address => $address,
+    address => $data{metadata}{address}[0],
   );
 
   my ( $wgs84_long, $wgs84_lat )
