@@ -43,7 +43,8 @@ div.cancel_edit a {
 
 /* Main body */
 div#body_wrapper {
-  background: #e3cfe6;
+#  background: #e3cfe6;
+  background: #e4d8e6;
 }
 
 @media only screen and (min-width: 800px) {
@@ -53,6 +54,14 @@ div#body_wrapper {
     margin-top: 1.5em;
     margin-bottom: 1em;
   }
+}
+
+#about_and_contact {
+  float: right;
+}
+
+#about_and_contact a {
+  padding-left: 1.5em;
 }
 
 #banner {
@@ -139,7 +148,8 @@ div.cancel_edit a {
 #navbar {
   float: right;
   color: black;
-  background: #e3cfe6;
+#  background: #e3cfe6;
+  background: #e4d8e6;
   width: 20%;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
@@ -189,7 +199,7 @@ div.cancel_edit a {
 
 #nav_search {
   color: #47004f;
-  background: #e7eeff;
+  background: #e4d8e6;
   padding-left: 0.2em;
   border: 1px solid #58078E;
 }
@@ -459,6 +469,14 @@ div#node_map_canvas {
   height: 200px;
   border: thin solid black;
   margin-top: 1em;
+}
+
+div#map_links {
+  clear: both;
+  float: right;
+  width: 240px;
+  padding-top: 0.25em;
+  font-size: 0.7em;
 }
 
 /* Create new page stuff */
@@ -938,6 +956,8 @@ div#front_page_modules dl dt a {
 div#front_page_modules dl dd {
   margin: 0 0 1em 0;
   background: #DBD8D8;
+#  background: #e3cfe6;
+#  background: #e4d8e6;
   padding: 1em .5em;
   font-style: italic;
   border-left: 1px solid #131210;
