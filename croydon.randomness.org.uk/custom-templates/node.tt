@@ -50,6 +50,17 @@
   [% END %]
 [% END %]
 
+<div id="map_links">
+  [% IF map_link %]
+    <a href="[% map_link %]" class="external">streetmap</a>
+  [% END %]
+  [% IF wgs84_lat AND wgs84_long %]
+    <a href="http://www.openstreetmap.org/?mlat=[% wgs84_lat %]&mlon=[% wgs84_long %]&zoom=15" class="external">osm</a>
+    <a href="http://maps.google.co.uk/maps?q=[% FILTER replace( '\s', '+' ) %][% node_name %][% END %]@[% wgs84_lat %],[% wgs84_long %]&z=15" class="external">gmap</a>
+    <a href="http://maps.google.co.uk/maps?q=[% wgs84_lat %],[% wgs84_long %]&cbll=[% wgs84_lat %],[% wgs84_long %]&layer=c&cbp=12,0,,0,5" class="external">streetview</a>
+  [% END %]
+</div>
+
 [% INCLUDE node_image.tt %]
 </div>
 
