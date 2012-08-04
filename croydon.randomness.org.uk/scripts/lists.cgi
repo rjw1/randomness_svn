@@ -66,7 +66,7 @@ foreach my $locale ( sort @locales ) {
     }
     my $number = $address;
     $number =~ s/ $locale$//;
-    if ( $address !~ m/$number $locale/ ) {
+    if ( $address !~ m/$number $locale/ || $q->param( "nosplit" ) ) {
       $type = "other";
     } elsif ( $number =~ /[13579][a-d]?$/ ) {
       $type = "odd";
@@ -84,6 +84,9 @@ foreach my $locale ( sort @locales ) {
   @odds = sort { addr_sort( $a->{number}, $b->{number}, $dir ) } @odds;
   @evens = sort { addr_sort( $a->{number}, $b->{number}, $dir ) } @evens;
   @others = sort {$a->{address} cmp $b->{address} } @others;
+  if ( $q->param("nosplit") ) {
+    @others = sort { addr_sort( $a->{number}, $b->{number}, $dir ) } @others;
+  }
 
   push @streets, { name => $locale, odds => \@odds, evens => \@evens,
                    others => \@others };
