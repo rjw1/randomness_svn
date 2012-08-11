@@ -43,21 +43,23 @@
   </table>
 </div>
 
-<div class="checklist_other_numbers">
-  <table class="checklist">
-    <tr>
-      <th class="checklist_number">Other addresses</th>
-      <th class="checklist_status">Status</th>
-    </tr>
-
-    [% FOREACH node IN street.others %]
+[% IF street.others.size %]
+  <div class="checklist_other_numbers">
+    <table class="checklist">
       <tr>
-        <td class="checklist_address">[% node.name | html %]</td>
-        <td class="checklist_status">&nbsp;</td>
+        <th class="checklist_number">Other addresses</th>
+        <th class="checklist_status">Status</th>
       </tr>
-    [% END %]
-  </table>
-</div>
+
+      [% FOREACH node IN street.others %]
+        <tr>
+          <td class="checklist_address">[% node.name | html %]</td>
+          <td class="checklist_status">&nbsp;</td>
+        </tr>
+      [% END %]
+    </table>
+  </div>
+[% END %]
   
 [% END %]
 
