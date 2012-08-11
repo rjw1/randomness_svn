@@ -192,7 +192,7 @@ sub addr_sort {
   my ( $c, $d, $dir ) = @_;
   foreach ( ( $c, $d ) ) {
     my $flag;
-    s/2nd Floor, Woolwich House, //;
+    s/^.*Woolwich House, //;
     s/11-12 Suffolk House,/70.11/;
     s/1-3 Suffolk House,/70.01/;
     s/1(\d)[a-d]? Suffolk House,/70.1$1/;
