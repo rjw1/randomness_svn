@@ -78,10 +78,14 @@ foreach my $locale ( sort @locales ) {
     } else {
       $type = "even";
     }
-    push @nodes, { name => $name,
-                   address => $address,
-                   number => $number,
-                   type => $type };
+    if ( $address =~ /Norfolk House/ ) {
+      $type = "odd";
+    }
+    my $info = { name => $name,
+                 address => $address,
+                 number => $number,
+                 type => $type };
+    push @nodes, $info;
   }
   my @odds   = grep { $_->{type} eq "odd" }   @nodes;
   my @evens  = grep { $_->{type} eq "even" }  @nodes;
@@ -187,6 +191,13 @@ sub update_last_verified {
 sub addr_sort {
   my ( $c, $d, $dir ) = @_;
   foreach ( ( $c, $d ) ) {
+    my $flag;
+    s/2nd Floor, Woolwich House, //;
+    s/11-12 Suffolk House,/70.11/;
+    s/1-3 Suffolk House,/70.01/;
+    s/1(\d)[a-d]? Suffolk House,/70.1$1/;
+    s/(\d)[a-d]? Suffolk House,/70.0$1/;
+    s/(\d+)[a-d]? Norfolk House,/69.$1/;
     s/-.*$//;
     s/[a-d]$//;
   }
