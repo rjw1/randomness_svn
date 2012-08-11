@@ -29,9 +29,14 @@ my $dir = $q->param( "dir" );
 if ( !$dir || $dir ne "desc" ) {
   $dir = "asc";
 }
+my $split = $q->param( "split" );
 
 my $format = $q->param( "format" ) || "";
-if ( $format ne "print" ) {
+if ( !$format || $format ne "print" ) {
+  $format = "form";
+}
+
+if ( $format eq "form" ) {
   $tt_vars{streets_box} = make_streets_box();
   # Only one street at a time if we're not doing the printable version.
   my @streets = sort keys %wanted;
@@ -66,7 +71,7 @@ foreach my $locale ( sort @locales ) {
     }
     my $number = $address;
     $number =~ s/ $locale$//;
-    if ( $address !~ m/$number $locale/ || $q->param( "nosplit" ) ) {
+    if ( $address !~ m/$number $locale/ || !$split ) {
       $type = "other";
     } elsif ( $number =~ /[13579][a-d]?$/ ) {
       $type = "odd";
@@ -84,7 +89,7 @@ foreach my $locale ( sort @locales ) {
   @odds = sort { addr_sort( $a->{number}, $b->{number}, $dir ) } @odds;
   @evens = sort { addr_sort( $a->{number}, $b->{number}, $dir ) } @evens;
   @others = sort {$a->{address} cmp $b->{address} } @others;
-  if ( $q->param("nosplit") ) {
+  if ( !$split ) {
     @others = sort { addr_sort( $a->{number}, $b->{number}, $dir ) } @others;
   }
 
@@ -102,6 +107,19 @@ sub output_and_exit {
   my %prefs = OpenGuides::CGI->get_prefs_from_cookie( config => $config );
   $tt_vars{username} = $prefs{username};
   $tt_vars{cgi_url} = $q->url();
+
+  $tt_vars{dir_box} = $q->radio_group(
+      -name => "dir",
+      -values => [ "asc", "desc" ],
+      -labels => { asc => "ascending", desc => "descending" } );
+
+  $tt_vars{split_box} = $q->checkbox(
+      -name => "split", -value => 1, -label => "" );
+
+  $tt_vars{format_box} = $q->radio_group(
+      -name => "format",
+      -values => [ "form", "print" ],
+      -labels => { print => "printable", form => "interactive form" } );
 
   my $custom_template_path = $config->custom_template_path || "";
   my $template_path = $config->template_path;
