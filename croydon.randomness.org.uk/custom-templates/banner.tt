@@ -14,7 +14,7 @@
       [% UNLESS read_only %]
         [% url = CGI.url( query => 1 ) %]
         [% IF url.match( '/edit/' ) %]
-          <a href="[% url | replace( '/edit', '' ) | replace( 'keywords=', '' ) %]">[x]</a>
+          <a href="[% url | replace( '/edit', '' ) | replace( 'keywords=', '' ) | replace( '%2C', ',' ) %]">[x]</a>
         [% END %]
       [% END %]
     </h1>
