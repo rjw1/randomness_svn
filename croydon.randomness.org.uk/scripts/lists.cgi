@@ -85,6 +85,18 @@ foreach my $locale ( sort @locales ) {
       $number = 95.5;
       $type = "odd";
     }
+    if ( $name eq "Natwest, 1 High Street" ) {
+      $type = "even";
+      $number = 0.5;
+    }
+    if ( $name eq "Allders, 2 North End" ) {
+      $type = "odd";
+      $number = 1;
+    }
+    if ( $name eq "East Croydon Station" ) {
+      $type = "odd";
+      $number = 99;
+    }
     my $info = { name => $name,
                  address => $address,
                  number => $number,
