@@ -85,7 +85,7 @@ foreach my $locale ( sort @locales ) {
       $number = 95.5;
       $type = "odd";
     }
-    if ( $name eq "Natwest, 1 High Street" ) {
+    if ( $name eq "Natwest, 1 High Street" && $locale eq "George Street" ) {
       $type = "even";
       $number = 0.5;
     }
@@ -96,6 +96,11 @@ foreach my $locale ( sort @locales ) {
     if ( $name eq "East Croydon Station" ) {
       $type = "odd";
       $number = 99;
+    }
+    if ( $name eq "Spreadeagle, 39-41 Katharine Street"
+         && $locale eq "High Street" ) {
+      $type = "odd";
+      $number = 43;
     }
     my $info = { name => $name,
                  address => $address,
@@ -208,6 +213,9 @@ sub addr_sort {
   my ( $c, $d, $dir ) = @_;
   foreach ( ( $c, $d ) ) {
     s/^.*Woolwich House, //;
+    s/^.*Grants Building, //;
+    s/^.*The Arcade, //;
+    s/^.*Boswell Cottage, //;
     s/11-12 Suffolk House,/70.11/;
     s/1-3 Suffolk House,/70.01/;
     s/1(\d)[a-d]? Suffolk House,/70.1$1/;
