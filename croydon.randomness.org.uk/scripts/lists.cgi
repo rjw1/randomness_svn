@@ -81,6 +81,10 @@ foreach my $locale ( sort @locales ) {
     if ( $address =~ /Norfolk House/ ) {
       $type = "odd";
     }
+    if ( $name eq "Croydon Fruits And Vegetables, George Street" ) {
+      $number = 95.5;
+      $type = "odd";
+    }
     my $info = { name => $name,
                  address => $address,
                  number => $number,
@@ -191,7 +195,6 @@ sub update_last_verified {
 sub addr_sort {
   my ( $c, $d, $dir ) = @_;
   foreach ( ( $c, $d ) ) {
-    my $flag;
     s/^.*Woolwich House, //;
     s/11-12 Suffolk House,/70.11/;
     s/1-3 Suffolk House,/70.01/;
