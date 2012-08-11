@@ -9,7 +9,7 @@
 [% INCLUDE navbar.tt %]
 <div id="maincontent">
   [% IF search_terms %]
-  <h2>Search Results for <em>[% search_terms %]</em></h2>
+  <h2>Search results for <em>[% search_terms %]</em></h2>
     [% IF results.size %]
       <h3>[% total_num %] matches found, showing [% first_num %] - [% last_num %]</h3>
     [% END %]
@@ -104,6 +104,7 @@
 
     [% ELSE %]
       <h2>No Items Matched</h2>
+      <p>(The <a href="wiki.cgi?FAQ">FAQ</a> might explain why!)</p>
     [% END %]  
   [% END %]
 
