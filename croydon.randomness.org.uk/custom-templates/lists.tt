@@ -12,7 +12,10 @@
 <body>
 
 <form action="[% cgi_url %]" method="get">
-[% streets_box %]
+Street: [% streets_box %]<br />
+Direction of numbers: [% dir_box %]<br />
+Split into odd and even numbers: [% split_box %]<br />
+Output format: [% format_box %]<br />
 <input type="submit" value="Get addresses" />
 </form>
 
