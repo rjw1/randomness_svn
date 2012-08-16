@@ -11,9 +11,9 @@
       OR hours_text OR map_link %] 
   <ul id="general_metadata">
 
-    [% IF phone AND 0 %]
+    [% IF phone %]
       <li class="telephone">
-        <span class="metadata_label">Telephone:</span> <span class="tel">[% CGI.escapeHTML(phone) %]</span>
+        <span class="metadata_label">Phone number:</span> <span class="tel">[% CGI.escapeHTML(phone) %]</span>
       </li>
     [% END %]
     [% IF address %]
@@ -44,7 +44,7 @@
     [% END %]
     [% IF hours_text %]
       <li class="opening_hours">
-        <span class="metadata_label">Opening Hours:</span>
+        <span class="metadata_label">Opening times/hours:</span>
         [% IF ( otck = hours_text.match( '^http://(?:www\.)?opening-times.co.uk/([-0-9a-z]+)$' ) ) %]
           <a href="http://www.opening-times.co.uk/[% otck.first %]">see opening-times.co.uk</a>
         [% ELSE %]
