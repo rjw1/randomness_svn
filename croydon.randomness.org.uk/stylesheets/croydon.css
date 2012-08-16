@@ -9,7 +9,6 @@ body {
 /* Links */
 a {
   color: #7a0088;
-  font-family: lucida, verdana, arial, sans-serif;
 }
 
 a:visited { color: #47004f; }
@@ -69,7 +68,6 @@ div#body_wrapper {
   margin-top: -1.35em;
   background: #7a0088;
   color: #fff;
-  letter-spacing: 0.1em;
 }
 
 #banner h1 {
@@ -78,9 +76,10 @@ div#body_wrapper {
 
 #banner a {
   color: #e3cfe6;
-  font-size: 0.8em;
+  font-family: calibri, lucida, verdana, arial, sans-serif;
   text-decoration: none;
   font-weight: normal;
+  letter-spacing: 0.01em;
 }
 
 #banner h1 a:active { text-decoration: none; }
@@ -321,8 +320,8 @@ div#node_image_copyright a {
 
 h2.node_name {
   font-style: italic;
-  font-size: 1.2em;
-  padding-top: 0.5em;
+  font-family: calibri, lucida, verdana, arial, sans-serif;
+  font-size: 1.5em;
   margin-bottom: 0.2em;
 }
 
