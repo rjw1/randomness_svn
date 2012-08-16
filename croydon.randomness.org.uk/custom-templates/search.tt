@@ -57,6 +57,9 @@
     <label for="search_upper">Find pages containing text:</label>
     <input type="text" name="search" value="[% IF search_terms %][% search_terms | html %][% END %]" size="50" maxlength="80" id="search_upper" />
     <input type="submit" name="go" class="form_button" value="Go" />
+    [% IF !search_terms %]
+      <p>Alternatively, maybe you're interested in <a href="http://croydon.randomness.org.uk/wiki.cgi?Category_Food_And_Drink">food &amp; drink</a>, <a href="http://croydon.randomness.org.uk/wiki.cgi?Category_Retail_Shops">shopping</a>, <a href="http://croydon.randomness.org.uk/wiki.cgi?Category_Culture_And_Entertainment">culture &amp; entertainment</a>, or <a href="http://croydon.randomness.org.uk/wiki.cgi?Category_Services">services</a>.</p>
+    [% END %]
   [% END %]
   </form>
 
@@ -107,11 +110,6 @@
       <p>(The <a href="wiki.cgi?FAQ">FAQ</a> might explain why!)</p>
     [% END %]  
   [% END %]
-
-  <p><small>
-    Search version [% ss_version %].  See the
-    <a href="[% ss_info_url %]">information page</a> for help and more details.
-  </small></p>
 
 </div>
 
