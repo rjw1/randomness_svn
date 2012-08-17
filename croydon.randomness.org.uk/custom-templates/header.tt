@@ -1,3 +1,5 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="[% language %]">
 <head profile="http://a9.com/-/spec/opensearch/1.1/">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -13,9 +15,13 @@
   [% IF contact_email %]
     <link rev="made" href="mailto:[% contact_email %]" />
   [% END %]
-  [% IF summary %]
+
+  [% IF page_description %]
+    <meta name="description" content="[% page_description %]" />
+  [% ELSIF summary %]
     <meta name="description" content="[% summary %]" />
   [% END %]
+
   [% IF (categories.size AND categories.size > 0)
      OR (locales.size AND locales.size > 0) %]
     <meta name="keywords" content="[% IF categories.size AND
@@ -33,7 +39,7 @@ locales.size > 0 %][% FOREACH locale = locales %][% locale.name %][%-
   [% IF config.use_leaflet %]
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.3.1/leaflet.css" />
     <!--[if lte IE 8]>
-      <link rel="stylesheet" href="http://code.leafletjs.com/leaflet-0.3.1/leaflet.ie.css" />
+      <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.3.1/leaflet.ie.css" />
     <![endif]-->
   [% END %]
 

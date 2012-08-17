@@ -29,8 +29,8 @@
     on map!</p>
   [% ELSE %]
     <span id="map_index_no_js">
-      <p>Sorry! JavaScript is required to view the map - you may prefer to
-      <a href="[% feed_base %]">view the results as a list</a> instead.</p>
+      Sorry! JavaScript is required to view the map - you may prefer to
+      <a href="[% feed_base %]">view the results as a list</a> instead.
     </span>
 
     <script type="text/javascript">

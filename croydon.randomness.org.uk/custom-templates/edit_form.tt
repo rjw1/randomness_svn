@@ -197,6 +197,26 @@
         [% END %]
       </div>
 
+      <div class="edit_form_group" id="phone_group">
+        [% IF conflict %]
+          <label for="phone">Current phone:</label>
+        [% ELSE %]
+          <label for="phone">Phone:</label>
+        [% END %]
+        <div class="edit_box">
+          <input type="text" size="50" id="phone" name="phone"
+           value="[% phone %]" />
+        </div>
+        [% IF conflict %]
+          <div class="conflict_group">
+            <label>Your phone:</label>
+            <div class="conflict_box">
+              [% CGI.escapeHTML(new_phone) %]
+            </div>
+          </div>
+        [% END %]
+      </div>
+
       <div class="edit_form_group" id="hours_group">
         <label for="hours">
           [% IF conflict %]
