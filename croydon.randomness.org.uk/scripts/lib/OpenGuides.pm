@@ -14,7 +14,7 @@ use URI::Escape;
 
 use vars qw( $VERSION );
 
-$VERSION = '0.69dev';
+$VERSION = '0.69';
 
 =head1 NAME
 
@@ -1060,6 +1060,13 @@ sub show_index {
             $tt_vars{criteria} = \@criteria;
             $tt_vars{not_editable} = 1;
         }
+
+        $tt_vars{page_description} =
+            OpenGuides::Utils->get_index_page_description(
+                format => $args{format} || "",
+                criteria => \@criteria,
+            );
+
         my $feed_base = $self->config->script_url
                         . $self->config->script_name . "?action=index";
         foreach my $criterion ( @criteria ) {
