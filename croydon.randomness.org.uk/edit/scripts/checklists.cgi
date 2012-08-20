@@ -105,6 +105,58 @@ foreach my $locale ( sort @locales ) {
       $number = 43;
     }
 
+    # London Road
+    if ( $locale eq "London Road" ) {
+      if ( $name eq "Molbee Motors, 1 Kidderminster Road" ) {
+        $type = "even" if $split;
+        $number = 180;
+      }
+      if ( $name eq "West Croydon Station" ) {
+        $type = "even" if $split;
+        $number = 8.9;
+      }
+      if ( $name eq "Road Runners, 174 North End" ) {
+        $type = "even" if $split;
+        $number = 8.8;
+      }
+      if ( $name eq "Sade's, 172 North End" ) {
+        $type = "even" if $split;
+        $number = 8.7;
+      }
+      if ( $name eq "Computer Repairs, 170 North End" ) {
+        $type = "even" if $split;
+        $number = 8.6;
+      }
+      if ( $name eq "H Purchen, 168 North End" ) {
+        $type = "even" if $split;
+        $number = 8.5;
+      }
+      if ( $name eq "Maplin, 166 North End" ) {
+        $type = "even" if $split;
+        $number = 8.4;
+      }
+      if ( $name eq "UCKG, 12-14 London Road" ) {
+        $type = "even" if $split;
+        $number = 15;
+      }
+      if ( $name eq "Zam Call, 181 North End" ) {
+        $type = "odd" if $split;
+        $number = 0.9;
+      }
+      if ( $name eq "Clearance Outlet, 177-179 North End" ) {
+        $type = "odd" if $split;
+        $number = 0.8;
+      }
+      if ( $name eq "175 North End" ) {
+        $type = "odd" if $split;
+        $number = 0.7;
+      }
+      if ( $name eq "Anadolu Kiraathanesi/Peri Community Centre, London Road" ) {
+        $type = "odd" if $split;
+        $number = 173;
+      }
+    }
+
     my $info = { name => $name,
                  address => $address,
                  number => $number,
