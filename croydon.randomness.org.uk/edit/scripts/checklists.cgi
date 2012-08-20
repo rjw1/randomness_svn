@@ -78,36 +78,40 @@ foreach my $locale ( sort @locales ) {
     } else {
       $type = "even";
     }
+
+    # Tweaks for individual addresses.
     if ( $address =~ /Norfolk House/ ) {
-      $type = "odd";
+      $type = "odd" if $split;
     }
     if ( $name eq "Croydon Fruits And Vegetables, George Street" ) {
       $number = 95.5;
-      $type = "odd";
+      $type = "odd" if $split;
     }
     if ( $name eq "Natwest, 1 High Street" && $locale eq "George Street" ) {
-      $type = "even";
+      $type = "even" if $split;
       $number = 0.5;
     }
     if ( $name eq "Allders, 2 North End" ) {
-      $type = "odd";
+      $type = "odd" if $split;
       $number = 1;
     }
     if ( $name eq "East Croydon Station" ) {
-      $type = "odd";
+      $type = "odd" if $split;
       $number = 99;
     }
     if ( $name eq "Spreadeagle, 39-41 Katharine Street"
          && $locale eq "High Street" ) {
-      $type = "odd";
+      $type = "odd" if $split;
       $number = 43;
     }
+
     my $info = { name => $name,
                  address => $address,
                  number => $number,
                  type => $type };
     push @nodes, $info;
   }
+
   my @odds   = grep { $_->{type} eq "odd" }   @nodes;
   my @evens  = grep { $_->{type} eq "even" }  @nodes;
   my @others = grep { $_->{type} eq "other" } @nodes;
@@ -188,10 +192,11 @@ sub update_last_verified {
   my %node = $wiki->retrieve_node( $pagename );
   my $now = strftime( "%B %Y", localtime );
 
-  # If it's been verified in the last two months, do nothing.
+  # If it's already been verified this month, do nothing.
   my $last_checked = CGC->months_since_last_verified( text => $node{content},
                                                       date => $now );
-  return if $last_checked > -1 && $last_checked < 2;
+#  return if $last_checked > -1 && $last_checked < 2;
+  return unless $last_checked;
 
   my $new_content = CGC->update_last_verified( text => $node{content},
                                                date => $now );
