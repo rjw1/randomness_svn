@@ -151,9 +151,41 @@ foreach my $locale ( sort @locales ) {
         $type = "odd" if $split;
         $number = 0.7;
       }
-      if ( $name eq "Anadolu Kiraathanesi/Peri Community Centre, London Road" ) {
+      if ( $name eq
+                 "Anadolu Kiraathanesi/Peri Community Centre, London Road" ) {
         $type = "odd" if $split;
         $number = 173;
+      }
+    }
+
+    # South End
+    if ( $locale eq "South End" ) {
+      if ( $name eq "Croydon Jewellery School, 22 South End" ) {
+        $number = 22;
+      }
+      if ( $name eq "Scream Studios, 20a South End" ) {
+        $number = 20.5;
+      }
+      if ( $name eq "Desi Hut (CLOSED), 38a South End" ) {
+        $number = 36.5;
+      }
+      if ( $name eq "Jacksons Property Services, 82-84 South End" ) {
+        $number = 84;
+      }
+      if ( $name eq "MSC/Modern Sports Classics (CLOSED), 96b South End" ) {
+        $number = 96.1;
+      }
+      if ( $name eq "Keepers, 96a South End" ) {
+        $number = 96.2;
+      }
+      if ( $name eq "Sovereign Cars, 96a South End" ) {
+        $number = 96.3;
+      }
+      if ( $name eq "Kwintessential, 96d South End" ) {
+        $number = 96.4;
+      }
+      if ( $name eq "Croydon Cosmetic Clinic, 98a South End" ) {
+        $number = 98.5;
       }
     }
 
