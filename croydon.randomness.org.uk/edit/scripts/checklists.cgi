@@ -99,10 +99,37 @@ foreach my $locale ( sort @locales ) {
       $type = "odd" if $split;
       $number = 99;
     }
-    if ( $name eq "Spreadeagle, 39-41 Katharine Street"
-         && $locale eq "High Street" ) {
-      $type = "odd" if $split;
-      $number = 43;
+
+    # High Street
+    if ( $locale eq "High Street" ) {
+      if ( $name eq "Spreadeagle, 39-41 Katharine Street" ) {
+        $type = "odd" if $split;
+        $number = 43;
+      }
+      if ( $name eq "Tulsi ApartHotel, 256a High Street" ) {
+        $number = 256.5;
+      }
+      if ( $name eq "Caprice, 108a High Street" ) {
+        $number = 108.5;
+      }
+      if ( $name eq "Soulful Cellar, 90b High Street" ) {
+        $number = 90.5;
+      }
+      if ( $name eq "Ponte Nuovo, 80-88 High Street" ) {
+        $number = 88;
+      }
+      if ( $name eq "Caffe Del Ponte, 80-88 High Street" ) {
+        $number = 80;
+      }
+      if ( $name eq "Streeter Marshall, 78a High Street" ) {
+        $number = 78.5;
+      }
+      if ( $name eq "Quick Stop Food And Wine, 76a High Street" ) {
+        $number = 76.5;
+      }
+      if ( $name eq "Petit Cafe, 74a High Street" ) {
+        $number = 74.5;
+      }
     }
 
     # London Road
