@@ -2,19 +2,23 @@ var centre_lat, centre_long, min_lat, min_long, max_lat, max_long, map, map_div_
 var positions = [], markers = [];
 
 var gicon = L.Icon.extend( {
-    iconUrl: 'http://maps.google.com/mapfiles/ms/micons/red-dot.png',
-    shadowUrl: null,
-    iconSize: new L.Point( 32, 32 ),
-    iconAnchor: new L.Point( 15, 32 ),
-    popupAnchor: new L.Point( 0, -29 )
+    options: {
+      iconUrl: 'http://maps.google.com/mapfiles/ms/micons/red-dot.png',
+      shadowUrl: null,
+      iconSize: new L.Point( 32, 32 ),
+      iconAnchor: new L.Point( 15, 32 ),
+      popupAnchor: new L.Point( 0, -29 )
+    }
 } );
 
 var gicon_blue = L.Icon.extend( {
-    iconUrl: 'http://maps.google.com/mapfiles/ms/micons/blue-dot.png',
-    shadowUrl: null,
-    iconSize: new L.Point( 32, 32 ),
-    iconAnchor: new L.Point( 15, 32 ),
-    popupAnchor: new L.Point( 0, -29 )
+    options: {
+      iconUrl: 'http://maps.google.com/mapfiles/ms/micons/blue-dot.png',
+      shadowUrl: null,
+      iconSize: new L.Point( 32, 32 ),
+      iconAnchor: new L.Point( 15, 32 ),
+      popupAnchor: new L.Point( 0, -29 )
+    }
 } );
 
 $(
