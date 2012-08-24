@@ -1,6 +1,7 @@
 /*
  * Google layer using Google Maps API
  */
+(function (google, L) {
 
 L.Google = L.Class.extend({
 	includes: L.Mixin.Events,
@@ -14,14 +15,17 @@ L.Google = L.Class.extend({
 		attribution: '',
 		opacity: 1,
 		continuousWorld: false,
-		noWrap: false,
+		noWrap: false
 	},
 
-	// Possible types: SATELLITE, ROADMAP, HYBRID
+	// Possible types: SATELLITE, ROADMAP, HYBRID, TERRAIN
 	initialize: function(type, options) {
 		L.Util.setOptions(this, options);
 
-		this._type = window.google.maps.MapTypeId[type || 'SATELLITE'];
+		this._ready = google.maps.Map != undefined;
+		if (!this._ready) L.Google.asyncWait.push(this);
+
+		this._type = type || 'SATELLITE';
 	},
 
 	onAdd: function(map, insertAtTheBottom) {
@@ -39,6 +43,8 @@ L.Google = L.Class.extend({
 		map.on('move', this._update, this);
 		//map.on('moveend', this._update, this);
 
+		map._controlCorners['bottomright'].style.marginBottom = "1em";
+
 		this._reset();
 		this._update();
 	},
@@ -50,6 +56,7 @@ L.Google = L.Class.extend({
 		this._map.off('viewreset', this._resetCallback, this);
 
 		this._map.off('move', this._update, this);
+		map._controlCorners['bottomright'].style.marginBottom = "0em";
 		//this._map.off('moveend', this._update, this);
 	},
 
@@ -64,31 +71,37 @@ L.Google = L.Class.extend({
 		}
 	},
 
+	setElementSize: function(e, size) {
+		e.style.width = size.x + "px";
+		e.style.height = size.y + "px";
+	},
+
 	_initContainer: function() {
 		var tilePane = this._map._container,
 			first = tilePane.firstChild;
 
 		if (!this._container) {
 			this._container = L.DomUtil.create('div', 'leaflet-google-layer leaflet-top leaflet-left');
-			this._container.id = "_GMapContainer";
+			this._container.id = "_GMapContainer_" + L.Util.stamp(this);
+			this._container.style.zIndex = "auto";
 		}
 
 		if (true) {
 			tilePane.insertBefore(this._container, first);
 
 			this.setOpacity(this.options.opacity);
-			var size = this._map.getSize();
-			this._container.style.width = size.x;
-			this._container.style.height = size.y;
+			this.setElementSize(this._container, this._map.getSize());
 		}
 	},
 
 	_initMapObject: function() {
-		this._google_center = new window.google.maps.LatLng(0, 0);
-		var map = new window.google.maps.Map(this._container, {
+		if (!this._ready) return;
+		this._google_center = new google.maps.LatLng(0, 0);
+		var map = new google.maps.Map(this._container, {
 		    center: this._google_center,
 		    zoom: 0,
-		    mapTypeId: this._type,
+		    tilt: 0,
+		    mapTypeId: google.maps.MapTypeId[this._type],
 		    disableDefaultUI: true,
 		    keyboardShortcuts: false,
 		    draggable: false,
@@ -98,9 +111,9 @@ L.Google = L.Class.extend({
 		});
 
 		var _this = this;
-		this._reposition = window.google.maps.event.addListenerOnce(map, "center_changed", 
+		this._reposition = google.maps.event.addListenerOnce(map, "center_changed",
 			function() { _this.onReposition(); });
-	
+
 		map.backgroundColor = '#ff0000';
 		this._google = map;
 	},
@@ -114,17 +127,18 @@ L.Google = L.Class.extend({
 	},
 
 	_update: function() {
+		if (!this._google) return;
 		this._resize();
 
 		var bounds = this._map.getBounds();
 		var ne = bounds.getNorthEast();
 		var sw = bounds.getSouthWest();
-		var google_bounds = new window.google.maps.LatLngBounds(
-			new window.google.maps.LatLng(sw.lat, sw.lng),
-			new window.google.maps.LatLng(ne.lat, ne.lng)
+		var google_bounds = new google.maps.LatLngBounds(
+			new google.maps.LatLng(sw.lat, sw.lng),
+			new google.maps.LatLng(ne.lat, ne.lng)
 		);
 		var center = this._map.getCenter();
-		var _center = new window.google.maps.LatLng(center.lat, center.lng);
+		var _center = new google.maps.LatLng(center.lat, center.lng);
 
 		this._google.setCenter(_center);
 		this._google.setZoom(this._map.getZoom());
@@ -136,12 +150,27 @@ L.Google = L.Class.extend({
 		if (this._container.style.width == size.x &&
 		    this._container.style.height == size.y)
 			return;
-		this._container.style.width = size.x;
-		this._container.style.height = size.y;
+		this.setElementSize(this._container, size);
 		this.onReposition();
 	},
 
 	onReposition: function() {
-		window.google.maps.event.trigger(this._google, "resize");
+		if (!this._google) return;
+		google.maps.event.trigger(this._google, "resize");
 	}
 });
+
+L.Google.asyncWait = [];
+L.Google.asyncInitialize = function() {
+	var i;
+	for (i = 0; i < L.Google.asyncWait.length; i++) {
+		var o = L.Google.asyncWait[i];
+		o._ready = true;
+		if (o._container) {
+			o._initMapObject();
+			o._update();
+		}
+	}
+	L.Google.asyncWait = [];
+}
+})(window.google, L)
