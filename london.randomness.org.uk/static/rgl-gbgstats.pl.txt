@@ -1,0 +1,78 @@
+#!/usr/bin/perl -w
+
+use strict;
+use WWW::Mechanize;
+
+# Change these for different years and different OpenGuides installs.
+my $year = "2012";
+my $base_url = "http://london.randomness.org.uk/wiki.cgi";
+
+$base_url .= "?action=index;index_type=category;index_value=";
+
+my %gbg = get_frequencies( "Good+Beer+Guide+$year" );
+my %all = get_frequencies( "Pubs" );
+
+my @gbgnames = get_array( \%gbg );
+my @allnames = get_array( \%all );
+my %percent;
+my $railways;
+my $gbg_railways;
+
+foreach my $pub ( @allnames ) {
+  my $name = $pub->{name};
+  my $n = $pub->{n};
+  my $gbgn = $gbg{$name} || 0;
+
+  if ( $n > 4 ) {
+    $percent{$name} = 100.0*$gbgn/$n;
+  }
+#  print "$name: $n ($gbgn in the GBG)\n";
+}
+
+my @pcarr = get_array( \%percent );
+foreach my $pub ( @pcarr ) {
+  printf "%s: %.2f%% in the GBG.\n", $pub->{name}, $pub->{n};
+}
+
+sub get_frequencies {
+  my $index_value = shift;
+  my $index_url = $base_url . $index_value;
+
+  my $agent = WWW::Mechanize->new;
+  $agent->get( $index_url );
+  my $index_html = $agent->content;
+  $index_html =~ s|^.*<ol>||s;
+  $index_html =~ s|</ol>.*$||s;
+  $index_html =~ s|^\s+<li><a href="||s;
+  my @tmparr = split( /\s+<li><a href="/, $index_html );
+  my %pubs = map { s/">([^<]*)<.*$//s; $1 => 1; } @tmparr;
+
+  my %names;
+  foreach my $pub ( keys %pubs ) {
+    my $name = lc( $pub );
+    $name =~ s/,.*$//;
+    $name =~ s/['\.]//g;
+    $name =~ s/^ye olde //;
+    $name =~ s/^ye //;
+    $name =~ s/^olde? //;
+    $name =~ s/ ?tavern ?//;
+    $name =~ s/ ?inn ?//;
+    $names{$name}++;
+  }
+
+  return %names;
+}
+
+sub get_array {
+  my $ref = shift;
+  my %names = %$ref;
+
+  my @namearr;
+  foreach my $name ( keys %names ) {
+    push @namearr, { name => $name, n => $names{$name} };
+  }
+
+  @namearr = sort { $b->{n} <=> $a->{n}
+                    || $a->{name} cmp $b->{name} } @namearr;
+  return @namearr;
+}
