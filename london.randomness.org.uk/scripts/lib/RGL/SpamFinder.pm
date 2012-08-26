@@ -86,6 +86,13 @@ sub looks_like_spam {
             return 1;
         }
 
+        if ( $name eq "Parrilladas Del Sur, SE1 5TY"
+              && $comment =~ m|^\w{11},.*https?://| ) {
+            $class->notify_admins( %args, id => "00046",
+                                  reason => "11 char + URL comment on $name" );
+            return 1;
+        }
+
         if ( $name eq "Indian Ocean, CM16 7ES"
               && $comment =~ m|^\w{11},.*https?://| ) {
             $class->notify_admins( %args, id => "00047",
