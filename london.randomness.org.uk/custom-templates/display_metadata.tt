@@ -16,11 +16,6 @@
         <span class="metadata_label">Telephone:</span> <span class="tel">[% CGI.escapeHTML(phone) %]</span>
       </li>
     [% END %]
-    [% IF fax %]
-      <li class="fax">
-        <span class="metadata_label">Fax:</span> [% CGI.escapeHTML(fax) %]
-      </li>
-    [% END %]
     [% IF address %]
       <li class="address">
         <span class="metadata_label">Address:</span>
@@ -57,6 +52,13 @@
     [% IF formatted_website_text %]
       <li class="website_link">
         <span class="metadata_label">Website:</span> <span class="url">[% formatted_website_text %]</span>
+      </li>
+    [% END %]
+    [% IF fax %]
+      <li class="fax">
+        [% twitter = fax.replace( 'https?://(www\.)?twitter.com(/#!)?/', '' ) %]
+        [% twitter = twitter.replace( '@', '' ) %]
+        <span class="metadata_label">Twitter:</span> <a href="http://twitter.com/[% CGI.escape(twitter) %]">@[% CGI.escapeHTML(twitter) %]</a>
       </li>
     [% END %]
     [% IF hours_text %]

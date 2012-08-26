@@ -177,26 +177,6 @@
         [% END %]
       </div>
 
-      <div class="edit_form_group" id="fax_group">
-        [% IF conflict %]
-          <label for="fax">Current fax:</label>
-        [% ELSE %]
-          <label for="fax">Fax:</label>
-        [% END %]
-        <div class="edit_box">
-          <input type="text" size="50" id="fax" name="fax"
-            value="[% fax %]" />
-        </div>
-        [% IF conflict %]
-          <div class="conflict_group">
-            <label>Your fax:</label>
-            <div class="conflict_box">
-              [% CGI.escapeHTML(new_fax) %]
-            </div>
-          </div>
-        [% END %]
-      </div>
-
       <div class="edit_form_group" id="website_group">
         [% IF conflict %]
           <label for="website">Current website:</label>
@@ -212,6 +192,26 @@
             <label>Your website:</label>
             <div class="conflict_box">
               [% CGI.escapeHTML(new_website) %]
+            </div>
+          </div>
+        [% END %]
+      </div>
+
+      <div class="edit_form_group" id="fax_group">
+        [% IF conflict %]
+          <label for="fax">Current Twitter name:</label>
+        [% ELSE %]
+          <label for="fax">Twitter name (e.g. rglondon):</label>
+        [% END %]
+        <div class="edit_box">
+          <input type="text" size="50" id="fax" name="fax"
+            value="[% fax %]" />
+        </div>
+        [% IF conflict %]
+          <div class="conflict_group">
+            <label>New Twitter name:</label>
+            <div class="conflict_box">
+              [% CGI.escapeHTML(new_fax) %]
             </div>
           </div>
         [% END %]

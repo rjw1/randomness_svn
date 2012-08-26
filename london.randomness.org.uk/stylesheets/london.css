@@ -13,6 +13,18 @@ a:visited { color: #734f37; }
 a:active  { text-decoration: underline; }
 a:hover   { text-decoration: underline; }
 
+a.external {
+  background: url("http://dev.london.randomness.org.uk/static/images/external-link-brown.png") no-repeat scroll right center transparent;
+  padding-right: 13px;
+}
+
+a.photo:before {
+  content: "[";
+}
+a.photo:after {
+  content: "]";
+}
+
 input.form_button, div.cancel_edit a {
   font-weight: bold;
   font-size: 0.9em;
@@ -618,12 +630,6 @@ fieldset#additional_information div.edit_box {
 
 fieldset#additional_information div.edit_form_group {
   clear: both;
-}
-
-/* Additional imformation */
-
-div#fax_group {
-  display: none;
 }
 
 /* Edit page image stuff */
