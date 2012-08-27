@@ -39,9 +39,7 @@ div#navbar_wrapper {
   margin-top: 0.9em;
   padding-right: 3em;
   white-space: nowrap;
-  background-image: url(http://www.pubology.co.uk/images/bricks-150px.jpg);
-  background-repeat: repeat-y;
-  background-size: contain;
+  background-color: #255c10;
   height: 100%;
 }
 
@@ -57,7 +55,7 @@ div#navbar ul li a {
 }
 
 div#navbar a:hover {
-  background-color: #ed002f;
+  background-color: #288e00;
 }
 
 div#navbar ul#internal_links li#home_link {
