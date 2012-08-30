@@ -100,6 +100,23 @@ foreach my $locale ( sort @locales ) {
       $number = 99;
     }
 
+    # Derby Road
+    if ( $locale eq "Derby Road" ) {
+      if ( $name =~ /1 London Road/ ) {
+        $type = "even" if $split;
+        $number = 1;
+      } elsif ( $name eq "Church Of God 7th Day Croydon, Derby Road" ) {
+        $type = "odd" if $split;
+        $number = 21;
+      } elsif ( $name =~ /181a North End/ ) {
+        $type = "odd" if $split;
+        $number = 0.9;
+      } elsif ( $name =~ /181 North End/ ) {
+        $type = "odd" if $split;
+        $number = 0.8;
+      }
+    }
+
     # High Street
     if ( $locale eq "High Street" ) {
       if ( $name eq "Spreadeagle, 39-41 Katharine Street" ) {
@@ -182,6 +199,42 @@ foreach my $locale ( sort @locales ) {
                  "Anadolu Kiraathanesi/Peri Community Centre, London Road" ) {
         $type = "odd" if $split;
         $number = 173;
+      }
+    }
+
+    # Selsdon Road
+    if ( $locale eq "Selsdon Road" ) {
+      if ( $name =~ /20e Selsdon Road/ ) {
+        $number = 20.5;
+      } elsif ( $name =~ /20d Selsdon Road/ ) {
+        $number = 20.4;
+      } elsif ( $name =~ /20c Selsdon Road/ ) {
+        $number = 20.3;
+      } elsif ( $name =~ /20a-20b Selsdon Road/ ) {
+        $number = 20.2;
+      } elsif ( $name =~ /18c Selsdon Road/ ) {
+        $number = 18.5;
+      } elsif ( $name =~ /12a Selsdon Road/ ) {
+        $number = 11.5;
+      } elsif ( $name =~ /2a Selsdon Road/ ) {
+        $number = 1.5;
+      } elsif ( $name =~ /1 Croham Road/ ) {
+        $type = "odd" if $split;
+        $number = 16.99;
+      } elsif ( $name =~ /1 Brighton Road/ ) {
+        $type = "even" if $split;
+        $number = 0.1;
+      }
+      if ( $name =~ /(\d+) Ye Market/ ) {
+        $type = "odd" if $split;
+        $number = 16 + 0.01 * $1;
+      }
+      if ( $name =~ /(\d)(-\d)? Ruskin Parade/ ) {
+        $type = "odd" if $split;
+        $number = 11 + 0.1 * $1;
+      }
+      if ( $name =~ /South End/ ) {
+        next;
       }
     }
 
