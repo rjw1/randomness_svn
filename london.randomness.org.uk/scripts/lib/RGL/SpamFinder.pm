@@ -17,7 +17,7 @@ sub looks_like_spam {
     my $host = $args{metadata}{host};
     my $comment = $args{added_comment} || "";
 
-    if ( $content =~ /\b(viagra|viagraonline|cialis|supermeganah|tramadol|vicodin|phentermine|buyphentermine|adipex|phendimetrazine|ephedrine|lipitor|hydrocodone|replica-watches|propecia|ativan|levitra|lexapro|ambien|citalopram|effexor|fluoxetine|prozac|kamagra|accutane|zithromax|clenbuterol|nolvadex|lorazepam|clonazepam|diazepam|valium|clomid|rimonabant|xenical|lolita|lolitas|vimax|prednisone|nexium|ultram|klonopin|vigrxplustabs|amoxicillin)\b/is ) {
+    if ( $content =~ /\b(viagra|viagraonline|cialis|supermeganah|tramadol|vicodin|phentermine|buyphentermine|adipex|phendimetrazine|ephedrine|lipitor|hydrocodone|replica-watches|propecia|ativan|levitra|lexapro|ambien|citalopram|effexor|fluoxetine|prozac|kamagra|accutane|zithromax|clenbuterol|nolvadex|lorazepam|clonazepam|diazepam|valium|clomid|rimonabant|xenical|lolita|lolitas|vimax|prednisone|nexium|ultram|klonopin|vigrxplustabs|amoxicillin|phen375)\b/is ) {
         $class->notify_admins( %args, id => "00002", reason => "Matches $1" );
         return 1;
     }
@@ -55,62 +55,17 @@ sub looks_like_spam {
             return 1;
         }
 
-        if ( $comment =~ /online-pharmacy-bs.com/ ) {
-            $class->notify_admins( %args, id => "00035",
-                                   reason => "online-pharmacy-bs.com" );
-            return 1;
-        }
-
-        if ( $host eq "94.23.1.28" ) {
-            $class->notify_admins( %args, id => "00041",
-                                  reason => "host is $host" );
-            return 1;
-        }
-
-        if ( $comment =~ m|^\w{6}\s+<a\s+href="http://(\w{12}).com/">\1</a>| ){
-            $class->notify_admins( %args, id => "00043",
-                                  reason => "URL/URL comment on $name" );
-            return 1;
-        }
-
         if ( $comment =~ m{http://www.(prominentinsurers.com|ensureyourhealth.net|protectionrates.net|bestinsurerstoday.com|healthinsurplans.com|discountinsurlife.com|autoprotectionquotes.net|coveryourhealth.net|insureeverything.net|topinsurancerates.net|getyourquote.net|cheapautoinsur.net|protectionagencies.net|teamschuco.com|topinsurancerates.net|locateautoinsur.com|quotesinyourstate.com|affordableautoinsur.net|bestinsurplans.net|businessinsurtips.com|bestinsurcoverage.com|carinsuragency.com|autoprotectiontips.com|comparelifeinsurers.net|homeownerscover.com|getthebestratesfast.com|findyourcarinsurance.net|insurancequotesforfree.net|freequotesfast.net|www.carinsurplans.com|www.lifeinsurpolicies.com|carinsurplans.com|yourhealthservice.net|lifeinsurforseniors.com|carinsurforyou.com|bestcarinsurers.net|lifeinsurpolicies.com|autoinsurplans.net)}is ) {
             $class->notify_admins( %args, id => "00044",
                                   reason => "insurance spam comment" );
             return 1;
         }
 
-        if ( $name eq "Elm Park, RM12 4RX"
-              && $comment =~ m|^\w{11},.*https?://| ) {
-            $class->notify_admins( %args, id => "00045",
-                                  reason => "11 char + URL comment on $name" );
-            return 1;
-        }
 
         if ( $name eq "Parrilladas Del Sur, SE1 5TY"
               && $comment =~ m|^\w{11},.*https?://| ) {
             $class->notify_admins( %args, id => "00046",
                                   reason => "11 char + URL comment on $name" );
-            return 1;
-        }
-
-        if ( $name eq "Indian Ocean, CM16 7ES"
-              && $comment =~ m|^\w{11},.*https?://| ) {
-            $class->notify_admins( %args, id => "00047",
-                                  reason => "11 char + URL comment on $name" );
-            return 1;
-        }
-
-        if ( $name eq "Old Salt Quay, SE16 5QU"
-              && $comment =~ m|http://.*bharatstudent.com| ) {
-            $class->notify_admins( %args, id => "00049",
-                                  reason => "bharatstudent comment on $name" );
-            return 1;
-        }
-
-        if ( $name eq "Old Salt Quay, SE16 5QU"
-              && $comment =~ m|http://.*springnote.com| ) {
-            $class->notify_admins( %args, id => "00050",
-                                  reason => "springnote comment on $name" );
             return 1;
         }
 
