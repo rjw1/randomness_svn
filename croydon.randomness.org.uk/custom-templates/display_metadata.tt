@@ -48,7 +48,7 @@
         [% IF ( otck = hours_text.match( '^http://(?:www\.)?opening-times.co.uk/([-0-9a-z]+)$' ) ) %]
           <a href="http://www.opening-times.co.uk/[% otck.first %]">see opening-times.co.uk</a>
         [% ELSE %]
-          [% CGI.escapeHTML(hours_text) %]
+          [% CGI.escapeHTML(hours_text).replace( ': ', ':&nbsp;' ) %]
         [% END %]
       </li>
     [% END %]
