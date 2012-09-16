@@ -4,5 +4,5 @@
   <script src="[% config.static_url %]Google.js"
           type="text/javascript"></script>
   <script type="text/javascript"
-          src="http://maps.stamen.com/js/tile.stamen.js"></script>
+          src="http://maps.stamen.com/js/tile.stamen.js?v1.1.2"></script>
 [% END %]
