@@ -10,6 +10,9 @@
     <a href="[% full_cgi_url %]?About_RGL">About RGL</a>
   </div> 
   <div class="summary_bar_link">
+    <a href="http://blog.london.randomness.org.uk/">RGL Blog</a>
+  </div> 
+  <div class="summary_bar_link">
     <a href="[% full_cgi_url %]?Contact_RGL">Contact RGL</a>
   </div> 
 </div>
