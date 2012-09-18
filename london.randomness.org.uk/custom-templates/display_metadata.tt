@@ -89,7 +89,7 @@
             [% years = category.name.match( '^Good Beer Guide (\d{4})' ) %]
             [% IF years %]
               [% gbg_year = years.0 %]
-              [% IF gbg_year == "2012" %]
+              [% IF gbg_year == "2013" %]
                 [% gbg_year = gbg_year _ "&nbsp;(current)" %]
               [% END %]
               [% IF category.url != "" %]
