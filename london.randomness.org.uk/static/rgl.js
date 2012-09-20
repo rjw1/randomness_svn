@@ -4,7 +4,9 @@ $(
   function() {
     // Click to reveal the map links.
     map_links = $( '.map_links' ).html();
-    hide_map_links();
+    if ( !/^\s*$/.test( map_links ) ) {
+      hide_map_links();
+    }
 
     // Nearby Tube stuff.
     $( '#nearby_tubes' ).css( { height: '2.5em' } );
