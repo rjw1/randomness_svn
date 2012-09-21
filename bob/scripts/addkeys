@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for keys in `ls ~/.ssh/*_rsa`
+do
+echo "adding $keys"
+ssh-add $keys
+done 
