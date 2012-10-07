@@ -798,7 +798,7 @@ link like so:
 sub make_external_link {
     my ($self, %args) = @_;
     my $class = "external";
-    if ( $args{title} eq "photo" ) {
+    if ( $args{title} =~ qr/^photo/ ) {
         $class .= " photo";
     }
     return qq|<a href="$args{url}" class="$class"|
