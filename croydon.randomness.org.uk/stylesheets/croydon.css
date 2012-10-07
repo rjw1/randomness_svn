@@ -975,3 +975,8 @@ div#front_page_modules dl dd {
 div.leaflet-control a {
   color: #7a0088;
 }
+
+/* Historical info */
+p.history_control {
+  font-size: 0.8em;
+}
