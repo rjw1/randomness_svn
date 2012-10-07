@@ -8,8 +8,8 @@ $(
   }
 );
 
-var show_button = '<p>(<a href="#" class="show_history">show historical info</a>)</p>';
-var hide_button = '<p>(<a href="#" class="hide_history">hide historical info</a>)</p>';
+var show_button = '<p class="history_control">(<a href="#" class="show_history">show historical info</a>)</p>';
+var hide_button = '<p class="history_control">(<a href="#" class="hide_history">hide historical info</a>)</p>';
 
 function hide_history() {
   $( 'div.history' ).html( show_button );
