@@ -234,6 +234,15 @@ img.pub_photo {
   border: thin solid black;
 }
 
+div#pub_photo_date {
+  text-align: right;
+}
+
+div#solicit_corrections {
+  padding-top: 1em;
+  clear: both;
+}
+
 ul.upload_form_type_selection {
   margin: 0;
   padding: 0;
