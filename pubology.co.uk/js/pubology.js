@@ -1,4 +1,4 @@
-var sources_text;
+var sources_text, report_text;
 
 $(
   function() {
@@ -33,6 +33,16 @@ $(
     // Hide the sources and references by default.
     sources_text = $( '#pub_sources_and_references' ).html();
     hide_sources();
+
+    // Hide the "report issue" text until they ask for it.
+    report_text = $( '#solicit_corrections' ).html();
+    $( '#solicit_corrections' ).html( '<a href="#" id="show_solicit_corrections">Report an issue with this page</a>' );
+    $( '#show_solicit_corrections' ).click(
+      function() {
+        $( '#solicit_corrections' ).html( report_text );
+        return false;
+      }
+    );
   }
 );
 
