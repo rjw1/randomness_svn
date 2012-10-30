@@ -17,7 +17,7 @@ sub looks_like_spam {
     my $host = $args{metadata}{host};
     my $comment = $args{added_comment} || "";
 
-    if ( $content =~ /\b(viagra|viagraonline|cialis|supermeganah|tramadol|vicodin|phentermine|buyphentermine|adipex|phendimetrazine|ephedrine|lipitor|hydrocodone|replica-watches|propecia|ativan|levitra|lexapro|ambien|citalopram|effexor|fluoxetine|prozac|kamagra|accutane|zithromax|clenbuterol|nolvadex|lorazepam|clonazepam|diazepam|valium|clomid|rimonabant|xenical|lolita|lolitas|vimax|prednisone|nexium|ultram|klonopin|vigrxplustabs|amoxicillin|phen375|onlinepharmacy)\b/is ) {
+    if ( $content =~ /\b(viagra|viagraonline|cialis|supermeganah|tramadol|vicodin|phentermine|buyphentermine|adipex|phendimetrazine|ephedrine|lipitor|hydrocodone|replica-watches|propecia|ativan|levitra|lexapro|ambien|citalopram|effexor|fluoxetine|prozac|kamagra|accutane|zithromax|clenbuterol|nolvadex|lorazepam|clonazepam|diazepam|valium|clomid|rimonabant|xenical|lolita|lolitas|vimax|prednisone|nexium|ultram|klonopin|vigrxplustabs|amoxicillin|phen375|onlinepharmacy|trazodone|viagrageneric)\b/is ) {
         $class->notify_admins( %args, id => "00002", reason => "Matches $1" );
         return 1;
     }
@@ -55,27 +55,19 @@ sub looks_like_spam {
             return 1;
         }
 
-        if ( $comment =~ m{http://www.(prominentinsurers.com|ensureyourhealth.net|protectionrates.net|bestinsurerstoday.com|healthinsurplans.com|discountinsurlife.com|autoprotectionquotes.net|coveryourhealth.net|insureeverything.net|topinsurancerates.net|getyourquote.net|cheapautoinsur.net|protectionagencies.net|teamschuco.com|topinsurancerates.net|locateautoinsur.com|quotesinyourstate.com|affordableautoinsur.net|bestinsurplans.net|businessinsurtips.com|bestinsurcoverage.com|carinsuragency.com|autoprotectiontips.com|comparelifeinsurers.net|homeownerscover.com|getthebestratesfast.com|findyourcarinsurance.net|insurancequotesforfree.net|freequotesfast.net|www.carinsurplans.com|www.lifeinsurpolicies.com|carinsurplans.com|yourhealthservice.net|lifeinsurforseniors.com|carinsurforyou.com|bestcarinsurers.net|lifeinsurpolicies.com|autoinsurplans.net)}is ) {
-            $class->notify_admins( %args, id => "00044",
-                                  reason => "insurance spam comment" );
-            return 1;
-        }
-
-
-        if ( $name eq "Parrilladas Del Sur, SE1 5TY"
+        if ( $name eq "Cargo, EC2A 3AY"
               && $comment =~ m|^\w{11},.*https?://| ) {
-            $class->notify_admins( %args, id => "00046",
+            $class->notify_admins( %args, id => "00047",
                                   reason => "11 char + URL comment on $name" );
             return 1;
         }
 
-        if ( $name eq "Abercorn Arms, HA7 3BU"
-              && $comment =~ m|^\w{11},.*https?://| ) {
-            $class->notify_admins( %args, id => "00051",
-                                  reason => "11 char + URL comment on $name" );
+        if ( $name eq "Old Salt Quay, SE16 5QU"
+              && $comment =~ m|pinger.pl| ) {
+            $class->notify_admins( %args, id => "00048",
+                                  reason => "pinger.pl comment on $name" );
             return 1;
         }
-
     }
 }
 
