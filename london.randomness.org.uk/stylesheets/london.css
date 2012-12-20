@@ -343,6 +343,9 @@ span#nearby_tube_results span {
 #content_text
 {
   margin-bottom: 2.5em;
+  line-height: 140%;
+  max-width: 50em;
+  margin-left: 0.5em;
 }
 
 /* All the location stuff - nearest Tubes, distance search form, etc. */
