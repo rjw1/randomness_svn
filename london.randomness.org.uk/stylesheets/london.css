@@ -746,6 +746,7 @@ dl.criteria_search_results dd {
 /* Extras */
 div.last_verified {
   font-size: 0.8em;
+  line-height: 130%;
 }
 
 div.free_geodata {
@@ -819,6 +820,7 @@ div.see_other_searches {
 
 div.getting_here {
   font-size: 0.8em;
+  line-height: 130%;
 }
 
 div#total_photo_count_message {
@@ -837,6 +839,7 @@ div.old_info {
   padding: 0.5em;
   border: 1px dotted #595A38;
   font-size: 0.8em;
+  line-height: 130%;
 }
 
 div.neighbouring_postcodes {
