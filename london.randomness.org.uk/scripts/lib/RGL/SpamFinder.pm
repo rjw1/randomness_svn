@@ -17,7 +17,7 @@ sub looks_like_spam {
     my $host = $args{metadata}{host};
     my $comment = $args{added_comment} || "";
 
-    if ( $content =~ /\b(viagra|viagraonline|cialis|supermeganah|tramadol|vicodin|phentermine|buyphentermine|adipex|phendimetrazine|ephedrine|lipitor|hydrocodone|replica-watches|propecia|ativan|levitra|lexapro|ambien|citalopram|effexor|fluoxetine|prozac|kamagra|accutane|zithromax|clenbuterol|nolvadex|lorazepam|clonazepam|diazepam|valium|clomid|rimonabant|xenical|lolita|lolitas|vimax|prednisone|nexium|ultram|klonopin|vigrxplustabs|amoxicillin|phen375|onlinepharmacy|trazodone|viagrageneric)\b/is ) {
+    if ( $content =~ /\b(viagra|viagraonline|cialis|supermeganah|tramadol|vicodin|phentermine|buyphentermine|adipex|phendimetrazine|ephedrine|lipitor|hydrocodone|replica-watches|propecia|ativan|levitra|lexapro|ambien|citalopram|effexor|fluoxetine|prozac|kamagra|accutane|zithromax|clenbuterol|nolvadex|lorazepam|clonazepam|diazepam|valium|clomid|rimonabant|xenical|lolita|lolitas|vimax|prednisone|nexium|ultram|klonopin|vigrxplustabs|amoxicillin|phen375|onlinepharmacy|trazodone|viagrageneric|isotretinoin|finasteride|escitalopram|vardenafil|topamax|zolpidem|oxycontin|lidocaine)\b/is ) {
         $class->notify_admins( %args, id => "00002", reason => "Matches $1" );
         return 1;
     }
@@ -66,6 +66,20 @@ sub looks_like_spam {
               && $comment =~ m|pinger.pl| ) {
             $class->notify_admins( %args, id => "00048",
                                   reason => "pinger.pl comment on $name" );
+            return 1;
+        }
+
+        if ( $name eq "Young Bean, EC2V 5VS"
+              && $comment =~ m|^\w{11},.*https?://| ) {
+            $class->notify_admins( %args, id => "00049",
+                                  reason => "11 char + URL comment on $name" );
+            return 1;
+        }
+
+        if ( $name eq "Old Salt Quay, SE16 5QU"
+              && $comment =~ m|exblog.jp| ) {
+            $class->notify_admins( %args, id => "00050",
+                                  reason => "exblog.jp comment on $name" );
             return 1;
         }
     }
