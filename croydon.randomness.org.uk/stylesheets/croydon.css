@@ -980,3 +980,17 @@ div.leaflet-control a {
 p.history_control {
   font-size: 0.8em;
 }
+
+/* Archives banner */
+div#library_banner {
+  margin: auto;
+  text-align: center; 
+  border: thin solid black;
+  padding: 1em; 
+}
+
+div#library_banner_title { 
+  font-weight: bold;
+  font-size: 1.3em;
+  padding-bottom: 0.5em;
+}
