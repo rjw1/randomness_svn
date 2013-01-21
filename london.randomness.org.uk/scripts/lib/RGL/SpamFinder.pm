@@ -17,7 +17,7 @@ sub looks_like_spam {
     my $host = $args{metadata}{host};
     my $comment = $args{added_comment} || "";
 
-    if ( $content =~ /\b(viagra|viagraonline|cialis|supermeganah|tramadol|vicodin|phentermine|buyphentermine|adipex|phendimetrazine|ephedrine|lipitor|hydrocodone|replica-watches|propecia|ativan|levitra|lexapro|ambien|citalopram|effexor|fluoxetine|prozac|kamagra|accutane|zithromax|clenbuterol|nolvadex|lorazepam|clonazepam|diazepam|valium|clomid|rimonabant|xenical|lolita|lolitas|vimax|prednisone|nexium|ultram|klonopin|vigrxplustabs|amoxicillin|phen375|onlinepharmacy|trazodone|viagrageneric|isotretinoin|finasteride|escitalopram|vardenafil|topamax|zolpidem|oxycontin|lidocaine)\b/is ) {
+    if ( $content =~ /\b(viagra|viagraonline|cialis|supermeganah|tramadol|vicodin|phentermine|buyphentermine|adipex|phendimetrazine|ephedrine|lipitor|hydrocodone|replica-watches|propecia|ativan|levitra|lexapro|ambien|citalopram|effexor|fluoxetine|prozac|kamagra|accutane|zithromax|clenbuterol|nolvadex|lorazepam|clonazepam|diazepam|valium|clomid|rimonabant|xenical|lolita|lolitas|vimax|prednisone|nexium|ultram|klonopin|vigrxplustabs|amoxicillin|phen375|onlinepharmacy|trazodone|viagrageneric|isotretinoin|finasteride|escitalopram|vardenafil|topamax|zolpidem|oxycontin|lidocaine|seroquel)\b/is ) {
         $class->notify_admins( %args, id => "00002", reason => "Matches $1" );
         return 1;
     }
@@ -52,6 +52,12 @@ sub looks_like_spam {
              || ( $comment =~ /a\s+href=.*a\s+href=.*a\s+href=/s ) ) {
             $class->notify_admins( %args, id => "00034",
                               reason => "comment with more than two URLs in" );
+            return 1;
+        }
+
+        if ( $comment =~ /\b(cheapinsurquotes|findcheapinsuranceonline|getcheapestinsurancenow|autoinsurers4u|insurautofast|searchcarquotes|cheapinsurcoverage)\b/is ){
+            $class->notify_admins( %args, id => "00035",
+                                  reason => "insurance comment on $name" );
             return 1;
         }
 
