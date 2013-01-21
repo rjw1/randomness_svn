@@ -2,8 +2,8 @@
 Order deny,allow
 Deny from all
 AuthType Basic
-AuthName "Username: "
+AuthName "Pubology Admin"
 AuthUserFile /export/home/pubology/.htpasswd-admin
 require valid-user
-satisfy any
+Satisfy any
 </Limit>
