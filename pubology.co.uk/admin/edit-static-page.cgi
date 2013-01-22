@@ -11,7 +11,7 @@ use CGI;
 use CGI::Carp qw( fatalsToBrowser );
 use HTML::Entities;
 use HTML::PullParser;
-use HTML::TokeParser;
+use PubSite;
 use Template;
 
 my $HOME = "/export/home/pubology";
@@ -35,7 +35,11 @@ my $errmsg;
 
 # Types of page we can edit.
 my $page = $q->param( "page" ) || "";
-if ( $page ne "front" && $page ne "updates" && $page ne "notes" ) {
+if ( $page eq "updates" ) {
+  print $q->redirect( $base_url . "admin/upload-updates-info.cgi" );
+  exit 0;
+}
+if ( $page ne "front" && $page ne "notes" ) {
   print $q->redirect( $base_url . "admin/index.cgi" );
   exit 0;
 }
@@ -120,51 +124,11 @@ sub write_static_page {
 sub print_form_and_exit {
   my %args = @_;
 
-  open( my $fh, "<", $args{page_file} )
-    || die $!;
-  my $parser = HTML::TokeParser->new( $fh );
-
-  my $current_text = "";
-  while ( my $token = $parser->get_tag( "div" ) ) {
-    my $attrs = $token->[1];
-    if ( $attrs->{id} eq $args{div_id} ) {
-      while ( my $bit = $parser->get_token ) {
-        if ( $bit->[0] eq "E" && $bit->[1] eq "div" ) {
-          last;
-        }
-        if ( $bit->[0] eq "S" ) {
-          if ( $bit->[1] eq "a" ) {
-            my $href = $bit->[2]->{href};
-            my $name = $bit->[2]->{name};
-            my $class = $bit->[2]->{class};
-            my $id = $bit->[2]->{id};
-            $current_text .= "<" . $bit->[1]
-                           . ( $href  ? " href=\"$href\"" : "" )
-                           . ( $name  ? " name=\"$name\"" : "" )
-                           . ( $class ? " class=\"$class\"" : "" )
-                           . ( $id    ? " id=\"$id\"" : "" )
-                           . ">";
-          } else {
-            $current_text .= "<" . $bit->[1] . ">";
-          }
-        } elsif ( $bit->[0] eq "E" ) {
-          $current_text .= "</" . $bit->[1] . ">";
-        } elsif ( $bit->[0] eq "T" ) {
-          $current_text .= $bit->[1];
-        }
-      }
-      last;
-    }
+  my $current_text = PubSite->extract_html( file   => $args{page_file},
+                                            div_id => $args{div_id} );
+  if ( !$current_text ) {
+    $args{errmsg} .= " Couldn't extract $args{div_id} from $args{page_file}.";
   }
-
-  $current_text = encode_entities( $current_text );
-
-  # put linebreaks back
-  $current_text =~ s/&lt;br&gt;/\r\n/g;
-
-  # Strip leading and trailing whitespace.
-  $current_text =~ s/^\s+//;
-  $current_text =~ s/\s+$//;
 
   my %tt_vars = (
                   base_url => $base_url,

@@ -255,3 +255,7 @@ div.upload_error {
   border: 0.2em solid black;
   padding: 1em;
 }
+
+td.update_info_change {
+  white-space: nowrap;
+}
