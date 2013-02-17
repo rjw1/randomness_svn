@@ -11,11 +11,11 @@
             [% IF result.origin.name == last_origin %]
               &nbsp;
             [% ELSE %]
-              <a href="[% result.origin.url %]">[% result.origin.name %]</a>
+              <a href="[% full_cgi_url %]?[% result.origin.param %]">[% result.origin.name %]</a>
             [% END %]
           </td>
           <td valign="top">
-            <a href="[% result.end.url %]">[% result.end.name %]</a>
+            <a href="[% full_cgi_url %]?[% result.end.param %]">[% result.end.name %]</a>
           </td>
           <td>[% result.dist %]</td>
         </tr>
