@@ -13,6 +13,13 @@ use RGL::Addons;
 use OpenGuides::Config;
 use Template;
 
+my %comments_disabled = map { $_ => 1 } (
+     "Lantana, W1T 1SN",
+     "Old Salt Quay, SE16 5QU",
+     "Old Street Station",
+     "Crown And Two Chairmen, W1D 3SB",
+   );
+
 my $q = CGI->new;
 
 my $config_file = $ENV{OPENGUIDES_CONFIG_FILE} || "../wiki.conf";
@@ -30,6 +37,23 @@ my $node;
 if ( $node_param ) {
     $node = $formatter->node_param_to_node_name( $node_param );
     if ( $node && $wiki->node_exists( $node ) ) {
+
+        # Commenting disabled on some pages because of spam.
+        if ( $comments_disabled{$node} ) { 
+            my $output = OpenGuides::Template->output( 
+                wiki     => $wiki, 
+                config   => $config, 
+                template => "comments_disabled.tt", 
+                vars     => { 
+                              node_param   => $node_param,
+                              node_name    => $q->escapeHTML( $node ),
+                              addon_title  => "Comments not enabled",
+                              not_editable => 1, 
+                            }, 
+            ); 
+            print $output; 
+            exit 0;
+        }
         $tt_vars{node_name} = $q->escapeHTML( $node );
         $tt_vars{node_param} = $formatter->node_name_to_node_param( $node );
         $tt_vars{addon_title} = "Add a comment to $tt_vars{node_name}";
