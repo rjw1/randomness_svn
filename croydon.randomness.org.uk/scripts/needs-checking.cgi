@@ -30,7 +30,7 @@ my $months = $q->param( "months" ) || 6;
 my @nodes = $wiki->list_all_nodes;
 my @to_check;
 
-my %to_exclude = map { $_ => 1 } ( "FAQ", "Home", "Tools", "West Croydon Bus Station", "West Croydon Tram Stop" );
+my %to_exclude = map { $_ => 1 } ( "FAQ", "Home", "Tools", "West Croydon Bus Station", "West Croydon Tram Stop", "West Croydon Station", "Croydon Minster", "Fairfield Halls" );
 
 my $nodes_on_map;
 
