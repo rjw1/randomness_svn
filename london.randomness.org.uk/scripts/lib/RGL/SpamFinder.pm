@@ -55,9 +55,15 @@ sub looks_like_spam {
             return 1;
         }
 
-        if ( $comment =~ /\b(cheapinsurquotes|findcheapinsuranceonline|getcheapestinsurancenow|autoinsurers4u|insurautofast|searchcarquotes|cheapinsurcoverage)\b/is ){
+        if ( $comment =~ /\b(cheapinsurquotes|findcheapinsuranceonline|getcheapestinsurancenow|autoinsurers4u|insurautofast|searchcarquotes|cheapinsurcoverage|getyourinsurancequote|onlinecheapautoinsur|mycarinsurquote|findcarinsurbrokers|bestautoquotesonline|autoinsurcoverage|compareinsurdeals|insureyourcaronline|comparebestquotes.net|insurersplace|carinsurquote|carinsurrates|bestcarinsurrates|carinsurcompanies|searchquotesfast|locatecarinsur)\b/is ){
             $class->notify_admins( %args, id => "00035",
                                   reason => "insurance comment on $name" );
+            return 1;
+        }
+
+        if ( $comment =~ /\b(thisdaddysblog\.com|blackwomanasianman\.com|etnomania\.ru)\b/is ){
+            $class->notify_admins( %args, id => "00036",
+                                  reason => "stealth insurance comment on $name" );
             return 1;
         }
 
@@ -83,9 +89,9 @@ sub looks_like_spam {
         }
 
         if ( $name eq "Old Salt Quay, SE16 5QU"
-              && $comment =~ m|exblog.jp| ) {
+              && $comment =~ m/(exblog\.jp|videogum\.com)/ ) {
             $class->notify_admins( %args, id => "00050",
-                                  reason => "exblog.jp comment on $name" );
+                                  reason => "$1 comment on $name" );
             return 1;
         }
     }
