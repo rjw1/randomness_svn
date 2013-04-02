@@ -1,4 +1,4 @@
-var centre_lat, centre_long, map;
+var centre_lat, centre_long, map_type;
 var positions = [], markers = [];
 var base_url = "http://pubology.co.uk/";
 var icons = {};
@@ -28,24 +28,28 @@ $(
 
     tile_layer = new L.TileLayer( mq_url, { maxZoom: 18, attribution: attrib, subdomains: subdomains } );
 
-    map.setView( map_centre, 13 ).addLayer( tile_layer );
+    var zoom = 13;
+    if ( map_type && map_type == 'brewery' ) {
+      zoom = 10;
+    }
+    map.setView( map_centre, zoom ).addLayer( tile_layer );
 
     add_markers();
   }
 );
 
-function add_marker( i, pub ) {
+function add_marker( i, thing, type ) {
   var content, icon, marker, position;
 
-  if ( pub.not_on_map ) {
+  if ( thing.not_on_map ) {
     return;
   }
 
-  position = new L.LatLng( pub.lat, pub.long );
+  position = new L.LatLng( thing.lat, thing.long );
 
-  if ( pub.demolished ) {
+  if ( thing.demolished ) {
     icon = icons.demolished;
-  } else if ( pub.closed ) {
+  } else if ( thing.closed ) {
     icon = icons.closed;
   } else {
     icon = icons.open;
@@ -54,14 +58,51 @@ function add_marker( i, pub ) {
   marker = new L.Marker( position, { icon: icon } );
   map.addLayer( marker );
 
-  content = '<a href="' + base_url + 'pubs/' + pub.id + '.html">' +
-            pub.name + '</a>';
-  if ( pub.demolished ) {
+  if ( type && type == 'brewery' ) {
+    content = '<b>' + thing.name + '</b>';
+  } else {
+    content = '<a href="' + base_url + 'pubs/' + thing.id + '.html">' +
+              thing.name + '</a>';
+  }
+  if ( thing.demolished ) {
     content = content + ' (demolished)';
-  } else if ( pub.closed ) {
+  } else if ( thing.closed ) {
     content = content + ' (closed)';
   }
-  content = content + '<br>' + pub.address;
+  content = content + '<br>' + thing.address;
+  if ( type && type == 'brewery' ) {
+    content = content +
+      ( thing.location_accurate ? '' : ' (location on map is approximate)' ) +
+      ( thing.dates_open ? '<br><b>Active:</b> ' + thing.dates_open : '' ) +
+      ( thing.dates_building ? '<br><b>Opened/closed:</b> ' +
+                               thing.dates_building : '' ) +
+      ( thing.former_names ? '<br><b>Former name(s)</b>: ' +
+                             thing.former_names :'') +
+      ( thing.former_address ? '<br><b>Former address(s)</b>: ' +
+                               thing.former_address : '' ) +
+      ( thing.notes ? '<br><b>Notes:</b> ' + thing.notes : '' ) +
+      ( thing.sources ? '<br><b>Sources:</b> ' + thing.sources : '' );
+    if ( thing.has_links ) {
+      var links = [];
+      if ( thing.flickr ) {
+        links.push( '<a href="' + thing.flickr + '">Photo</a>' );
+      }
+      if ( thing.website ) {
+        links.push( '<a href="' + thing.website + '">Website</a>' );
+      }
+      if ( thing.twitter ) {
+        links.push( '<a href="https://twitter.com/' + thing.twitter +
+                    '">Twitter</a>' );
+      }
+      if ( thing.rgl ) {
+        links.push( '<a href="' + thing.rgl + '">RGL</a>' );
+      }
+      if ( thing.quaffale ) {
+        links.push( '<a href="' + thing.quaffale + '">Quaffale</a>' );
+      }
+      content = content + '<br><b>Links: </b>' + links.join( ', ' );
+    }
+  }
 
   marker.bindPopup( content );
 
