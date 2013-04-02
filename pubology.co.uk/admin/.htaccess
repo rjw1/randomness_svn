@@ -7,3 +7,4 @@ AuthUserFile /export/home/pubology/.htpasswd-admin
 require valid-user
 Satisfy any
 </Limit>
+DirectoryIndex index.cgi
