@@ -39,7 +39,7 @@ if ( $page eq "updates" ) {
   print $q->redirect( $base_url . "admin/upload-updates-info.cgi" );
   exit 0;
 }
-if ( $page ne "front" && $page ne "notes" ) {
+if ( $page ne "front" && $page ne "key" ) {
   print $q->redirect( $base_url . "admin/index.cgi" );
   exit 0;
 }
@@ -55,10 +55,10 @@ if ( $page eq "front" ) {
   $div_id = "updates_page_text";
   $text = $q->param( "updates_page_text" );
 } else {
-  $page_file = $base_dir . "notes.html";
-  $template_file = "notes.tt";
-  $div_id = "notes_page_text";
-  $text = $q->param( "notes_page_text" );
+  $page_file = $base_dir . "key.html";
+  $template_file = "key.tt";
+  $div_id = "key_page_text";
+  $text = $q->param( "key_page_text" );
 }
 
 if ( $q->param( "Save" ) ) {
