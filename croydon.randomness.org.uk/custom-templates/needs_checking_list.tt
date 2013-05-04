@@ -1,0 +1,17 @@
+[% INCLUDE header.tt page_title = "Pages needing checking - $site_name" %]
+[% INCLUDE banner.tt %]
+<div id="content">
+<div id="maincontent_no_navbar">
+<h2>Pages needing checking</h2>
+
+<div>
+  <ul>
+    [% FOREACH node = nodes %]
+      <li>
+        <a href="[% full_cgi_url %]?[% node.param %]">[% node.name.replace( ', ' _ node.address, '' ) | html %]</a>, [% node.address %]
+      </li>
+    [% END %]
+  </ul>
+</div>
+
+[% INCLUDE footer.tt %]
