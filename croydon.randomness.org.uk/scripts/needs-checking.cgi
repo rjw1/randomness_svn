@@ -26,6 +26,12 @@ my %tt_vars;
 # Find out how many months we want to look back.  Default to 6.
 my $months = $q->param( "months" ) || 6;
 
+# Find out if we want a map or a list.
+my $format = $q->param( "format" );
+if ( !$format || $format ne "list" ) {
+  $format = "map";
+}
+
 # Get all the nodes.
 my @nodes = $wiki->list_all_nodes;
 my @to_check;
@@ -60,16 +66,18 @@ foreach my $node ( @nodes ) {
     address => $data{metadata}{address}[0],
   );
 
-  my ( $wgs84_long, $wgs84_lat )
-      = OpenGuides::Utils->get_wgs84_coords(
-            latitude  => $data{metadata}{latitude}[0],
-            longitude => $data{metadata}{longitude}[0],
-            config    => $config );
-  if ( defined $wgs84_lat ) {
-      $this_node{has_geodata} = 1;
-      $this_node{wgs84_lat} = $wgs84_lat;
-      $this_node{wgs84_long} = $wgs84_long;
-      $nodes_on_map++;
+  if ( $format eq "map" ) {
+    my ( $wgs84_long, $wgs84_lat )
+        = OpenGuides::Utils->get_wgs84_coords(
+              latitude  => $data{metadata}{latitude}[0],
+              longitude => $data{metadata}{longitude}[0],
+              config    => $config );
+    if ( defined $wgs84_lat ) {
+        $this_node{has_geodata} = 1;
+        $this_node{wgs84_lat} = $wgs84_lat;
+        $this_node{wgs84_long} = $wgs84_long;
+        $nodes_on_map++;
+    }
   }
   push @to_check, \%this_node;
 }
@@ -79,17 +87,26 @@ foreach my $node ( @nodes ) {
              not_deletable => 1,
              deter_robots  => 1,
              nodes         => \@to_check,
-             no_nodes_on_map => !$nodes_on_map,
            );
 
-my %minmaxdata = OpenGuides::Utils->get_wgs84_min_max( nodes => \@to_check );
-if ( scalar %minmaxdata ) {
-  %tt_vars = ( %tt_vars, %minmaxdata );
+my $template;
+
+if ( $format eq "map" ) {
+  my %minmaxdata = OpenGuides::Utils->get_wgs84_min_max( nodes => \@to_check );
+  if ( scalar %minmaxdata ) {
+    %tt_vars = ( %tt_vars, %minmaxdata );
+  }
+  %tt_vars = ( %tt_vars,
+               display_google_maps => 1, # to get the JavaScript in
+               show_map => 1,
+               no_nodes_on_map => !$nodes_on_map,
+             );
+  $template = "needs_checking.tt";
+} else {
+  $template = "needs_checking_list.tt";
 }
-$tt_vars{display_google_maps} = 1; # to get the JavaScript in
-$tt_vars{show_map} = 1;
 
 print $guide->process_template(
-                                template => "needs_checking.tt",
+                                template => $template,
                                 tt_vars => \%tt_vars,
                               );
