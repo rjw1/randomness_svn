@@ -9,6 +9,7 @@ use lib qw(
 use CGC;
 use CGI;
 #use CGI::Carp qw(fatalsToBrowser);
+use Geo::Coordinates::OSGB;
 use OpenGuides;
 use OpenGuides::CGI;
 use OpenGuides::Config;
@@ -32,11 +33,22 @@ if ( !$format || $format ne "list" ) {
   $format = "map";
 }
 
+# Find out if we want to restrict results to a given radius around us.
+my $dist = $q->param( "dist" ) || 0;
+my $lat = $q->param( "lat" );
+my $long = $q->param( "long" );
+my ( $origin_x, $origin_y );
+if ( defined $lat && defined $long ) {
+  ( $origin_x, $origin_y ) = Geo::Coordinates::OSGB::ll_to_grid( $lat, $long );
+} else {
+  $dist = 0;
+}
+
 # Get all the nodes.
 my @nodes = $wiki->list_all_nodes;
 my @to_check;
 
-my %to_exclude = map { $_ => 1 } ( "FAQ", "Home", "Tools", "West Croydon Bus Station", "West Croydon Tram Stop", "West Croydon Station", "Croydon Minster", "Fairfield Halls" );
+my %to_exclude = map { $_ => 1 } ( "FAQ", "Home", "Tools", "Contact Us", "West Croydon Bus Station", "West Croydon Tram Stop", "West Croydon Station", "Croydon Minster", "Fairfield Halls" );
 
 my $nodes_on_map;
 
@@ -66,7 +78,7 @@ foreach my $node ( @nodes ) {
     address => $data{metadata}{address}[0],
   );
 
-  if ( $format eq "map" ) {
+  if ( $format eq "map" || $dist ) {
     my ( $wgs84_long, $wgs84_lat )
         = OpenGuides::Utils->get_wgs84_coords(
               latitude  => $data{metadata}{latitude}[0],
@@ -77,9 +89,22 @@ foreach my $node ( @nodes ) {
         $this_node{wgs84_lat} = $wgs84_lat;
         $this_node{wgs84_long} = $wgs84_long;
         $nodes_on_map++;
+
+        if ( $dist ) {
+          my ( $x, $y ) = Geo::Coordinates::OSGB::ll_to_grid(
+                                       $wgs84_lat, $wgs84_long );
+          my $this_dist = int( sqrt( ( $origin_x - $x )**2
+                                   + ( $origin_y - $y )**2 ) + 0.5 );
+          $this_node{dist} = $this_dist;
+          next if ( $this_dist > $dist );
+        }
     }
   }
   push @to_check, \%this_node;
+}
+
+if ( $dist ) {
+  @to_check = sort { $a->{dist} <=> $b->{dist} } @to_check;
 }
 
 %tt_vars = (
