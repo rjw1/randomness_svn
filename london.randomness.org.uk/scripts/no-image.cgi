@@ -141,7 +141,8 @@ LEFT JOIN metadata as address
        AND node.version = address.version
        AND lower( address.metadata_type ) = 'address'
      )
-WHERE img.metadata_value IS NULL
+WHERE ( img.metadata_value IS NULL
+        OR lower( category.metadata_value ) = 'needs new photo' )
 ";
 
 if ( $q->param( "exclude_locales" ) ) {
@@ -337,7 +338,7 @@ $tt_vars{percent_photos} = floor( 100 * $num_photos / $num_pages );
 
 %tt_vars = (
              %tt_vars,
-             addon_title => "Pages without a photo",
+             addon_title => "Pages that need a photo",
              geo_handler => $geo_handler,
              results     => [ sort { $a->{name} cmp $b->{name} }
                                    values %results ],

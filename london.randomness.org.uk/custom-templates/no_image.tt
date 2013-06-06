@@ -47,17 +47,20 @@ function clearAllCriteria() {
 
 <h2>[% addon_title %]</h2>
 
+<p>Use this form to search for pages that either have no photo or
+have been marked as needing a new photo.</p>
+
 <div id="total_photo_count_message">A total of <b>[% num_photos %]</b> pages
 ([% percent_photos %]%) already have photos!</div>
 
 <form id="criteria_form" action="[% self_url %]" method="get">
   <p>Restrict results to locale [% locale_box %]
-     <small>(Locales not listed have no pages with missing images.)
+     <small>(Locales not listed have no pages that need a photo.)
      </small>
   </p>
 
   <p>Restrict results to category [% category_box %]
-     <small>(Categories not listed have no pages with missing images.)
+     <small>(Categories not listed have no pages that need a photo.)
      </small>
   </p>
 
@@ -88,7 +91,7 @@ function clearAllCriteria() {
 [% IF results.size %]
   [% IF show_map %]
     <p>
-      Number of photo-less pages satisfying these criteria: [% total_count %]
+      Number of pages satisfying these criteria: [% total_count %]
       [% IF results.size < total_count %]
         ([% results.size %] shown on map - untick the map box to see pages
          without geodata as well)
@@ -100,7 +103,7 @@ function clearAllCriteria() {
     [% INCLUDE search_result_map.tt %]
  
   [% ELSE %]
-    <p>Number of photo-less pages satisfying these criteria:
+    <p>Number of pages satisfying these criteria:
     [% results.size %]</p>
     <ul>
       [% FOREACH node = results %]
