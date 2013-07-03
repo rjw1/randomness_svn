@@ -86,6 +86,10 @@ div#redirect_message {
   padding: 0.5em 1em 0.5em 1em;
 }
 
+#maincontent.preview p {
+  line-height: 140%;
+}
+
 #maincontent_no_navbar {
   padding-left: 1em;
 }
