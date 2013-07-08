@@ -4,6 +4,39 @@
 <div id="maincontent_no_navbar">
 <h2>Pages needing checking</h2>
 
-[% INCLUDE search_results_leaflet.tt %]
+<form action="[% cgi_url %]" method="get">
+[% format_box %]
+[% months_box %]
+[% dist_box %] metres or less from [% lat_box %], [% long_box %]
+<a href="#" onClick="setLocation(); return false;">Set location</a><br>
+<input type="submit" value="Go" />
+</form>
+
+<script type="text/javascript">
+  function putLocationInForm( loc ) {
+    var lat = loc.coords.latitude;
+    var long = loc.coords.longitude;
+    document.getElementById( "lat_box" ).value = lat;
+    document.getElementById( "long_box" ).value = long;
+  }
+
+  function setLocation() {
+    navigator.geolocation.getCurrentPosition( putLocationInForm );
+  }
+</script>
+
+[% IF format == "map" %]
+  [% INCLUDE search_results_leaflet.tt %]
+[% ELSE %]
+  <div>
+    <ul>
+      [% FOREACH node = nodes %]
+        <li>
+          <a href="[% full_cgi_url %]?[% node.param %]">[% node.name.replace( ', ' _ node.address, '' ) | html %]</a>, [% node.address %]
+        </li>
+      [% END %]
+    </ul>
+  </div>
+[% END %]
 
 [% INCLUDE footer.tt %]
