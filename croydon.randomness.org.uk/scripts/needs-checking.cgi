@@ -65,7 +65,7 @@ foreach my $node ( @nodes ) {
 
                                            date => $now );
 
-  # Only flag things if they've not been checked for 6 months.
+  # Only flag things if they've not been checked for N months.
   next if $n > -1 && $n < $months;
 
   # Don't flag things that are vacant, or things in the meta category.
@@ -112,9 +112,9 @@ if ( $dist ) {
              not_deletable => 1,
              deter_robots  => 1,
              nodes         => \@to_check,
+             format        => $format,
+             cgi_url       => $q->url(),
            );
-
-my $template;
 
 if ( $format eq "map" ) {
   my %minmaxdata = OpenGuides::Utils->get_wgs84_min_max( nodes => \@to_check );
@@ -126,12 +126,25 @@ if ( $format eq "map" ) {
                show_map => 1,
                no_nodes_on_map => !$nodes_on_map,
              );
-  $template = "needs_checking.tt";
-} else {
-  $template = "needs_checking_list.tt";
 }
 
+$tt_vars{format_box} = $q->radio_group(
+    -name => "format",
+    -values => [ "map", "list" ] );
+
+$tt_vars{months_box} = $q->popup_menu(
+    -name => "months",
+    -values => [ 1 .. 12 ],
+    -labels => { map { $_ => "last checked $_ or more months ago" } ( 1.. 12) }
+);
+
+$tt_vars{lat_box} = $q->textfield(
+    -name => "lat", -id => "lat_box", -size => 10 );
+$tt_vars{long_box} = $q->textfield(
+    -name => "long", -id => "long_box", -size => 10 );
+$tt_vars{dist_box} = $q->textfield( -name => "dist", -size => 4 );
+
 print $guide->process_template(
-                                template => $template,
+                                template => "needs_checking.tt",
                                 tt_vars => \%tt_vars,
                               );
