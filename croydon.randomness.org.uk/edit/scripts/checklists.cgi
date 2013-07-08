@@ -80,9 +80,6 @@ foreach my $locale ( sort @locales ) {
     }
 
     # Tweaks for individual addresses.
-    if ( $address =~ /Norfolk House/ ) {
-      $type = "odd" if $split;
-    }
     if ( $name eq "Croydon Fruits And Vegetables, George Street" ) {
       $number = 95.5;
       $type = "odd" if $split;
@@ -331,6 +328,23 @@ foreach my $locale ( sort @locales ) {
       }
     }
 
+    # Wellesley Road
+    if ( $locale eq "Wellesley Road" ) {
+      if ( $address =~ /Norfolk House/ ) {
+        $type = "even" if $split;
+        if ( $name =~ /Travelodge/ ) {
+          # Divide by 10 as above to force Norfolk House south of Office Angels
+          $number = 0.9;
+        }
+      } elsif ( $address =~ /43 George Street/ ) {
+        $type = "odd" if $split;
+        $number = 11;
+      } elsif ( $address =~ /66-68 George Street/ ) {
+        $type = "odd" if $split;
+        $number = 13;
+      }
+    }
+
     my $info = { name => $name,
                  address => $address,
                  number => $number,
@@ -451,7 +465,10 @@ sub addr_sort {
     s/1-3 Suffolk House,/70.01/;
     s/1(\d)[a-d]? Suffolk House,/70.1$1/;
     s/(\d)[a-d]? Suffolk House,/70.0$1/;
-    s/(\d+)[a-d]? Norfolk House,/69.$1/;
+    if ( m/Norfolk House/ ) {
+      s/(\d+)[a-d]? Norfolk House,/$1/;
+      $_ /= 10;
+    }
     s/-.*$//;
     s/[a-d]$//;
   }
