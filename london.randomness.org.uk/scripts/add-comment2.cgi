@@ -18,6 +18,15 @@ my %comments_disabled = map { $_ => 1 } (
      "Old Salt Quay, SE16 5QU",
      "Old Street Station",
      "Crown And Two Chairmen, W1D 3SB",
+     "Perry Hill, SE6 4EY",
+     "Cafe Crema, SE14 6AF",
+     "Old Street Station",
+     "Edgware Station",
+     "Bow Road Station",
+     "Brick Lane Coffee, E1 6SB",
+     "Bermondsey Brazilian Shop, SE16 4BD",
+     "Spring Grove, KT1 2SF",
+     "Tai Tip Mein, SE1 6TE",
    );
 
 my $q = CGI->new;
