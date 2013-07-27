@@ -35,6 +35,7 @@ my %all_criteria = (
                      gbg       => "good beer guide",
                      wifi      => "free wireless",
                      food      => "pub food",
+                     barsnacks => "bar snacks",
                      thai      => "thai food",
                      room      => "function room",
                      pool      => "pool table",
