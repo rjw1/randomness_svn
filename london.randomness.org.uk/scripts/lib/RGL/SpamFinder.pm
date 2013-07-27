@@ -17,7 +17,7 @@ sub looks_like_spam {
     my $host = $args{metadata}{host};
     my $comment = $args{added_comment} || "";
 
-    if ( $content =~ /\b(viagra|viagraonline|cialis|supermeganah|tramadol|vicodin|phentermine|buyphentermine|adipex|phendimetrazine|ephedrine|lipitor|hydrocodone|replica-watches|propecia|ativan|levitra|lexapro|ambien|citalopram|effexor|fluoxetine|prozac|kamagra|accutane|zithromax|clenbuterol|nolvadex|lorazepam|clonazepam|diazepam|valium|clomid|rimonabant|xenical|lolita|lolitas|vimax|prednisone|nexium|ultram|klonopin|vigrxplustabs|amoxicillin|phen375|onlinepharmacy|trazodone|viagrageneric|isotretinoin|finasteride|escitalopram|vardenafil|topamax|zolpidem|oxycontin|lidocaine|seroquel)\b/is ) {
+    if ( $content =~ /\b(viagra|viagraonline|cialis|supermeganah|tramadol|vicodin|phentermine|buyphentermine|adipex|phendimetrazine|ephedrine|lipitor|hydrocodone|replica-watches|propecia|ativan|levitra|lexapro|ambien|citalopram|effexor|fluoxetine|prozac|kamagra|accutane|zithromax|clenbuterol|nolvadex|lorazepam|clonazepam|diazepam|valium|clomid|rimonabant|xenical|lolita|lolitas|vimax|prednisone|nexium|ultram|klonopin|vigrxplustabs|amoxicillin|phen375|onlinepharmacy|trazodone|viagrageneric|isotretinoin|finasteride|escitalopram|vardenafil|topamax|zolpidem|oxycontin|lidocaine|seroquel|fioricet|sildenafil|provestra|vigrx|ritalin|tadalafil|reductil|sboepnoftt)\b/is ) {
         $class->notify_admins( %args, id => "00002", reason => "Matches $1" );
         return 1;
     }
@@ -44,6 +44,12 @@ sub looks_like_spam {
         return 1;
     }
 
+    if ( ( $name eq "Old Street Station" || $name eq "Cafe Crema, SE14 6AF" ) && $content =~ m|\b\w{5}mpoepo,\s+<a\s+href="| ) {
+        $class->notify_admins( %args, id => "00007",
+                               reason => "mpoepo edit on $name" );
+        return 1;
+    }
+
     # Everything below here only matches if we come via "Add a comment".
     if ( $args{via_add_comment} ) {
 
@@ -55,7 +61,7 @@ sub looks_like_spam {
             return 1;
         }
 
-        if ( $comment =~ /\b(cheapinsurquotes|findcheapinsuranceonline|getcheapestinsurancenow|autoinsurers4u|insurautofast|searchcarquotes|cheapinsurcoverage|getyourinsurancequote|onlinecheapautoinsur|mycarinsurquote|findcarinsurbrokers|bestautoquotesonline|autoinsurcoverage|compareinsurdeals|insureyourcaronline|comparebestquotes.net|insurersplace|carinsurquote|carinsurrates|bestcarinsurrates|carinsurcompanies|searchquotesfast|locatecarinsur)\b/is ){
+        if ( $comment =~ /\b(cheapinsurquotes|findcheapinsuranceonline|getcheapestinsurancenow|autoinsurers4u|insurautofast|searchcarquotes|cheapinsurcoverage|getyourinsurancequote|onlinecheapautoinsur|mycarinsurquote|findcarinsurbrokers|bestautoquotesonline|autoinsurcoverage|compareinsurdeals|insureyourcaronline|comparebestquotes.net|insurersplace|carinsurquote|carinsurrates|bestcarinsurrates|carinsurcompanies|searchquotesfast|locatecarinsur|findcheapinsurproviders|insurcomparisonservice|findlifequotesonline|comparecheapinsur|findinsurrates|autoinsuranceoptions4you|compareinsuroffersonline|careyourauto|carquotesoptions|getcheapcarquotes|shoppingforautoinsurance|getcheapautoinsur|autoprotectionoptions|bestinsuranceprovider)\b/is ){
             $class->notify_admins( %args, id => "00035",
                                   reason => "insurance comment on $name" );
             return 1;
@@ -64,6 +70,12 @@ sub looks_like_spam {
         if ( $comment =~ /\b(thisdaddysblog\.com|blackwomanasianman\.com|etnomania\.ru)\b/is ){
             $class->notify_admins( %args, id => "00036",
                                   reason => "stealth insurance comment on $name" );
+            return 1;
+        }
+
+        if ( $comment =~ m|^\w{6}.*https?://(\w{12}).com/">\1</a>| ) {
+            $class->notify_admins( %args, id => "00037",
+                                  reason => "6 char + URL comment on $name" );
             return 1;
         }
 
@@ -98,12 +110,15 @@ sub looks_like_spam {
 }
 
 sub notify_admins {
+    # the.earth.li is bouncing these now and I don't think I've ever seen a
+    # false positive so don't bother with notifications.
+    return;
     my ( $class, %args ) = @_;
     my $datestamp = localtime( time() );
     $args{id} ||= "(none)";
     my $message = <<EOM;
 From: kake\@earth.li
-To: kake\@earth.li, bob\@randomness.org.uk
+To: kake\@earth.li
 Date: $datestamp
 Subject: Attempted spam edit on RGL
 
