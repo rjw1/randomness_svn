@@ -41,151 +41,174 @@ my $latlong_dist = $q->param( "latlong_dist" );
 my $origin = $q->param( "origin" );
 my $origin_dist = $q->param( "origin_dist" );
 my $show_map = $q->param( "show_map" );
+my ( $min_lat, $max_lat, $min_long, $max_long, $bd_set );
+my $total_count; # Everything with missing photo even if not on map.
+my %results;
+my %seen;
 
 my ( $x, $y, $dist );
 
-if ( $origin && defined $origin_dist ) {
-    my %data = $wiki->retrieve_node( $origin );
-    if ( $geo_handler == 3 ) {
-        my $mx = $data{metadata}{easting}[0];
-        my $my = $data{metadata}{northing}[0];
-        if ( $mx && $my ) {
-            $x = $mx;
-            $y = $my;
-            $dist = $origin_dist;
-        }
-    } elsif ( $geo_handler == 1 ) {
-        my $mx = $data{metadata}{os_x}[0];
-        my $my = $data{metadata}{os_y}[0];
-        if ( $mx && $my ) {
-            $x = $mx;
-            $y = $my;
-            $dist = $origin_dist;
-        }
-    }
-} else {
-    if ( $os_x && $os_y && $os_dist && ( $geo_handler == 1 ) ) {
-        $x = $os_x;
-        $y = $os_y;
-        $dist = $os_dist;
-    } elsif ( $lat && $long && $latlong_dist && ( $geo_handler == 3 ) ) {
-        require Geo::Coordinates::UTM;
-        my $zone;
-        ($zone, $x, $y ) = 
+my $do_search = $q->param( "do_search" );
+if ( $do_search ) {
+
+  if ( $origin && defined $origin_dist ) {
+      my %data = $wiki->retrieve_node( $origin );
+      if ( $geo_handler == 3 ) {
+          my $mx = $data{metadata}{easting}[0];
+          my $my = $data{metadata}{northing}[0];
+          if ( $mx && $my ) {
+              $x = $mx;
+              $y = $my;
+              $dist = $origin_dist;
+          }
+      } elsif ( $geo_handler == 1 ) {
+          my $mx = $data{metadata}{os_x}[0];
+          my $my = $data{metadata}{os_y}[0];
+          if ( $mx && $my ) {
+              $x = $mx;
+              $y = $my;
+              $dist = $origin_dist;
+          }
+      }
+  } else {
+      if ( $os_x && $os_y && $os_dist && ( $geo_handler == 1 ) ) {
+          $x = $os_x;
+          $y = $os_y;
+          $dist = $os_dist;
+      } elsif ( $lat && $long && $latlong_dist && ( $geo_handler == 3 ) ) {
+          require Geo::Coordinates::UTM;
+          my $zone;
+          ($zone, $x, $y ) = 
                      Geo::Coordinates::UTM::latlon_to_utm( $config->ellipsoid, 
                                                            $lat, $long ); 
-        $x =~ s/\..*//; # chop off decimal places 
-        $y =~ s/\..*//; # - metre accuracy enough
-        $dist = $latlong_dist;
-    }
-}
+          $x =~ s/\..*//; # chop off decimal places 
+          $y =~ s/\..*//; # - metre accuracy enough
+          $dist = $latlong_dist;
+      }
+  }
 
-$x =~ s/[^0-9]//g if $x;
-$y =~ s/[^0-9]//g if $y;
-$dist =~ s/[^0-9]//g if $dist;
+  $x =~ s/[^0-9]//g if $x;
+  $y =~ s/[^0-9]//g if $y;
+  $dist =~ s/[^0-9]//g if $dist;
 
-my ( $x_name, $y_name );
-if ( $geo_handler == 3 ) {
-    $x_name = "easting";
-    $y_name = "northing";
-} elsif ( $geo_handler == 1 ) {
-    $x_name = "os_x";
-    $y_name = "os_y";
-}
+  my ( $x_name, $y_name );
+  if ( $geo_handler == 3 ) {
+      $x_name = "easting";
+      $y_name = "northing";
+  } elsif ( $geo_handler == 1 ) {
+      $x_name = "os_x";
+      $y_name = "os_y";
+  }
 
-my $dbh = $wiki->store->dbh;
-my $sql = "
-SELECT DISTINCT
+  my $dbh = $wiki->store->dbh;
+  my $sql = "
+  SELECT DISTINCT
        node.name, locale.metadata_value, category.metadata_value, node.text,
        x.metadata_value, y.metadata_value,
        latit.metadata_value, longit.metadata_value,
        address.metadata_value
-FROM node
-LEFT JOIN metadata as img
-  ON ( node.id = img.node_id
-       AND node.version = img.version
-       AND lower( img.metadata_type ) = 'node_image'
-     )
-LEFT JOIN metadata as locale
-  ON ( node.id = locale.node_id
-       AND node.version = locale.version
-       AND lower( locale.metadata_type ) = 'locale'
-     )
-LEFT JOIN metadata as category
-  ON ( node.id = category.node_id
-       AND node.version = category.version
-       AND lower( category.metadata_type ) = 'category'
-     )
-LEFT JOIN metadata as x
-  ON ( node.id = x.node_id
-       AND node.version = x.version
-       AND lower( x.metadata_type ) = '$x_name'
-     )
-LEFT JOIN metadata as y
-  ON ( node.id = y.node_id
-       AND node.version = y.version
-       AND lower( y.metadata_type ) = '$y_name'
-     )
-LEFT JOIN metadata as latit
-  ON ( node.id = latit.node_id
-       AND node.version = latit.version
-       AND lower( latit.metadata_type ) = 'latitude'
-     )
-LEFT JOIN metadata as longit
-  ON ( node.id = longit.node_id
-       AND node.version = longit.version
-       AND lower( longit.metadata_type ) = 'longitude'
-     )
-LEFT JOIN metadata as address
-  ON ( node.id = address.node_id
-       AND node.version = address.version
-       AND lower( address.metadata_type ) = 'address'
-     )
-WHERE ( img.metadata_value IS NULL
-        OR lower( category.metadata_value ) = 'needs new photo' )
-";
+  FROM node
+  LEFT JOIN metadata as img
+    ON ( node.id = img.node_id
+         AND node.version = img.version
+         AND lower( img.metadata_type ) = 'node_image'
+       )
+  LEFT JOIN metadata as locale
+    ON ( node.id = locale.node_id
+         AND node.version = locale.version
+         AND lower( locale.metadata_type ) = 'locale'
+       )
+  LEFT JOIN metadata as category
+    ON ( node.id = category.node_id
+         AND node.version = category.version
+         AND lower( category.metadata_type ) = 'category'
+       )
+  LEFT JOIN metadata as x
+    ON ( node.id = x.node_id
+         AND node.version = x.version
+         AND lower( x.metadata_type ) = '$x_name'
+       )
+  LEFT JOIN metadata as y
+    ON ( node.id = y.node_id
+         AND node.version = y.version
+         AND lower( y.metadata_type ) = '$y_name'
+       )
+  LEFT JOIN metadata as latit
+    ON ( node.id = latit.node_id
+         AND node.version = latit.version
+         AND lower( latit.metadata_type ) = 'latitude'
+       )
+  LEFT JOIN metadata as longit
+    ON ( node.id = longit.node_id
+         AND node.version = longit.version
+         AND lower( longit.metadata_type ) = 'longitude'
+       )
+  LEFT JOIN metadata as address
+    ON ( node.id = address.node_id
+         AND node.version = address.version
+         AND lower( address.metadata_type ) = 'address'
+       )
+  WHERE ( img.metadata_value IS NULL
+          OR lower( category.metadata_value ) = 'needs new photo' )
+  ";
 
-if ( $q->param( "exclude_locales" ) ) {
-  $sql .= " AND node.name NOT LIKE 'Locale %'";
-}
-if ( $q->param( "exclude_categories" ) ) {
-  $sql .= " AND node.name NOT LIKE 'Category %'";
-}
+  if ( $q->param( "exclude_locales" ) ) {
+    $sql .= " AND node.name NOT LIKE 'Locale %'";
+  }
+  if ( $q->param( "exclude_categories" ) ) {
+    $sql .= " AND node.name NOT LIKE 'Category %'";
+  }
 
-$sql .= " ORDER BY node.name";
+  $sql .= " ORDER BY node.name";
 
-my $sth = $dbh->prepare( $sql );
-$sth->execute or die $dbh->errstr;
+  my $sth = $dbh->prepare( $sql );
+  $sth->execute or die $dbh->errstr;
 
-my %locales;
-my %categories;
-my %results;
-my $base_url = $config->script_url . $config->script_name . "?";
-my $total_count; # Everything with missing photo even if not on map.
-my ( $min_lat, $max_lat, $min_long, $max_long, $bd_set );
+  # If we want to exclude closed places, get a list of them.
+  my $exclude_closed = $q->param( "exclude_closed" );
+  my %closed;
+  if ( $exclude_closed ) {
+    %closed = map { $_ => 1 } $wiki->list_nodes_by_metadata(
+        metadata_type => "category",
+        metadata_value => "now closed",
+        ignore_case => 1,
+    );
+  }
 
-while ( my ( $name, $this_locale, $this_category, $content,
-             $this_x, $this_y, $this_lat, $this_long, $address)
+  # Similarly for excluding contributors.
+  my $exclude_contributors = $q->param( "exclude_contributors" );
+  my %contributors;
+  if ( $exclude_contributors ) {
+    %contributors = map { $_ => 1 } $wiki->list_nodes_by_metadata(
+        metadata_type => "category",
+        metadata_value => "contributors",
+        ignore_case => 1,
+    );
+  }
+
+  my $base_url = $config->script_url . $config->script_name . "?";
+
+  while ( my ( $name, $this_locale, $this_category, $content,
+               $this_x, $this_y, $this_lat, $this_long, $address)
                                                      = $sth->fetchrow_array ) {
+    # We may have already processed this page, if it has more than one locale
+    # or category.
+    if ( $seen{$name} ) {
+        next;
+    } else {
+        $seen{$name} = 1;
+    }
+
     # If this is a redirect it doesn't count at all.
     if ( $content =~ qr/^\s*#REDIRECT/ ) {
         next;
     }
 
-    # Make sure to grab the categories and locales for our list of cats/locs
-    # that have missing images.
-    if ( $this_locale ) {
-        $locales{$this_locale} = 1;
-    }
-    if ( $this_category ) {
-        $categories{$this_category} = 1;
-    }
+    # Ditto if it's closed and we're ignoring closed places.
+    next if ( $exclude_closed && $closed{$name} );
 
-    # We may have already processed this page, if it has more than one locale
-    # or category.
-    if ( $results{$name} ) {
-        next;
-    }
+    # Ditto for contributors.
+    next if ( $exclude_contributors && $contributors{$name} );
 
     # Check the criteria.
     if ( $locale && ( lc( $this_locale ) ne lc( $locale ) ) ) {
@@ -253,20 +276,30 @@ while ( my ( $name, $this_locale, $this_category, $content,
         }
     }
     $results{$name} = $this;
+  }
 }
 
 my $any_string = " -- any -- ";
 
-my @localelist = map { s/^Locale //; $_; } keys %locales;
-@localelist = sort( @localelist );
+my @localelist = $wiki->list_nodes_by_metadata(
+    metadata_type  => "category",
+    metadata_value => "locales",
+    ignore_case    => 1,
+);
+@localelist = sort map { s/^Locale //; $_; } @localelist;
 $tt_vars{locale_box} = $q->popup_menu( -name   => "locale",
                                        -values => [ "", @localelist ],
                                        -labels => { "" => $any_string,
                                                     map { $_ => $_ }
                                                           @localelist },
                                      );
-my @catlist = map { s/^Category //; $_; } keys %categories;
-@catlist = sort( @catlist );
+
+my @catlist = $wiki->list_nodes_by_metadata(
+    metadata_type  => "category",
+    metadata_value => "category",
+    ignore_case    => 1,
+);
+@catlist = sort map { s/^Category //; $_; } @catlist;
 $tt_vars{category_box} = $q->popup_menu( -name   => "category",
                                          -values => [ "", @catlist ],
                                          -labels => { "" => $any_string,
@@ -288,23 +321,17 @@ if ( $geo_handler == 1 ) {
                                                 -size => 4, -maxlength => 4 );
 }
 
-my @all_nodes = RGL::Addons->get_nodes_with_geodata( wiki => $wiki,
-                                                     config => $config );
-my %choices = map { $_->{name} => $_->{name} } @all_nodes;
-$tt_vars{origin_list} = $q->popup_menu( -name   => "origin",
-                                        -values => [ "", sort keys %choices ],
-                                        -labels => { "" => " -- choose -- ",
-                                                     %choices },
-                                      );
-$tt_vars{origin_dist_box} = $q->textfield( -name => "origin_dist", -size => 4,
-                                           -maxlength => 4 );
-
 $tt_vars{exclude_locales_box} = $q->checkbox( -name => "exclude_locales",
-                                              -value => 1, label => "" );
+  -value => 1, -label => " Exclude locale pages" );
 $tt_vars{exclude_categories_box} = $q->checkbox( -name => "exclude_categories",
-                                                 -value => 1, label => "" );
-$tt_vars{show_map_box} = $q->checkbox( -name => "show_map",
-                                                 -value => 1, label => "" );
+  -value => 1, -label => " Exclude category pages" );
+$tt_vars{exclude_closed_box} = $q->checkbox( -name => "exclude_closed",
+  -value => 1, -label => " Exclude places that have now closed" );
+$tt_vars{exclude_contributors_box} = $q->checkbox(
+  -name => "exclude_contributors", -value => 1,
+  -label => " Exclude contributor pages" );
+$tt_vars{show_map_box} = $q->checkbox( -name => "show_map", -value => 1,
+  -label => " Show results on map (may be slow for large result sets)" );
 
 my $custom_template_path = $config->custom_template_path || "";
 my $template_path = $config->template_path;
@@ -342,6 +369,7 @@ $tt_vars{percent_photos} = floor( 100 * $num_photos / $num_pages );
              geo_handler => $geo_handler,
              results     => [ sort { $a->{name} cmp $b->{name} }
                                    values %results ],
+             do_search   => $do_search,
            );
 
 if ( $q->param( "format" ) && $q->param( "format" ) eq "kml" ) {
