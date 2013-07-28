@@ -1,46 +1,6 @@
 [% USE CGI %]
 [% INCLUDE addons_header.tt %]
 
-<script type="text/javascript" language="javascript">
-<!--
-
-function addLoadEvent( func ) {
-  var oldonload = window.onload;
-  if ( typeof window.onload != 'function' ) {
-    window.onload = func;
-  } else {
-    window.onload = function() {
-      oldonload();
-      func();
-    }
-  }
-}
-
-addLoadEvent( addClearButton );
-
-function addClearButton() {
-  document.getElementById( 'clear_criteria' ).innerHTML = '<input type="submit" name="Clear all criteria" value="Clear all criteria" onClick="return clearAllCriteria()" />';
-}
-
-function clearAllCriteria() {
-  var form = document.getElementById( 'criteria_form' );
-  var textfields = form.getElementsByTagName( 'input' );
-  for ( i = 0; i < textfields.length; i++ ) {
-    if ( textfields[i].getAttribute( 'type' ) == 'text' ) {
-      textfields[i].value = '';
-    }
-  }
-
-  var dropdowns = form.getElementsByTagName( 'select' );
-  for ( i = 0; i < dropdowns.length; i++ ) {
-    dropdowns[i].selectedIndex = 0;
-  }
-  return false;
-}
-
--->
-</script>
-
 <div class="see_other_searches">
   See also: <a href="[% full_cgi_url %]?Ways_To_Search_RGL">Ways To Search RGL</a>
 </div>
@@ -54,38 +14,32 @@ have been marked as needing a new photo.</p>
 ([% percent_photos %]%) already have photos!</div>
 
 <form id="criteria_form" action="[% self_url %]" method="get">
-  <p>Restrict results to locale [% locale_box %]
-     <small>(Locales not listed have no pages that need a photo.)
-     </small>
-  </p>
+  <p>Restrict results to:</p>
 
-  <p>Restrict results to category [% category_box %]
-     <small>(Categories not listed have no pages that need a photo.)
-     </small>
-  </p>
-
-  [% IF geo_handler == 1 %]
-    <p>Restrict results to within [% os_dist_box %] metres of
-       OS X [% os_x_box %], OS Y [% os_y_box %]</p>
-  [% ELSIF geo_handler == 3 %]
-    <p>Restrict results to within [% latlong_dist_box %] metres of
-       latitude [% latitude_box %], longitude [% longitude_box %]
-       <small>(decimal, WGS-84)</small></p>
-  [% END %]
-
-  <p>Restrict results to within [% origin_dist_box %] metres of
-     [% origin_list %]</p>
+  <ul>
+    <li>locale [% locale_box %]</li>
+    <li>category [% category_box %]</li>
+    [% IF geo_handler == 1 %]
+      <li>within [% os_dist_box %] metres of
+         OS X [% os_x_box %], OS Y [% os_y_box %]</li>
+    [% ELSIF geo_handler == 3 %]
+      <li>within [% latlong_dist_box %] metres of
+         latitude [% latitude_box %], longitude [% longitude_box %]
+         <small>(decimal, WGS-84)</small></li>
+    [% END %]
+  </ul>
 
   <p>
-    [% exclude_locales_box %] Exclude locale pages
-    [% exclude_categories_box %] Exclude category pages
+    [% exclude_locales_box %]<br>
+    [% exclude_categories_box %]<br>
+    [% exclude_contributors_box %]<br>
+    [% exclude_closed_box %]
   </p>
   <p>
-    [% show_map_box %] Show results on map (may be slow for large result sets)
-     <input type="hidden" name="do_search" value="1">
-     <input type="submit" name="Search" value="Search" class="form_button">
+    [% show_map_box %]
   </p>
-  <span id="clear_criteria"></span>
+  <input type="hidden" name="do_search" value="1">
+  <input type="submit" name="Search" value="Search" class="form_button">
 </form>
 
 [% IF results.size %]
@@ -111,7 +65,7 @@ have been marked as needing a new photo.</p>
       [% END %]
     </ul>
   [% END %]
-[% ELSE %]
+[% ELSIF do_search %]
   <p>No pages found matching your criteria.</p>
 [% END %]
 
