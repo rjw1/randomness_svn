@@ -65,7 +65,13 @@
       <div class="criteria_search_checkbox">
         [% checkboxes.food %]
       </div>
-      <label for="food">Serves food</label>
+      <label for="food">Serves meals</label>
+    </div>
+    <div class="criteria_search_checkbox_group">
+      <div class="criteria_search_checkbox">
+        [% checkboxes.barsnacks %]
+      </div>
+      <label for="barsnacks">Serves bar snacks</label>
     </div>
     <div class="criteria_search_checkbox_group">
       <div class="criteria_search_checkbox">
