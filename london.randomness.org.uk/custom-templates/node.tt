@@ -133,7 +133,7 @@ Would you like to <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]">c
   <div id="title_edit_link">
     <a href="[% full_cgi_url %]?action=edit;id=[% node_param %]" rel="nofollow">Edit this page</a>
   </div>
-  [% UNLESS node_name == 'Old Salt Quay, SE16 5QU' OR node_name == 'Lantana, W1T 1SN' OR node_name == 'Old Street Station' OR node_name == 'Crown And Two Chairmen, W1D 3SB' %]
+  [% UNLESS node_name == 'Old Salt Quay, SE16 5QU' OR node_name == 'Lantana, W1T 1SN' OR node_name == 'Old Street Station' OR node_name == 'Crown And Two Chairmen, W1D 3SB' OR node_name == 'Perry Hill, SE6 4EY' OR node_name == 'Cafe Crema, SE14 6AF' OR node_name == 'Old Street Station' OR node_name == 'Edgware Station' OR node_name == 'Bow Road Station' OR node_name == 'Brick Lane Coffee, E1 6SB' OR node_name == 'Bermondsey Brazilian Shop, SE16 4BD' OR node_name == 'Spring Grove, KT1 2SF' OR node_name == 'Tai Tip Mein, SE1 6TE' %]
     <div id="title_comment_link">
       <a href="[% script_url %]scripts/add-comment2.cgi?id=[% node_param %]" rel="nofollow">Add a comment</a>
     </div>
