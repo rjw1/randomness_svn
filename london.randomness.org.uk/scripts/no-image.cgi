@@ -152,6 +152,14 @@ if ( $do_search ) {
           OR lower( category.metadata_value ) = 'needs new photo' )
   ";
 
+  if ( $locale ) {
+    $sql .= " AND lower( locale.metadata_value ) = '$locale'";
+  }
+
+  if ( $category ) {
+    $sql .= " AND lower( category.metadata_value ) = '$category'";
+  }
+
   if ( $q->param( "exclude_locales" ) ) {
     $sql .= " AND node.name NOT LIKE 'Locale %'";
   }
@@ -209,14 +217,6 @@ if ( $do_search ) {
 
     # Ditto for contributors.
     next if ( $exclude_contributors && $contributors{$name} );
-
-    # Check the criteria.
-    if ( $locale && ( lc( $this_locale ) ne lc( $locale ) ) ) {
-        next;
-    }
-    if ( $category && ( lc( $this_category ) ne lc( $category ) ) ) {
-        next;
-    }
 
     # If we're doing a location search, we need geodata.
     if ( $x && $y && $dist ) {
