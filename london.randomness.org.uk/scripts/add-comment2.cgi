@@ -27,6 +27,8 @@ my %comments_disabled = map { $_ => 1 } (
      "Bermondsey Brazilian Shop, SE16 4BD",
      "Spring Grove, KT1 2SF",
      "Tai Tip Mein, SE1 6TE",
+     "Shahi Tandoori, SE1 3BW",
+     "Only Parathas, HA3 9BX",
    );
 
 my $q = CGI->new;
