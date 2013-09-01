@@ -9,7 +9,7 @@
 
 <form id="criteria_form" action="[% self_url %]" method="get">
   <p>Find places where the address contains: [% address_box %]</p>
-
+  <p>[% closed_box %]</p>
   <input type="submit" name="Search" value="Search" />
 </form>
 
