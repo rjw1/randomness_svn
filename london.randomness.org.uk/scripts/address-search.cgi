@@ -15,12 +15,15 @@ use RGL::Addons;
 use OpenGuides::Config;
 use OpenGuides::Utils;
 use Template;
+use Wiki::Toolkit::Plugin::Categoriser;
 
 my $config_file = $ENV{OPENGUIDES_CONFIG_FILE} || "../wiki.conf";
 my $config = OpenGuides::Config->new( file => $config_file );
 
 my $guide = OpenGuides->new( config => $config );
 my $wiki = $guide->wiki;
+my $categoriser = Wiki::Toolkit::Plugin::Categoriser->new;
+$wiki->register_plugin( plugin => $categoriser );
 my $formatter = $wiki->formatter;
 my $base_url = $config->script_url . $config->script_name . "?";
 
@@ -40,26 +43,44 @@ if ( $address ) {
                AND node.version = address.version
                AND lower( address.metadata_type ) = 'address'
              )
-        WHERE address.metadata_value LIKE ?
-        ORDER BY node.name";
+        WHERE address.metadata_value LIKE ?";
 
     my $sth = $dbh->prepare( $sql );
     $sth->execute( "%" . $address . "%" ) or die $dbh->errstr;
 
-    my @nodes;
+    my %candidates;
     while ( my ( $name, $this_address ) = $sth->fetchrow_array ) {
         my $param = $formatter->node_name_to_node_param( $name );
-        push @nodes, {
-                       name => CGI->escapeHTML( $name ),
-                       address => CGI->escapeHTML( $this_address),
-                       url  => $base_url . $param,
-                     };
+        $candidates{$name} = {
+                               name => CGI->escapeHTML( $name ),
+                               address => CGI->escapeHTML( $this_address),
+                               url  => $base_url . $param,
+                             };
     }
+
+    my @nodes;
+    # Exclude places that have closed, if required.
+    if ( $q->param( "exclude_closed" ) ) {
+        foreach my $node ( keys %candidates ) {
+            if ( !$categoriser->in_category( category => "Now Closed",
+                                            node => $node ) ) {
+                push @nodes, $candidates{$node};
+            }
+        }
+    } else {
+        @nodes = values %candidates;
+    }
+
+    @nodes = sort { $a->{name} cmp $b->{name} } @nodes;
     $tt_vars{nodes} = \@nodes;
     $tt_vars{searching} = 1;
 }
 
 $tt_vars{address_box} = $q->textfield( -name => "address", -size => 60 );
+$tt_vars{closed_box} = $q->checkbox(
+    -name => "exclude_closed",
+    -value => 1,
+    -label => " Exclude places that have closed" );
 
 my $custom_template_path = $config->custom_template_path || "";
 my $template_path = $config->template_path;
