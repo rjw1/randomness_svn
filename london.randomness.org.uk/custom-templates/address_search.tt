@@ -16,7 +16,11 @@
 [% IF nodes.size %]
   <ul>
     [% FOREACH node = nodes %]
-      <li><a href="[% node.url %]">[% node.name %]</a> ([% node.address %])</li>
+      <li>
+        <a href="[% node.url %]">[% node.name %]</a>
+        ([% node.address %])
+        [% IF node.closed %](now closed)[% END %]
+      </li>
     [% END %]
   </ul>
 [% ELSIF searching %]
