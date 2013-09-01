@@ -59,16 +59,15 @@ if ( $address ) {
     }
 
     my @nodes;
-    # Exclude places that have closed, if required.
-    if ( $q->param( "exclude_closed" ) ) {
-        foreach my $node ( keys %candidates ) {
-            if ( !$categoriser->in_category( category => "Now Closed",
-                                            node => $node ) ) {
-                push @nodes, $candidates{$node};
-            }
+    # Get data on which places have closed, and exclude them if required.
+    foreach my $node ( keys %candidates ) {
+        my $closed = $categoriser->in_category( category => "Now Closed",
+                                                node => $node );
+        if ( $q->param( "exclude_closed" ) && $closed ) {
+            next;
         }
-    } else {
-        @nodes = values %candidates;
+        $candidates{$node}{closed} = $closed;
+        push @nodes, $candidates{$node};
     }
 
     @nodes = sort { $a->{name} cmp $b->{name} } @nodes;
