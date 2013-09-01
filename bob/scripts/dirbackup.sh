@@ -5,13 +5,14 @@
 # defaults
 DAYSTOKEEP=7
 
-while getopts "b:d:k:h" option
+while getopts "b:d:k:x:h" option
 do
   case $option in
    b ) BACKUPDIR=$OPTARG ;;
    d ) DIRTOBACKUP=$OPTARG ;;
    h ) HELP=1 ;;
    k ) DAYSTOKEEP=$OPTARG ;;
+   x ) EXCLUDEFILE=$OPTARG ;;
    * ) HELP=1 ;;
   esac
 done
@@ -34,6 +35,7 @@ then
   echo "-b backup directory"
   echo "-d directory to backup"
   echo "-k days to keep"
+  echo "-x path to file of patterns to exclude"
   echo "-h this help message"
   exit 0
 fi
@@ -43,6 +45,15 @@ DIRNAME=$(basename $DIRTOBACKUP)
 ROOTPATH=$(dirname $DIRTOBACKUP)
 BACKUPFILE=${BACKUPDIR}/${DIRNAME}_backup_$(date +'%Y_%m_%d').tar.gz
 
+if [[ ! -z $EXCLUDEFILE ]]
+then
+   if [ ! -f "$EXCLUDEFILE" ]
+   then
+     echo "$EXCLUDEFILE doesnt exist"
+     exit 1
+   fi
+   EXCLUDE_OPTION="-X $EXCLUDEFILE"
+fi
 
 if [ ! -d "$BACKUPDIR" ]; then
   echo "$APPNAME: The backup destination directory '$BACKUPDIR' doesn't exist..."
@@ -58,7 +69,7 @@ STARTCLEAN=$(date +'%s')
 find $BACKUPDIR -name "${DIRNAME}_backup_*" -mtime +${DAYSTOKEEP} -exec rm {} \;
 STOPCLEAN=$(date +'%s')
 STARTBACKUP=$(date +'%s')
-/bin/tar -zcf $BACKUPFILE -C $ROOTPATH $DIRNAME
+/bin/tar -zcf $BACKUPFILE $EXCLUDE_OPTION -C $ROOTPATH $DIRNAME
 STOPBACKUP=$(date +'%s')
 FINISHEPOCH=$(date +'%s')
 CLEANTIME=$(expr  $STOPCLEAN  - $STARTCLEAN)
