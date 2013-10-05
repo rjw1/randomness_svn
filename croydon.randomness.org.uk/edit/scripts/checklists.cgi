@@ -328,6 +328,17 @@ foreach my $locale ( sort @locales ) {
       }
     }
 
+    # St George's Walk
+    if ( $locale eq "St George's Walk" ) {
+      if ( $address =~ /23-25 High Street/ ) {
+        $type = "odd" if $split;
+        $number = 1;
+      } elsif ( $address =~ /27 High Street/ ) {
+        $type = "even" if $split;
+        $number = 1;
+      }
+    }
+
     # Wellesley Road
     if ( $locale eq "Wellesley Road" ) {
       if ( $address =~ /Norfolk House/ ) {
