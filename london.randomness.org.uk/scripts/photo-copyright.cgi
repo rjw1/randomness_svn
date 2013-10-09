@@ -53,6 +53,8 @@ if ( $copyright ) {
                      };
     }
     $tt_vars{nodes} = \@nodes;
+    $tt_vars{num_nodes} = scalar @nodes;
+    $tt_vars{photographer} = CGI->escapeHTML( $copyright );
     $tt_vars{searching} = 1;
 }
 
