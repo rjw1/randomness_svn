@@ -14,6 +14,7 @@
 </form>
 
 [% IF nodes.size %]
+  <h4>Photos by [% photographer %]: [% num_nodes %]</h4>
   <ul>
     [% FOREACH node = nodes %]
       <li><a href="[% node.url %]">[% node.name %]</a></li>
