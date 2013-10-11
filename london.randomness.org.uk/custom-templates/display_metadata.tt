@@ -78,13 +78,24 @@
         <span class="metadata_label">Categories:</span>
         [% doing_gbg = 0 %]
         [% gbg_cats = '' %]
+        [% doing_stations = 0 %]
+        [% station_cats = '' %]
         [% FOREACH category = categories %]
+
           [% IF !doing_gbg AND category.name.match( '^Good Beer Guide' ) %]
             [% gbg_cats = '<li class="gbg_list"><span class="metadata_label">Good Beer Guide:</span> ' %]
             [% doing_gbg = 1 %]
           [% ELSIF doing_gbg AND !category.name.match( '^Good Beer Guide' ) %]
              [% doing_gbg = 0 %]
           [% END %]
+
+          [% IF !doing_stations AND category.name.match( '^Trains To' ) %]
+            [% station_cats = '<li class="trains_list"><span class="metadata_label">Trains to:</span> ' %]
+            [% doing_stations = 1 %]
+          [% ELSIF doing_stations AND !category.name.match( '^Trains To' ) %]
+             [% doing_stations = 0 %]
+          [% END %]
+
           [% IF doing_gbg %]
             [% years = category.name.match( '^Good Beer Guide (\d{4})' ) %]
             [% IF years %]
@@ -99,7 +110,18 @@
               [% END %]
               [% gbg_cats = gbg_cats _ ', ' %]
             [% END %]
-          [% ELSE %] [%# not a GBG category %]
+          [% ELSIF doing_stations %]
+            [% stations = category.name.match( '^Trains To (.*)$' ) %]
+            [% IF stations %]
+              [% station = stations.0 %]
+              [% IF category.url != "" %]
+                [% station_cats = station_cats _ '<a href="' _ category.url _ '" class="category">' _ station _ "</a>" %]
+              [% ELSE %]
+                [% station_cats = station_cats _ station %]
+              [% END %]
+              [% station_cats = station_cats _ ', ' %]
+            [% END %]
+          [% ELSE %] [%# not a special category %]
             [% IF category.url != "" %]
               <a href="[% category.url %]" class="category">[% category.name %]</a>[%- "," UNLESS loop.last %]
             [% ELSE %]
@@ -111,6 +133,11 @@
       [% IF gbg_cats %]
         <li class="gbg_list">
           [% gbg_cats.remove( ', $' ) %]
+        </li>
+      [% END %]
+      [% IF station_cats %]
+        <li class="trains_list">
+          [% station_cats.remove( ', $' ) %]
         </li>
       [% END %]
     [% END %]
