@@ -80,22 +80,6 @@ foreach my $locale ( sort @locales ) {
     }
 
     # Tweaks for individual addresses.
-    if ( $name eq "Croydon Fruits And Vegetables, George Street" ) {
-      $number = 95.5;
-      $type = "odd" if $split;
-    }
-    if ( $name eq "Natwest, 1 High Street" && $locale eq "George Street" ) {
-      $type = "even" if $split;
-      $number = 0.5;
-    }
-    if ( $name eq "Allders, 2 North End" ) {
-      $type = "odd" if $split;
-      $number = 1;
-    }
-    if ( $name eq "East Croydon Station" ) {
-      $type = "odd" if $split;
-      $number = 99;
-    }
 
     # Church Street
     if ( $locale eq "Church Street" ) {
@@ -146,6 +130,41 @@ foreach my $locale ( sort @locales ) {
       } elsif ( $name =~ /181 North End/ ) {
         $type = "odd" if $split;
         $number = 0.8;
+      }
+    }
+
+    # Frith Road
+    if ( $locale eq "Frith Road" ) {
+      if ( $name =~ /78c Frith Road/ ) {
+        $number = 78.3;
+      } elsif ( $name =~ /78d Frith Road/ ) {
+        $number = 78.4;
+      }
+    }
+
+    # George Street
+    if ( $locale eq "George Street" ) {
+      if ( $name eq "East Croydon Station" ) {
+        $type = "odd" if $split;
+        $number = 99;
+      } elsif ( $name =~ /4-5 Station Approach, George Street/ ) {
+        $type = "odd" if $split;
+        $number = 97.5;
+      } elsif ( $name =~ /1-3 Station Approach, George Street/ ) {
+        $type = "odd" if $split;
+        $number = 97;
+      } elsif ( $name eq "Croydon Fruits And Vegetables, George Street" ) {
+        $type = "odd" if $split;
+        $number = 95.5;
+      } elsif ( $name eq "Natwest, 1 High Street" ) {
+        $type = "even" if $split;
+        $number = 0.5;
+      } elsif ( $address =~ /Norfolk House/ ) {
+        $type = "odd" if $split;
+        $number += 37;
+      } elsif ( $name =~ /, 2 North End/ ) {
+        $type = "odd" if $split;
+        $number = 1;
       }
     }
 
@@ -245,7 +264,7 @@ foreach my $locale ( sort @locales ) {
       } elsif ( $name eq "Next, Centrale" ) {
         $type = "odd" if $split;
         $number = 109;
-      } elsif ( $name eq "HMV, Centrale" ) {
+      } elsif ( $name =~ /HMV.*, Centrale/ ) {
         $type = "odd" if $split;
         $number = 47;
       } elsif ( $name eq "Metro Bank, Centrale" ) {
@@ -259,7 +278,13 @@ foreach my $locale ( sort @locales ) {
 
     # Selsdon Road
     if ( $locale eq "Selsdon Road" ) {
-      if ( $name =~ /20e Selsdon Road/ ) {
+      if ( $name =~ /1a Selsdon Road/ ) {
+        $number = 0.1;
+      } elsif ( $name =~ /1b Selsdon Road/ ) {
+        $number = 0.2;
+      } elsif ( $name =~ /William Hill, 1 Selsdon Road/ ) {
+        $number = 0.3;
+      } elsif ( $name =~ /20e Selsdon Road/ ) {
         $number = 20.5;
       } elsif ( $name =~ /20d Selsdon Road/ ) {
         $number = 20.4;
@@ -301,7 +326,7 @@ foreach my $locale ( sort @locales ) {
       if ( $name eq "Scream Studios, 20a South End" ) {
         $number = 20.5;
       }
-      if ( $name eq "Desi Hut (CLOSED), 38a South End" ) {
+      if ( $name =~ /38a South End/ ) {
         $number = 36.5;
       }
       if ( $name eq "Jacksons Property Services, 82-84 South End" ) {
@@ -325,6 +350,13 @@ foreach my $locale ( sort @locales ) {
       if ( $name =~ /1 Brighton Road/ ) {
         $type = "even" if $split;
         $number = 106;
+      }
+    }
+
+    # Station Road
+    if ( $locale eq "Station Road" ) {
+      if ( $address =~ /18b Station Road/ ) {
+        $number = 18.5;
       }
     }
 
