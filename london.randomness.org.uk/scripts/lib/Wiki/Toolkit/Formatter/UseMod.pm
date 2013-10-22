@@ -650,19 +650,29 @@ sub make_external_link {
     my ($self, %args) = @_;
     my ($open, $close) = ( "[", "]" );
     my $link_class = $self->{_external_link_class} || "";
-    if ( $args{title} eq $args{url} || $link_class ) {
+    my $title = $args{title};
+    my $url = $args{url};
+
+    if ( $title eq $url || $link_class ) {
         ($open, $close) = ( "", "" );
     }
-    if ( $args{title} =~ /^photo/ ) {
+    if ( $title =~ /^photo/ ) {
         $link_class .= " photo";
     }
-    my $ret = qq|$open<a href="$args{url}"|
-              . (( $args{url} =~ /qype\.co/ || $args{url} =~ /beerintheevening/
-                   ||$args{url} =~ /london-eating\.co\.uk/
-                   || $args{url} =~ /viewlondon\.co\.uk/
+
+    # Anchors for Yelp URLs.
+    if ( $url =~ /yelp\.co\.uk/ && $url !~ /bizReviews$/ ) {
+        $url .= "#bizReviews";
+    }
+
+    my $ret = qq|$open<a href="$url"|
+              . (( $url =~ /qype\.co/ || $url =~ /beerintheevening/
+                   || $url =~ /london-eating\.co\.uk/
+                   || $url =~ /viewlondon\.co\.uk/
+                   || $url =~ /yelp\.co\.uk/
                  ) ? qq| rel="nofollow" | : "" )
               . ( $link_class ? qq| class="$link_class"| : "" )
-              . qq|>$args{title}</a>$close|;
+              . qq|>$title</a>$close|;
     return $ret;
 }
 
