@@ -255,7 +255,12 @@ foreach my $locale ( sort @locales ) {
 
     # North End
     if ( $locale eq "North End" ) {
-      if ( $name eq "Zara, Centrale" ) {
+      # West side
+      if ( $name =~ /135a North End/ ) {
+        $number = 133.5;
+      } elsif ( $name =~ /139a North End/ ) {
+        $number = 137.5;
+      } elsif ( $name eq "Zara, Centrale" ) {
         $type = "odd" if $split;
         $number = 113;
       } elsif ( $name eq "Aldo, Centrale" ) {
@@ -264,6 +269,8 @@ foreach my $locale ( sort @locales ) {
       } elsif ( $name eq "Next, Centrale" ) {
         $type = "odd" if $split;
         $number = 109;
+      } elsif ( $name eq "Rush Advanced Academy, 73 North End" ) {
+        $number = 73.5;
       } elsif ( $name =~ /HMV.*, Centrale/ ) {
         $type = "odd" if $split;
         $number = 47;
@@ -273,6 +280,12 @@ foreach my $locale ( sort @locales ) {
       } elsif ( $name eq "Reggaemasters, 1 Drummond Road" ) {
         $type = "odd" if $split;
         $number = 69.5;
+      }
+      # East side
+      elsif ( $name =~ /30-32 North End/ ) {
+        $number = 32;
+      } elsif ( $name =~ /34-36 North End/ ) {
+        $number = 36.5;
       }
     }
 
@@ -368,6 +381,10 @@ foreach my $locale ( sort @locales ) {
       } elsif ( $address =~ /27 High Street/ ) {
         $type = "even" if $split;
         $number = 1;
+      } elsif ( $address =~ /41a St George's Walk/ ) {
+        $number = 41.5;
+      } elsif ( $address =~ /26a St George's Walk/ ) {
+        $number = 26.5;
       }
     }
 
