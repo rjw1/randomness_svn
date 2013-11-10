@@ -288,9 +288,9 @@
         <div class="edit_form_group" id="coord_field_1_group">
           <label for="[% coord_field_1 %]">
             [% IF conflict %]
-              Current [% coord_field_1_name %]:
+              Current [% coord_field_1_name %] (e.g. 528113):
             [% ELSE %]
-              [% coord_field_1_name %]:
+              [% coord_field_1_name %] (e.g. 528113):
             [% END %]
           </label>
           <div class="edit_box">
@@ -310,9 +310,9 @@
         <div class="edit_form_group" id="coord_field_2_group">
           <label for="[% coord_field_2 %]">
             [% IF conflict %]
-              Current [% coord_field_2_name %]:
+              Current [% coord_field_2_name %] (e.g. 179347):
             [% ELSE %]
-              [% coord_field_2_name %]:
+              [% coord_field_2_name %] (e.g. 179347):
             [% END %]
           </label>
           <div class="edit_box">
