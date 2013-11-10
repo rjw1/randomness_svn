@@ -626,12 +626,12 @@ div#summary_group {
 
 fieldset#additional_information label {
   display: block;
-  width: 20%;
+  width: 23%;
   float: left;
 }
 
 fieldset#additional_information div.edit_box {
-  width: 75%;
+  width: 72%;
   float: right;
 }
 
