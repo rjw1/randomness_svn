@@ -3,6 +3,7 @@
   <ul>
     <li><a href="[% config.script_url _ config.script_name %]?Locale_London_Road">London Road</a> (<a href="[% config.script_url _ config.script_name %]?action=index;format=map;loc=london+road">map</a>)</li>
     <li><a href="[% config.script_url _ config.script_name %]?Locale_North_End">North End</a> (<a href="[% config.script_url _ config.script_name %]?action=index;format=map;loc=north+end">map</a>)</li>
+    <li><a href="[% config.script_url _ config.script_name %]?Locale_George_Street">George Street</a> (<a href="[% config.script_url _ config.script_name %]?action=index;format=map;loc=george+street">map</a>)</li>
     <li><a href="[% config.script_url _ config.script_name %]?Locale_High_Street">High Street</a> (<a href="[% config.script_url _ config.script_name %]?action=index;format=map;loc=high+street">map</a>)</li>
     <li><a href="[% config.script_url _ config.script_name %]?Locale_South_End">South End</a> (<a href="[% config.script_url _ config.script_name %]?action=index;format=map;loc=south+end">map</a>)</li>
     <li><a href="[% config.script_url _ config.script_name %]?Category_Locales">All streets/areas</a></li>
