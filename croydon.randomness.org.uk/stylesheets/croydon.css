@@ -259,9 +259,11 @@ div.macro_index_list ul, div.macro_index_addr_list ul {
 .recentchanges_node_name {
   font-size: 0.8em;
   padding-right: 1em;
+  padding-top: 1.5em;
 }
 .recentchanges_meta {
   font-size: 0.8em;
+  padding-top: 1.5em;
 }
 .recentchanges_user {
   font-size: 0.8em;
