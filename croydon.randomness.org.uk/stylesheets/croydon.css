@@ -85,6 +85,10 @@ div#body_wrapper {
 #banner h1 a:active { text-decoration: none; }
 #banner h1 a:hover { text-decoration: none; }
 
+h3 {
+  padding-top: 0.5em;
+}
+
 div#redirect_message {
   display: none;
 }
@@ -995,4 +999,40 @@ div#library_banner_title {
   font-weight: bold;
   font-size: 1.3em;
   padding-bottom: 0.5em;
+}
+
+/* Blog stuff */
+
+div#blog_page_content {
+  padding-right: 1em;
+  padding-bottom: 1em;
+}
+
+ul.blog_posts li {
+  padding-top: 0.5em;
+}
+
+ul.blog_post_tags:before {
+  font-weight: bold;
+  content: "Tags: ";
+  margin-left: -2.5em;
+}
+
+ul.blog_post_tags li {
+  display: inline;
+}
+
+ul.blog_post_tags li:not(:last-child):after {
+  content: ",";
+}
+
+div.blog-photo {
+  clear: both;
+  float: right;
+  padding-left: 1em;
+  padding-bottom: 1em;
+}
+
+div.blog-photo img {
+  border: 1px solid #595A38;
 }
