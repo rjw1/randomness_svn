@@ -1012,6 +1012,10 @@ ul.blog_posts li {
   padding-top: 0.5em;
 }
 
+ul.blog_post_tags {
+  clear: both;
+}
+
 ul.blog_post_tags:before {
   font-weight: bold;
   content: "Tags: ";
