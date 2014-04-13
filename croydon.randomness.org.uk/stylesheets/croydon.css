@@ -1,7 +1,9 @@
 /* Global stuff */
 body {
   margin: 0;
-  background: #7a0088;
+  /* Background image is Darth Stripe by Ashton, from http://www.transparenttextures.com/ */
+  background-image: url("http://croydon.randomness.org.uk/static/images/darth-stripe.png");
+  background-color: #7a0088;
   color: #000000;
   font-family: lucida, verdana, arial, sans-serif;
 }
@@ -42,8 +44,9 @@ div.cancel_edit a {
 
 /* Main body */
 div#body_wrapper {
-#  background: #e3cfe6;
-  background: #e4d8e6;
+  /* Background image is Brilliant by Carlos Valdez, from http://www.transparenttextures.com/ */
+  background-image: url("http://croydon.randomness.org.uk/static/images/brilliant.png");
+  background-color: #e4d6e6;
 }
 
 @media only screen and (min-width: 800px) {
@@ -66,7 +69,9 @@ div#body_wrapper {
 #banner {
   padding-bottom: 0.1em;
   margin-top: -1.35em;
-  background: #7a0088;
+  /* Background image is Darth Stripe by Ashton, from http://www.transparenttextures.com/ */
+  background-image: url("http://croydon.randomness.org.uk/static/images/darth-stripe.png");
+  background-color: #7a0088;
   color: #fff;
 }
 
