@@ -53,12 +53,8 @@ locales.size > 0 %][% FOREACH locale = locales %][% locale.name %][%-
   [% END %]
     <link rel="alternate"
           type="application/rss+xml"
-          title="[% site_name %] - Recent Changes (RSS 1.0)"
-          href="[% full_cgi_url %]?action=rc;format=rss" />
-    <link rel="alternate"
-          type="application/atom+xml"
-          title="[% site_name %] - Recent Changes (Atom)"
-          href="[% full_cgi_url %]?action=rc;format=atom" />
+          title="[% site_name %] - Croydon Retail News (RSS)"
+          href="http://croydon.randomness.org.uk/blog/rss.xml" />
     <link rel="search"
           type="application/opensearchdescription+xml"
           title="Search the site '[% site_name %]'"

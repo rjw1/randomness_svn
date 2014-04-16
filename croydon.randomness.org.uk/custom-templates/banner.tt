@@ -3,6 +3,7 @@
   <div id="about_and_contact">
     <a href="[% full_cgi_url %]?id=About_Us">About CGC</a>
     <a href="[% full_cgi_url %]?id=Contact_Us">Contact CGC</a>
+    <a href="[% config.script_url %]blog/">CGC Blog</a>
   </div>
 
   [% TRY %]
