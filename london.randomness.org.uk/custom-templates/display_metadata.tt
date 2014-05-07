@@ -58,7 +58,7 @@
       <li class="fax">
         [% twitter = fax.replace( 'https?://(www\.)?twitter.com(/#!)?/', '' ) %]
         [% twitter = twitter.replace( '@', '' ) %]
-        <span class="metadata_label">Twitter:</span> <a href="http://twitter.com/[% CGI.escape(twitter) %]" class="external">@[% CGI.escapeHTML(twitter) %]</a>
+        <span class="metadata_label">Twitter:</span> <a href="https://twitter.com/[% CGI.escape(twitter) %]/with_replies" class="external">@[% CGI.escapeHTML(twitter) %]</a>
       </li>
     [% END %]
     [% IF hours_text %]
