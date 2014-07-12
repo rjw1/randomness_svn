@@ -661,8 +661,9 @@ sub make_external_link {
     }
 
     # Anchors for Yelp URLs.
-    if ( $url =~ /yelp\.co\.uk/ && $url !~ /bizReviews$/ ) {
-        $url .= "#bizReviews";
+    if ( $url =~ /yelp\.co\.uk/ ) {
+        $url =~ s/#bizReviews//;
+        $url .= "#q";
     }
 
     my $ret = qq|$open<a href="$url"|
