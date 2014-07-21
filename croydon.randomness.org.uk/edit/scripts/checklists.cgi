@@ -271,7 +271,7 @@ foreach my $locale ( sort @locales ) {
         $number = 109;
       } elsif ( $name eq "Rush Advanced Academy, 73 North End" ) {
         $number = 73.5;
-      } elsif ( $name =~ /HMV.*, Centrale/ ) {
+      } elsif ( $name =~ /Poundworld, Centrale/ ) {
         $type = "odd" if $split;
         $number = 47;
       } elsif ( $name eq "Metro Bank, Centrale" ) {
