@@ -14,6 +14,7 @@ use JSON;
 use OpenGuides;
 use OpenGuides::Config;
 use POSIX;
+use Template;
 use Wiki::Toolkit::Plugin::Locator::Grid;
 use WWW::Mechanize;
 use XML::Simple;
@@ -45,6 +46,16 @@ my %routes = get_routes( kml_url => $kml_url );
 my @route = @{$routes{6}};
 my @to_survey = get_survey_venues( route => \@route );
 exit 0 if $plain;
+
+# Package the data for the template.
+my %tt_vars = ( nodes => \@to_survey );
+my $custom_template_path = $config->custom_template_path || "";
+my $template_path = $config->template_path;
+my $tt = Template->new( {
+               INCLUDE_PATH => ".:$custom_template_path:$template_path" } );
+print $q->header;
+$tt->process( "surveys.tt", \%tt_vars );
+
 
 # Pass in a KML URL and get back a hash where the keys are the route names
 # and the values are refs to arrays of points, with each point being a
