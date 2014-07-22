@@ -71,7 +71,7 @@ sub get_routes {
             my ( $long, $lat ) = split ',', $pointstr;
             # Transform lat/long to grid based on WGS84.
             my ( $wgs84_x, $wgs84_y )
-             = Geo::Coordinates::OSGB::ll_to_grid( $lat, $long );
+             = Geo::Coordinates::OSGB::ll_to_grid( $lat, $long, 'WGS84' );
             # Transform WGS84 grid to OSGB grid.
             my ( $x, $y ) = Geo::Coordinates::OSTN02::ETRS89_to_OSGB36(
                                 $wgs84_x, $wgs84_y, 0 );
