@@ -48,7 +48,7 @@ if ( defined $lat && defined $long ) {
 my @nodes = $wiki->list_all_nodes;
 my @to_check;
 
-my %to_exclude = map { $_ => 1 } ( "FAQ", "Home", "Tools", "Contact Us", "West Croydon Bus Station", "West Croydon Tram Stop", "West Croydon Station", "Croydon Minster", "Fairfield Halls" );
+my %to_exclude = map { $_ => 1 } ( "FAQ", "Home", "Tools", "Contact Us", "West Croydon Bus Station", "West Croydon Tram Stop", "West Croydon Station", "Croydon Minster", "Fairfield Halls", "East Croydon Station", "Croydon College" );
 
 my $nodes_on_map;
 
