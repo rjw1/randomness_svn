@@ -1013,6 +1013,13 @@ div#blog_page_content {
   padding-bottom: 1em;
 }
 
+#blog_page_content h3 {
+  font-style: italic;
+  font-family: calibri, lucida, verdana, arial, sans-serif;
+  font-size: 1.5em;
+  margin-bottom: 0.2em;
+}
+
 ul.blog_posts li {
   padding-top: 0.5em;
 }
