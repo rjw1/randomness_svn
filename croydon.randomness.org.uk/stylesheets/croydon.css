@@ -376,6 +376,10 @@ div#metadata ul li span.metadata_label {
   margin-bottom: 2.5em;
 }
 
+#content_text, #blog_page_content {
+  line-height: 140%;
+}
+
 /* All the location stuff - nearest Tubes, distance search form, etc. */
 #location_stuff {
   clear: both;
