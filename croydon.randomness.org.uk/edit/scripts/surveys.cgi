@@ -40,7 +40,10 @@ if ( $plain ) {
   print "Bounding box size: $BOUND_BOX\n";
 }
 
-my $kml_url = "https://maps.google.co.uk/maps/ms?authuser=0&vps=2&ie=UTF8&msa=0&output=kml&msid=210131270935033819755.0004fec30bd5ef5150821";
+# The map for editing is at:
+# https://mapsengine.google.com/map/edit?mid=z3uPe0FYfwVE.kj_e_iCejtFU
+#my $kml_url = "https://maps.google.co.uk/maps/ms?authuser=0&vps=2&ie=UTF8&msa=0&output=kml&msid=210131270935033819755.0004fec30bd5ef5150821";
+my $kml_url = "http://mapsengine.google.com/map/kml?mid=z3uPe0FYfwVE.kj_e_iCejtFU";
 
 my %routes = get_routes( kml_url => $kml_url );
 my @route = @{$routes{6}};
@@ -69,7 +72,8 @@ sub get_routes {
     $mech->get( $kml_url );
     my $kml = $mech->content;
     #if ( $plain ) { print $kml; exit 0; }
-    my $routeinfo = XMLin( $kml )->{Document}{Placemark};
+#use Data::Dumper; print Dumper XMLin( $kml )->{Document}; exit 0;
+    my $routeinfo = XMLin( $kml )->{Document}{Folder}{Placemark};
     #if ( $plain ) { use Data::Dumper; print Dumper $routeinfo; exit 0; }
 
     my %routes;
