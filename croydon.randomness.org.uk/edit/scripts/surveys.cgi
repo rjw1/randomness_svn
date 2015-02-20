@@ -41,12 +41,12 @@ if ( $plain ) {
 }
 
 # The map for editing is at:
-# https://mapsengine.google.com/map/edit?mid=z3uPe0FYfwVE.kj_e_iCejtFU
-#my $kml_url = "https://maps.google.co.uk/maps/ms?authuser=0&vps=2&ie=UTF8&msa=0&output=kml&msid=210131270935033819755.0004fec30bd5ef5150821";
-my $kml_url = "http://mapsengine.google.com/map/kml?mid=z3uPe0FYfwVE.kj_e_iCejtFU";
+# http://umap.openstreetmap.fr/en/map/cgc-survey_29724
+# GeoJSON version at http://umap.openstreetmap.fr/en/map/29724/geojson/
+# See datalayer stuff in the JSON to get the json_url below.
+my $json_url = "http://umap.openstreetmap.fr/en/datalayer/61278/";
 
-my %routes = get_routes( kml_url => $kml_url );
-my @route = @{$routes{6}};
+my @route = get_route( json_url => $json_url );
 my @to_survey = get_survey_venues( route => \@route );
 exit 0 if $plain;
 
@@ -60,45 +60,42 @@ print $q->header;
 $tt->process( "surveys.tt", \%tt_vars );
 
 
-# Pass in a KML URL and get back a hash where the keys are the route names
-# and the values are refs to arrays of points, with each point being a
-# hashref containing lat, long, x, and y - lat and long come directly from
-# the KML, whereas x and y are the results of transforming to OSGB.
-sub get_routes {
+# Pass in a GeoJSON URL and get back an array of points relating to
+# the first LineString found in the data.  Each point is a hashref
+# containing lat, long, x, and y - lat and long come directly from the
+# KML, whereas x and y are the results of transforming to OSGB.
+
+sub get_route {
     my %args = @_;
-    my $kml_url = $args{kml_url};
+    my $json_url = $args{json_url};
 
     my $mech = WWW::Mechanize->new();
-    $mech->get( $kml_url );
-    my $kml = $mech->content;
-    #if ( $plain ) { print $kml; exit 0; }
-#use Data::Dumper; print Dumper XMLin( $kml )->{Document}; exit 0;
-    my $routeinfo = XMLin( $kml )->{Document}{Folder}{Placemark};
+    $mech->get( $json_url );
+    my $json = $mech->content;
+    #if ( $plain ) { print $json; exit 0; }
+
+    my $routeinfo = decode_json( $json );
     #if ( $plain ) { use Data::Dumper; print Dumper $routeinfo; exit 0; }
 
-    my %routes;
-    foreach my $routename ( keys %$routeinfo ) {
-        my $coordstr = $routeinfo->{$routename}{LineString}{coordinates};
-        $coordstr =~ s/^\s+//;
-        my @pointstrs = split /\s+/, $coordstr;
-        my @points;
-        foreach my $pointstr ( @pointstrs ) {
-            my ( $long, $lat ) = split ',', $pointstr;
-            # Transform lat/long to grid based on WGS84.
-            my ( $wgs84_x, $wgs84_y )
+    my $coords = $routeinfo->{features}[0]{geometry}{coordinates};
+    #if ( $plain ) { use Data::Dumper; print Dumper $coords; exit 0; }
+
+    my @points;
+    foreach my $pair ( @$coords ) {
+        my ( $long, $lat ) = @$pair;
+        # Transform lat/long to grid based on WGS84.
+        my ( $wgs84_x, $wgs84_y )
              = Geo::Coordinates::OSGB::ll_to_grid( $lat, $long, 'WGS84' );
-            # Transform WGS84 grid to OSGB grid.
-            my ( $x, $y ) = Geo::Coordinates::OSTN02::ETRS89_to_OSGB36(
+        # Transform WGS84 grid to OSGB grid.
+        my ( $x, $y ) = Geo::Coordinates::OSTN02::ETRS89_to_OSGB36(
                                 $wgs84_x, $wgs84_y, 0 );
-            push @points, { long => $long, lat => $lat,
-                            x => floor( $x ), y => floor( $y ) };
-        }
-        $routes{$routename} = [ @points ];
+        push @points, { long => $long, lat => $lat,
+                        x => floor( $x ), y => floor( $y ) };
     }
 
-    #if ( $plain ) { use Data::Dumper; print Dumper \%routes; exit 0; }
+    #if ( $plain ) { use Data::Dumper; print Dumper \@points; exit 0; }
 
-    return %routes;
+    return @points;
 }
 
 # Returns a list of names, in order.
