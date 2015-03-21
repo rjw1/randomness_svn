@@ -32,14 +32,6 @@ my $locator = Wiki::Toolkit::Plugin::Locator::Grid->new( x => "os_x", y => "os_y
 $wiki->register_plugin( plugin => $locator );
 my $q = CGI->new;
 
-my $plain = $q->param( "plain" ) || 0;
-
-if ( $plain ) {
-  print $q->header( "text/plain" );
-  print "Survey route finder for " . $config->{site_name} . "\n";
-  print "Bounding box size: $BOUND_BOX\n";
-}
-
 # The map for editing is at:
 # http://umap.openstreetmap.fr/en/map/cgc-survey_29724
 # GeoJSON version at http://umap.openstreetmap.fr/en/map/29724/geojson/
@@ -48,7 +40,6 @@ my $json_url = "http://umap.openstreetmap.fr/en/datalayer/61278/";
 
 my @route = get_route( json_url => $json_url );
 my @to_survey = get_survey_venues( route => \@route );
-exit 0 if $plain;
 
 # Package the data for the template.
 my %tt_vars = ( nodes => \@to_survey );
@@ -72,13 +63,10 @@ sub get_route {
     my $mech = WWW::Mechanize->new();
     $mech->get( $json_url );
     my $json = $mech->content;
-    #if ( $plain ) { print $json; exit 0; }
 
     my $routeinfo = decode_json( $json );
-    #if ( $plain ) { use Data::Dumper; print Dumper $routeinfo; exit 0; }
 
     my $coords = $routeinfo->{features}[0]{geometry}{coordinates};
-    #if ( $plain ) { use Data::Dumper; print Dumper $coords; exit 0; }
 
     my @points;
     foreach my $pair ( @$coords ) {
@@ -92,8 +80,6 @@ sub get_route {
         push @points, { long => $long, lat => $lat,
                         x => floor( $x ), y => floor( $y ) };
     }
-
-    #if ( $plain ) { use Data::Dumper; print Dumper \@points; exit 0; }
 
     return @points;
 }
@@ -112,7 +98,6 @@ sub get_survey_venues {
     my ( $x1, $y1 ) = ( $route[$i]{x}, $route[$i]{y} );
     my ( $x2, $y2 ) = ( $route[$i+1]{x}, $route[$i+1]{y} );
     my $length = sqrt( ($x1-$x2)**2 + ($y1-$y2)**2 ); # Pythagoras
-    print "Start: $x1, $y1 / End: $x2, $y2 / Length: $length\n" if $plain;
 
     # Use similar triangles to pick checkpoints $DELTA metres apart along
     # this line segment.  Always include the segment's start point and end
@@ -125,29 +110,22 @@ sub get_survey_venues {
       $along += $DELTA;
     }
     push @checkpoints, [ $x2, $y2 ];
-    #if ( $plain ) { use Data::Dumper; print Dumper \@checkpoints; }
 
     # Find venues within $BOUND_BOX metres of each checkpoint and push them
     # onto our list.  Keep hash of which venues are already on the list.
     foreach my $point ( @checkpoints ) {
       my ( $x, $y ) = @$point;
-      print "Looking for venues within $BOUND_BOX metres of ($x, $y)\n"
-          if $plain;
       my @venues = $locator->find_within_distance(
           x => $x, y => $y, metres => $BOUND_BOX );
       foreach my $venue ( @venues ) {
-        print "Found $venue\n" if $plain;
         next if $seen{$venue};
         push @to_survey, $venue;
         $seen{$venue} = 1;
       }
     }
 
-    #if ( $plain ) { use Data::Dumper; print Dumper \@to_survey; }
-    #last;
     $i++;
   }
 
-  if ( $plain ) { use Data::Dumper; print Dumper \@to_survey; }
   return @to_survey;
 }
