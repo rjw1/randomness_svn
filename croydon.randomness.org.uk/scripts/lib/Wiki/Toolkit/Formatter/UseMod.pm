@@ -3,7 +3,7 @@ package Wiki::Toolkit::Formatter::UseMod;
 use strict;
 
 use vars qw( $VERSION @_links_found );
-$VERSION = '0.23';
+$VERSION = '0.25';
 
 use URI::Escape;
 use Text::WikiFormat as => 'wikiformat';
@@ -50,10 +50,12 @@ A formatter backend for L<Wiki::Toolkit> that supports UseMod-style formatting.
                  edit_prefix         => 'wiki.pl?action=edit;id=',
                  edit_suffix         => '',
                  munge_urls          => 0,
+                 external_link_class => 'external',
   );
 
 Parameters will default to the values shown above (apart from
-C<allowed_tags>, which defaults to allowing no tags).
+C<allowed_tags>, which defaults to allowing no tags, and
+C<external_link_class>, which defaults to false).
 
 =over 4
 
@@ -92,6 +94,17 @@ Example:
 B<Note:> This is I<advanced> usage and you should only do it if you
 I<really> know what you're doing.  Consider in particular whether and
 how your munged nodes are going to be treated by C<retrieve_node>.
+
+=item B<External links>
+
+By default, we emulate the UseModWiki behaviour of formatting external
+links with hardcoded square brackets around them.  If you would
+instead prefer to control this with CSS, supply the
+C<external_link_class> parameter to C<< ->new >> - the value of this
+parameter will be used as the class applied to the link (so it should
+be a valid CSS class name).  Controlling the appearance with CSS is
+our recommended method, but the default is as described for reasons of
+backward compatibility.
 
 =item B<URL munging>
 
@@ -210,6 +223,7 @@ sub _init {
                  edit_suffix         => '',
                  munge_urls          => 0,
                  munge_node_name     => undef,
+                 external_link_class => undef,
                );
 
     my %collated = (%defs, %args);
@@ -275,112 +289,6 @@ sub format {
 
     # Now process any macros.
     my %macros = %{$self->{_macros}};
-
-    $macros{qr/\@INDEX_LIST\s+\[\[(Category|Locale)\s+([^\]]+)]]/}
-      = sub {
-        my ($wiki, $type, $value) = @_;
-        unless ( UNIVERSAL::isa( $wiki, "Wiki::Toolkit" ) ) {
-            return "(unprocessed INDEX_LIST macro)";
-        }
-
-        my @nodes = sort $wiki->list_nodes_by_metadata(
-                       metadata_type  => $type,
-                       metadata_value => $value,
-                       ignore_case    => 1,
-        );
-        unless ( scalar @nodes ) {
-            return qq(\n<div class="macro_index_list">)
-                   . "\n* No pages currently in "
-                   . lc($type) . " $value\n</div>";
-        }
-
-        # Split off address-only pages, and list them last.
-        my @addr_only_nodes = sort { $self->cmp_addr( $a, $b ) }
-                              grep( /^[-\d]+[ab]? /, @nodes );
-        my %tmphash = map { $_ => 1 } @addr_only_nodes;
-        my @occupied_nodes = grep( !$tmphash{$_}, @nodes );
-                             
-
-        my $return = qq(\n<div class="macro_index_list">\n);
-        foreach my $node ( @occupied_nodes, @addr_only_nodes ) {
-            if ( $node =~ /,/ ) {
-                my $title = $node;
-                my $address = $node;
-                $address =~ s/^.*?, //;
-                $title =~ s/, $address//;
-                $return .= "* "
-                    . $wiki->formatter->format_link( wiki => $wiki,
-                                                     link => "$node|$title" )
-                    . ", $address";
-            } else {
-                $return .= "* "
-                    . $wiki->formatter->format_link( wiki => $wiki,
-                                                     link => "$node" )
-            }
-            $return .= "\n";
-	}
-        $return .= "</div>";
-        $return =~ s/%2C/,/gs;
-        return $return;
-    };
-
-    $macros{qr/\@INDEX_ADDR_LIST\s+\[\[(Category|Locale)\s+([^\]]+)]]/}
-      = sub {
-        my ($wiki, $type, $value) = @_;
-        unless ( UNIVERSAL::isa( $wiki, "Wiki::Toolkit" ) ) {
-          return "(unprocessed INDEX_ADDR_LIST macro)";
-        }
-
-        my @nodes = $wiki->list_nodes_by_metadata(
-                       metadata_type  => $type,
-                       metadata_value => $value,
-                       ignore_case    => 1 );
-        unless ( scalar @nodes ) {
-          return qq(\n<div class="macro_index_addr_list">)
-                 . "\n* No pages currently in " . lc($type) . " $value\n"
-                 . "</div>";
-        }
-        my $return = qq(\n<div class="macro_index_addr_list">\n);
-        @nodes = sort { $self->cmp_addr( $a, $b ) } @nodes;
-        foreach my $node ( @nodes ) {
-            my ( $title, $address ) = split( /, /, $node );
-            $return .= "* "
-                    . $wiki->formatter->format_link( wiki => $wiki,
-                                                     link => "$node|$title" );
-            if ( $address ) {
-                $return .= ", $address";
-            }
-            $return .= "\n";
-        }
-        $return .= "</div>";
-        return $return;
-    };
-
-    $macros{qr/\@THUMB\s+\[\[([^|]+)\|([^]]+).*/}
-      = sub {
-        my ($wiki, $node, $image) = @_;
-        return $self->do_thumb( wiki => $wiki, node => $node, image => $image);
-    };
-
-    $macros{qr/\@THUMB\s+\[\[([^|\]]+)\]\].*/}
-      = sub {
-        my ($wiki, $node) = @_;
-        return $self->do_thumb( wiki => $wiki, node => $node );
-    };
-
-    $macros{qr/\@THIS_THUMB\s+\[\[([^|]+)\|([^]]+).*/}
-      = sub {
-        my ($wiki, $node, $image) = @_;
-        return $self->do_thumb( wiki => $wiki, node => $node, image => $image,
-                                this => 1 );
-    };
-
-    $macros{qr/\@THIS_THUMB\s+\[\[([^|\]]+)\]\].*/}
-      = sub {
-        my ($wiki, $node) = @_;
-        return $self->do_thumb( wiki => $wiki, node => $node, this => 1 );
-    };
-
     foreach my $key (keys %macros) {
         my $value = $macros{$key};
         if ( ref $value && ref $value eq 'CODE' ) {
@@ -447,56 +355,6 @@ sub format {
 
     return $rendered;
 }
-
-sub do_thumb {
-    my $self = shift;
-    my %args = @_;
-    unless ( $args{wiki}
-             && UNIVERSAL::isa( $args{wiki}, "Wiki::Toolkit" ) ) {
-        return "(unprocessed THUMB macro)";
-    }
-    if ( $args{image} ) {
-        $args{image} =~ s/<a href="//;
-    } else {
-        $args{image} = "http://croydon.randomness.org.uk/static/no-photo.png";
-    }
-    if ( $args{this} ) {
-        return qq(<span class="this_thumb">)
-               . qq(<img src="$args{image}" width="75" height="75" )
-               . qq(alt="$args{node}" title="$args{node}" /></span>);
-    } else {
-        return qq(<span class="neighbour_thumb"><a href="wiki.cgi?)
-               . $args{wiki}->formatter->node_name_to_node_param( $args{node} )
-               . qq("><img src="$args{image}" width="75" height="75" )
-               . qq(alt="$args{node}" title="$args{node}" /></a></span>);
-    }
-}
-
-sub cmp_addr {
-    my ( $self, $c, $d ) = @_;
-    my %ad; my %bd;
-    if ( $c =~ /,/ ) {
-        ( $ad{name}, $ad{addr} ) = split( ",", $c );
-    } else {
-        $ad{name} = "";
-        $ad{addr} = $c;
-    }
-    ( $ad{num}, $ad{street} ) = split( " ", $ad{addr} );
-
-    if ( $d =~ /,/ ) {
-        ( $bd{name}, $bd{addr} ) = split( ",", $d );
-    } else {
-        $bd{name} = "";
-        $bd{addr} = $d;
-    }
-    ( $bd{num}, $bd{street} ) = split( " ", $bd{addr} );
-    if ( $ad{street} ne $bd{street} ) {
-        return $ad{street} cmp $bd{street};
-    } elsif ( $ad{num} ne $bd{num} ) {
-        return $ad{num} <=> $bd{num};
-    }
-    return $ad{name} cmp $bd{name};
-} 
 
 sub _format_opts {
     my $self = shift;
@@ -817,7 +675,7 @@ Kake Pugh (kake@earth.li) and the Wiki::Toolkit team.
 =head1 COPYRIGHT
 
      Copyright (C) 2003-2004 Kake Pugh.  All Rights Reserved.
-     Copyright (C) 2006-2009 the Wiki::Toolkit team. All Rights Reserved.
+     Copyright (C) 2006-2012 the Wiki::Toolkit team. All Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
