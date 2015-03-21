@@ -12,10 +12,16 @@
 <body>
 
 <form action="[% cgi_url %]" method="get">
+<b>EITHER:</b><br>
+Use line on <a href="http://umap.openstreetmap.fr/en/map/cgc-survey_29724#16/51.3780/-0.1025">uMap</a>: [% umap_box %]
+<hr>
+<b>OR:</b><br>
 Street: [% streets_box %]<br />
 Direction of numbers: [% dir_box %]<br />
 Split into odd and even numbers: [% split_box %]<br />
+<hr>
 Output format: [% format_box %]<br />
+<hr>
 <input type="submit" value="Get addresses" />
 </form>
 
